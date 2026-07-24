@@ -5,7 +5,6 @@ import com.dreamoutbox.ams.announcement.AnnouncementType;
 import com.dreamoutbox.ams.contract.ContractService;
 import com.dreamoutbox.ams.maintenance.MaintenanceService;
 import com.dreamoutbox.ams.room.RoomService;
-import com.dreamoutbox.ams.room.RoomStatus;
 import com.dreamoutbox.ams.tenant.TenantService;
 import com.dreamoutbox.ams.user.Role;
 import com.dreamoutbox.ams.user.User;

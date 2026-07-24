@@ -131,12 +131,12 @@ class PaymentServiceTest {
         assertEquals(new BigDecimal("1000.00"), payment2.getAllocations().get(0).getAmountApplied());
         assertEquals(new BigDecimal("3000.00"), payment2.getAllocations().get(1).getAmountApplied());
 
-        assertEquals(BigDecimal.ZERO, janInvoice.getBalanceRemaining());
+        assertEquals(0, janInvoice.getBalanceRemaining().compareTo(BigDecimal.ZERO));
         assertEquals(InvoiceStatus.PAID, janInvoice.getStatus());
 
-        assertEquals(BigDecimal.ZERO, febInvoice.getBalanceRemaining());
+        assertEquals(0, febInvoice.getBalanceRemaining().compareTo(BigDecimal.ZERO));
         assertEquals(InvoiceStatus.PAID, febInvoice.getStatus());
-        assertEquals(BigDecimal.ZERO, bob.getCreditBalance());
+        assertEquals(0, bob.getCreditBalance().compareTo(BigDecimal.ZERO));
     }
 
     @Test
@@ -159,8 +159,9 @@ class PaymentServiceTest {
 
         Payment payment = paymentService.recordPayment(bob, new BigDecimal("1500.00"), accountant);
 
+        assertNotNull(payment);
         assertEquals(InvoiceStatus.PAID, invoice.getStatus());
-        assertEquals(BigDecimal.ZERO, invoice.getBalanceRemaining());
+        assertEquals(0, invoice.getBalanceRemaining().compareTo(BigDecimal.ZERO));
         assertEquals(new BigDecimal("500.00"), bob.getCreditBalance());
     }
 }

@@ -7,7 +7,6 @@ import com.dreamoutbox.ams.room.Room;
 import com.dreamoutbox.ams.tenant.Tenant;
 import com.dreamoutbox.ams.tenant.TenantRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
