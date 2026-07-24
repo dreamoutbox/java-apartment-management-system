@@ -9,7 +9,6 @@
 </head>
 <body>
 
-<!-- Sidebar Fragment -->
 <div th:replace="~{fragments/sidebar :: sidebar('ADMIN', 'announcements')}"></div>
 
 <div class="main-content">
@@ -17,13 +16,10 @@
         <h1>Building Announcements</h1>
         <p>Publish news or rules, update existing posts, and manage pinned items</p>
     </div>
-
-    <!-- Publish Announcement Form Fragment -->
     <div th:replace="~{fragments/forms :: publishAnnouncementForm('/Announcements')}"></div>
-
-    <!-- Announcement List Fragment with Update & Delete -->
     <div th:replace="~{fragments/views :: announcementView(${announcements})}"></div>
 </div>
 
+<script th:src="@{/js/tables.js}"></script>
 </body>
 </html>

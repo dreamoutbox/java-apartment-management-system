@@ -9,21 +9,17 @@
 </head>
 <body>
 
-<!-- Sidebar Fragment -->
 <div th:replace="~{fragments/sidebar :: sidebar('ADMIN', 'tenants')}"></div>
 
 <div class="main-content">
     <div class="header">
-        <h1>Tenant Profiles & Accounts</h1>
+        <h1>Tenant Profiles &amp; Accounts</h1>
         <p>Create tenant accounts with ID card uploads, update contact details, and manage profiles</p>
     </div>
-
-    <!-- Create Tenant Form (Creates User + Tenant Profile + ID Card Proof) -->
     <div th:replace="~{fragments/forms :: createTenantForm('/tenants')}"></div>
-
-    <!-- Tenant Profiles Table Fragment with Edit, Delete, and Image Preview -->
     <div th:replace="~{fragments/views :: tenantView(${tenants})}"></div>
 </div>
 
+<script th:src="@{/js/tables.js}"></script>
 </body>
 </html>

@@ -9,7 +9,6 @@
 </head>
 <body>
 
-<!-- Sidebar Fragment -->
 <div th:replace="~{fragments/sidebar :: sidebar('ADMIN', 'rooms')}"></div>
 
 <div class="main-content">
@@ -17,13 +16,10 @@
         <h1>Room Portfolio</h1>
         <p>Add new apartment units, update base pricing, and adjust room status</p>
     </div>
-
-    <!-- Create Room Form Fragment -->
     <div th:replace="~{fragments/forms :: createRoomForm('/rooms')}"></div>
-
-    <!-- Room Portfolio Table Fragment with Update & Delete -->
     <div th:replace="~{fragments/views :: roomView(${rooms})}"></div>
 </div>
 
+<script th:src="@{/js/tables.js}"></script>
 </body>
 </html>

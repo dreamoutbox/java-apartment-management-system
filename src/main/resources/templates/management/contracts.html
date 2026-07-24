@@ -9,7 +9,6 @@
 </head>
 <body>
 
-<!-- Sidebar Fragment -->
 <div th:replace="~{fragments/sidebar :: sidebar('ADMIN', 'contracts')}"></div>
 
 <div class="main-content">
@@ -17,13 +16,10 @@
         <h1>Lease Contracts</h1>
         <p>Issue new lease agreements, modify active dates/amounts, and track expiration warnings</p>
     </div>
-
-    <!-- Create Contract Form Fragment -->
     <div th:replace="~{fragments/forms :: createContractForm(${rooms}, ${tenants}, '/contracts')}"></div>
-
-    <!-- Lease Contract Table Fragment with Update & Delete -->
     <div th:replace="~{fragments/views :: contractView(${contracts}, ${expiringContracts})}"></div>
 </div>
 
+<script th:src="@{/js/tables.js}"></script>
 </body>
 </html>

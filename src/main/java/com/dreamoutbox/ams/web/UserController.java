@@ -2,7 +2,6 @@ package com.dreamoutbox.ams.web;
 
 import com.dreamoutbox.ams.tenant.TenantService;
 import com.dreamoutbox.ams.user.Role;
-import com.dreamoutbox.ams.user.User;
 import com.dreamoutbox.ams.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;

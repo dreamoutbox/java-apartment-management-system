@@ -9,7 +9,6 @@
 </head>
 <body>
 
-<!-- Sidebar Fragment -->
 <div th:replace="~{fragments/sidebar :: sidebar('ADMIN', 'tickets')}"></div>
 
 <div class="main-content">
@@ -17,10 +16,9 @@
         <h1>Maintenance Tickets</h1>
         <p>View reported property issues and assign technicians to open work orders</p>
     </div>
-
-    <!-- Maintenance Ticket List & Assign Fragment -->
     <div th:replace="~{fragments/views :: ticketView(${tickets}, ${technicians}, '/tickets/assign')}"></div>
 </div>
 
+<script th:src="@{/js/tables.js}"></script>
 </body>
 </html>
