@@ -32,8 +32,7 @@
                     <div th:if="${c != null}" style="display:flex;gap:6px;">
                         <button type="button" class="btn"
                                 style="padding:4px 10px;font-size:12px;"
-                                th:data-modal-target="'modal-contract-' + ${c.id}"
-                                onclick="openModal(this.dataset.modalTarget)">Update</button>
+                                th:data-modal-target="'modal-contract-' + ${c.id}">Update</button>
                         <form th:action="@{'/contracts/' + ${c.id} + '/delete'}" method="post"
                               onsubmit="return confirm('Delete this lease contract?');">
                             <button type="submit" class="btn" style="padding:4px 10px;font-size:12px;background:#ef4444;">Delete</button>
@@ -52,7 +51,7 @@
                     <div class="card-title" style="margin:0;">Update Contract — Room <span th:text="${c.room != null ? c.room.roomNumber : ''}"></span></div>
                     <button type="button" class="btn" style="background:#ef4444;padding:4px 12px;font-size:12px;"
                             th:data-modal-target="'modal-contract-' + ${c.id}"
-                            onclick="closeModal(this.dataset.modalTarget)">✕ Close</button>
+                            data-modal-action="close">✕ Close</button>
                 </div>
                 <form th:action="@{'/contracts/' + ${c.id} + '/update'}" method="post">
                     <div class="form-group">

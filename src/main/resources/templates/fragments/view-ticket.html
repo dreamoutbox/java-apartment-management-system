@@ -1,63 +1,73 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <body>
 
-<div th:fragment="ticketView(tickets, technicians, assignActionUrl)" class="card">
-    <div class="card-title">Maintenance Tickets</div>
-    <table class="data-table">
-        <thead>
-            <tr>
-                <th>Room</th>
-                <th>Reported By</th>
-                <th>Description</th>
-                <th>Assigned Technician</th>
-                <th>Status</th>
-                <th th:if="${assignActionUrl != null}">Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr th:each="ticket : ${tickets}">
-                <td th:text="${ticket != null and ticket.room != null ? ticket.room.roomNumber : 'N/A'}">101</td>
-                <td th:text="${ticket != null and ticket.reportedBy != null ? ticket.reportedBy.fullName : 'N/A'}">Tenant</td>
-                <td th:text="${ticket != null ? ticket.description : ''}">Issue</td>
-                <td th:text="${ticket != null and ticket.assignedTechnician != null ? ticket.assignedTechnician.fullName : 'Unassigned'}">Unassigned</td>
-                <td><span th:class="${'status-badge status-' + (ticket != null ? ticket.status : 'PENDING')}" th:text="${ticket != null ? ticket.status : ''}">PENDING</span></td>
-                <td th:if="${assignActionUrl != null and ticket != null}">
-                    <button type="button" class="btn"
-                            style="padding:4px 10px;font-size:12px;"
-                            th:data-modal-target="'modal-ticket-' + ${ticket.id}"
-                            onclick="openModal(this.dataset.modalTarget)">Assign</button>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+    <div th:fragment="ticketView(tickets, technicians, assignActionUrl)" class="card">
+        <div class="card-title">Maintenance Tickets</div>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Room</th>
+                    <th>Reported By</th>
+                    <th>Description</th>
+                    <th>Assigned Technician</th>
+                    <th>Status</th>
+                    <th th:if="${assignActionUrl != null}">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="ticket : ${tickets}">
+                    <td th:text="${ticket != null and ticket.room != null ? ticket.room.roomNumber : 'N/A'}">101</td>
+                    <td th:text="${ticket != null and ticket.reportedBy != null ? ticket.reportedBy.fullName : 'N/A'}">
+                        Tenant</td>
+                    <td th:text="${ticket != null ? ticket.description : ''}">Issue</td>
+                    <td
+                        th:text="${ticket != null and ticket.assignedTechnician != null ? ticket.assignedTechnician.fullName : 'Unassigned'}">
+                        Unassigned</td>
+                    <td><span th:class="${'status-badge status-' + (ticket != null ? ticket.status : 'PENDING')}"
+                            th:text="${ticket != null ? ticket.status : ''}">PENDING</span></td>
+                    <td th:if="${assignActionUrl != null and ticket != null}">
+                        <button type="button" class="btn" style="padding:4px 10px;font-size:12px;"
+                            th:data-modal-target="'modal-ticket-' + ${ticket.id}">Assign</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
 
-    <!-- Assign Modals for each Ticket -->
-    <div th:if="${assignActionUrl != null}" th:each="ticket : ${tickets}" th:if="${ticket != null}">
-        <div class="ams-modal-overlay" th:id="'modal-ticket-' + ${ticket.id}" style="display:none;">
-            <div class="ams-modal-box">
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
-                    <div class="card-title" style="margin:0;">Assign Technician — Room <span th:text="${ticket.room != null ? ticket.room.roomNumber : ''}"></span></div>
-                    <button type="button" class="btn" style="background:#ef4444;padding:4px 12px;font-size:12px;"
-                            th:data-modal-target="'modal-ticket-' + ${ticket.id}"
-                            onclick="closeModal(this.dataset.modalTarget)">✕ Close</button>
-                </div>
-                <p style="color:#94a3b8;font-size:13px;margin-bottom:16px;" th:text="${ticket.description}">Description</p>
-                <form th:action="@{${assignActionUrl}}" method="post">
-                    <input type="hidden" name="ticketId" th:value="${ticket.id}">
-                    <div class="form-group">
-                        <label>Assign To</label>
-                        <select name="technicianId" class="form-control" required>
-                            <option value="">-- Select Technician --</option>
-                            <option th:each="tech : ${technicians}" th:value="${tech.id}" th:text="${tech.fullName}"></option>
-                        </select>
+        <!-- Assign Modals for each Ticket -->
+        <div th:if="${assignActionUrl != null}">
+            <div th:each="ticket : ${tickets}" th:if="${ticket != null}">
+                <div class="ams-modal-overlay" th:id="'modal-ticket-' + ${ticket.id}" style="display:none;">
+                    <div class="ams-modal-box">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+                            <div class="card-title" style="margin:0;">Assign Technician — Room <span
+                                    th:text="${ticket.room != null ? ticket.room.roomNumber : ''}"></span></div>
+                            <button type="button" class="btn"
+                                style="background:#ef4444;padding:4px 12px;font-size:12px;"
+                                th:data-modal-target="'modal-ticket-' + ${ticket.id}" data-modal-action="close">✕
+                                Close</button>
+                        </div>
+                        <p style="color:#94a3b8;font-size:13px;margin-bottom:16px;" th:text="${ticket.description}">
+                            Description</p>
+                        <form th:action="@{${assignActionUrl}}" method="post">
+                            <input type="hidden" name="ticketId" th:value="${ticket.id}">
+                            <div class="form-group">
+                                <label>Assign To</label>
+                                <select name="technicianId" class="form-control" required>
+                                    <option value="">-- Select Technician --</option>
+                                    <option th:each="tech : ${technicians}" th:value="${tech.id}"
+                                        th:text="${tech.fullName}"></option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn">Confirm Assignment</button>
+                        </form>
                     </div>
-                    <button type="submit" class="btn">Confirm Assignment</button>
-                </form>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
 </body>
+
 </html>

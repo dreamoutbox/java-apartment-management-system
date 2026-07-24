@@ -18,7 +18,7 @@
                     <option value="">-- Select Tenant --</option>
                     <option th:each="t : ${tenants}" th:value="${t.id}" th:text="${t.fullName + ' (' + (t.user != null ? t.user.username : 'No User') + ')'}"></option>
                 </select>
-                <button type="button" class="btn" style="white-space:nowrap;" onclick="openTenantPickerModal()">Browse</button>
+                <button type="button" class="btn" style="white-space:nowrap;" data-modal-target="tenantPickerModal">Browse</button>
             </div>
         </div>
         <div class="form-group">
@@ -41,7 +41,7 @@
         <div class="ams-modal-box">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
                 <div class="card-title" style="margin:0;">Select Tenant</div>
-                <button type="button" class="btn" style="background:#ef4444;padding:4px 12px;font-size:12px;" onclick="closeTenantPickerModal()">✕ Close</button>
+                <button type="button" class="btn" style="background:#ef4444;padding:4px 12px;font-size:12px;" data-modal-target="tenantPickerModal" data-modal-action="close">✕ Close</button>
             </div>
             <table>
                 <thead>

@@ -24,8 +24,7 @@
                 </div>
                 <div style="display:flex;gap:6px;flex-shrink:0;">
                     <button type="button" class="btn" style="padding:4px 10px;font-size:12px;"
-                        th:data-modal-target="'modal-ann-' + ${a.id}"
-                        onclick="openModal(this.dataset.modalTarget)">Update</button>
+                        th:data-modal-target="'modal-ann-' + ${a.id}">Update</button>
                     <form th:action="@{'/Announcements/' + ${a.id} + '/delete'}" method="post"
                         onsubmit="return confirm('Delete this announcement?');">
                         <button type="submit" class="btn"
@@ -43,7 +42,7 @@
                         <div class="card-title" style="margin:0;">Update Announcement</div>
                         <button type="button" class="btn" style="background:#ef4444;padding:4px 12px;font-size:12px;"
                             th:data-modal-target="'modal-ann-' + ${a.id}"
-                            onclick="closeModal(this.dataset.modalTarget)">✕ Close</button>
+                            data-modal-action="close">✕ Close</button>
                     </div>
                     <form th:action="@{'/Announcements/' + ${a.id} + '/update'}" method="post">
                         <div class="form-group">

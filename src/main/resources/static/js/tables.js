@@ -1,22 +1,36 @@
 /**
  * Apartment Hub — Table Utilities + Modal Helpers
  * Adds a live search bar and sortable column headers to every <table> on the page.
- * Also provides openModal / closeModal used by per-row Update buttons.
+ *
+ * Modal open/close is handled via event delegation off data-modal-target /
+ * data-modal-action attributes — no th:onclick / inline handlers required in templates.
+ *
+ *   <button data-modal-target="modal-user-123">Update</button>
+ *   <button data-modal-target="modal-user-123" data-modal-action="close">✕ Close</button>
  */
-
-function openModal(id) {
-    var el = document.getElementById(id);
-    if (el) el.style.display = 'flex';
-}
-
-function closeModal(id) {
-    var el = document.getElementById(id);
-    if (el) el.style.display = 'none';
-}
 
 (function () {
     'use strict';
 
+    // --- Modal delegation ---
+    document.addEventListener('click', function (e) {
+        var trigger = e.target.closest('[data-modal-target]');
+        if (!trigger) return;
+
+        var modal = document.getElementById(trigger.dataset.modalTarget);
+        if (!modal) return;
+
+        modal.style.display = trigger.dataset.modalAction === 'close' ? 'none' : 'flex';
+    });
+
+    // Optional: click on overlay background (not the modal box) closes it
+    document.addEventListener('click', function (e) {
+        if (e.target.classList && e.target.classList.contains('ams-modal-overlay')) {
+            e.target.style.display = 'none';
+        }
+    });
+
+    // --- Table search + sort ---
     function initTables() {
         document.querySelectorAll('table').forEach(function (table) {
             var tbody = table.querySelector('tbody');
