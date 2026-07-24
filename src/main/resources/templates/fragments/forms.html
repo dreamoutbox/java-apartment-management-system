@@ -13,6 +13,8 @@
         th:replace="~{fragments/form-create-contract :: createContractForm(${rooms}, ${tenants}, ${actionUrl})}"></div>
     <div th:fragment="publishAnnouncementForm(actionUrl)"
         th:replace="~{fragments/form-publish-announcement :: publishAnnouncementForm(${actionUrl})}"></div>
+    <div th:fragment="createTicketForm(rooms, tenants, actionUrl)"
+        th:replace="~{fragments/form-create-ticket :: createTicketForm(${rooms}, ${tenants}, ${actionUrl})}"></div>
 
 </body>
 

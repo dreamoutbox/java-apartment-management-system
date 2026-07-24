@@ -18,7 +18,9 @@
             <h1>Maintenance Tickets Triage</h1>
             <p>Review resident issues and assign work orders to qualified technicians</p>
         </div>
-        <div th:replace="~{fragments/view-ticket :: ticketView(${tickets}, ${technicians}, null)}"></div>
+        <div th:replace="~{fragments/form-create-ticket :: createTicketForm(${rooms}, ${tenants}, '/tickets/create')}"></div>
+
+        <div th:replace="~{fragments/view-ticket :: ticketView(${tickets}, ${technicians}, '/tickets/assign')}"></div>
     </div>
 
     <script th:src="@{/js/tables.js}"></script>

@@ -1,6 +1,11 @@
 package com.dreamoutbox.ams.web;
 
 import com.dreamoutbox.ams.maintenance.MaintenanceService;
+import com.dreamoutbox.ams.maintenance.MaintenanceTicket;
+import com.dreamoutbox.ams.room.Room;
+import com.dreamoutbox.ams.room.RoomService;
+import com.dreamoutbox.ams.tenant.Tenant;
+import com.dreamoutbox.ams.tenant.TenantService;
 import com.dreamoutbox.ams.user.Role;
 import com.dreamoutbox.ams.user.User;
 import com.dreamoutbox.ams.user.UserService;
@@ -10,9 +15,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.UUID;
 
@@ -23,13 +30,38 @@ public class TicketController {
 
     private final MaintenanceService maintenanceService;
     private final UserService userService;
+    private final RoomService roomService;
+    private final TenantService tenantService;
 
     @GetMapping
     public String index(Model model) {
         model.addAttribute("tickets", maintenanceService.getAllTickets());
         model.addAttribute("technicians", userService.getUsersByRole(Role.TECHNICIAN));
+        model.addAttribute("rooms", roomService.getAllRooms());
+        model.addAttribute("tenants", tenantService.getAllTenants());
         model.addAttribute("activeTab", "tickets");
         return "management/tickets";
+    }
+
+    @PostMapping({"", "/create"})
+    public String createTicket(
+            @RequestParam UUID roomId,
+            @RequestParam UUID tenantId,
+            @RequestParam String description,
+            @RequestParam(required = false) MultipartFile image) {
+        Room room = roomService.getById(roomId);
+        Tenant tenant = tenantService.getById(tenantId);
+        maintenanceService.createTicket(room, tenant, description, image);
+        return "redirect:/tickets";
+    }
+
+    @GetMapping("/{id}")
+    public String ticketDetail(@PathVariable UUID id, Model model) {
+        MaintenanceTicket ticket = maintenanceService.getById(id);
+        model.addAttribute("ticket", ticket);
+        model.addAttribute("technicians", userService.getUsersByRole(Role.TECHNICIAN));
+        model.addAttribute("activeTab", "tickets");
+        return "management/ticket-detail";
     }
 
     @PostMapping("/assign")
@@ -39,6 +71,6 @@ public class TicketController {
             @AuthenticationPrincipal UserDetails userDetails) {
         User currentUser = userService.getByUsername(userDetails.getUsername());
         maintenanceService.assignTechnician(ticketId, technicianId, currentUser);
-        return "redirect:/tickets";
+        return "redirect:/tickets/" + ticketId;
     }
 }

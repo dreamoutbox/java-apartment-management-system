@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Ticket Detail - Apartment Hub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 16px;
+            margin-top: 12px;
+        }
+
+        .image-card {
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--border-color, #334155);
+            background: #1e293b;
+        }
+
+        .image-card img {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .image-card .caption {
+            padding: 8px 12px;
+            font-size: 12px;
+            color: #94a3b8;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div th:replace="~{fragments/sidebar :: sidebar('ADMIN', 'tickets')}"></div>
+
+    <div class="main-content">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;">
+            <div>
+                <a th:href="@{/tickets}" class="btn"
+                    style="background:#475569;font-size:13px;padding:6px 14px;margin-bottom:12px;display:inline-block;">←
+                    Back to Tickets</a>
+                <h1 style="margin:0;font-size:24px;">
+                    Maintenance Ticket #<span th:text="${ticket.id}">ID</span>
+                    <span th:class="${'status-badge status-' + ticket.status}" th:text="${ticket.status}">PENDING</span>
+                </h1>
+            </div>
+        </div>
+
+        <!-- Details Grid -->
+        <div class="grid grid-2" style="gap:24px;margin-bottom:24px;">
+            <div class="card">
+                <div class="card-title">Ticket Information</div>
+                <table class="data-table" style="margin:0;">
+                    <tr>
+                        <strong style="color:#94a3b8;">Room:</strong>
+                        <span
+                            th:text="${ticket.room != null ? 'Room ' + ticket.room.roomNumber + ' (Floor ' + ticket.room.floor + ')' : 'N/A'}">Room
+                            101</span>
+                    </tr>
+                    <br><br>
+                    <tr>
+                        <strong style="color:#94a3b8;">Reported By:</strong>
+                        <span
+                            th:text="${ticket.reportedBy != null ? ticket.reportedBy.fullName + ' (' + (ticket.reportedBy.email != null ? ticket.reportedBy.email : 'No Email') + ')' : 'N/A'}">Tenant
+                            Name</span>
+                    </tr>
+                    <br><br>
+                    <tr>
+                        <strong style="color:#94a3b8;">Assigned Technician:</strong>
+                        <span
+                            th:text="${ticket.assignedTechnician != null ? ticket.assignedTechnician.fullName : 'Unassigned'}">Technician
+                            Name</span>
+                    </tr>
+                    <br><br>
+                    <tr>
+                        <strong style="color:#94a3b8;">Date Created:</strong>
+                        <span th:text="${#temporals.format(ticket.createdAt, 'yyyy-MM-dd HH:mm')}">2026-07-24</span>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Issue Description</div>
+                <p style="font-size:15px;line-height:1.6;color:#e2e8f0;white-space:pre-wrap;"
+                    th:text="${ticket.description}">Description content here...</p>
+
+                <!-- Assign Technician Form -->
+                <div style="margin-top:24px;padding-top:16px;border-top:1px solid var(--border-color, #334155);"
+                    sec:authorize="hasAnyRole('LANDLORD', 'MANAGER')">
+                    <div class="card-title" style="font-size:14px;">Assign / Change Technician</div>
+                    <form th:action="@{/tickets/assign}" method="post"
+                        style="display:flex;gap:12px;align-items:center;">
+                        <input type="hidden" name="ticketId" th:value="${ticket.id}">
+                        <select name="technicianId" class="form-control" style="flex:1;" required>
+                            <option value="">-- Select Technician --</option>
+                            <option th:each="tech : ${technicians}" th:value="${tech.id}"
+                                th:selected="${ticket.assignedTechnician != null and ticket.assignedTechnician.id == tech.id}"
+                                th:text="${tech.fullName}"></option>
+                        </select>
+                        <button type="submit" class="btn" style="white-space:nowrap;">Assign</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tenant Submitted Images -->
+        <div class="card" style="margin-bottom:24px;">
+            <div class="card-title">📸 Tenant Submitted Photos</div>
+            <div class="image-grid" th:with="tenantImages=${ticket.images.?[type.name() == 'REPORTED']}">
+                <div class="image-card" th:each="img : ${tenantImages}">
+                    <a th:href="@{'/uploads/' + ${img.imagePath}}" target="_blank">
+                        <img th:src="@{'/uploads/' + ${img.imagePath}}" alt="Tenant photo">
+                    </a>
+                    <div class="caption">Reported Photo</div>
+                </div>
+                <div th:if="${#lists.isEmpty(tenantImages)}" style="color:#94a3b8;grid-column:1/-1;">
+                    No photos attached by tenant.
+                </div>
+            </div>
+        </div>
+
+        <!-- Technician Fix Images -->
+        <div class="card" style="margin-bottom:24px;">
+            <div class="card-title">🛠️ Technician Proof of Fix Photos</div>
+            <div class="image-grid" th:with="fixImages=${ticket.images.?[type.name() == 'PROOF_OF_FIX']}">
+                <div class="image-card" th:each="img : ${fixImages}">
+                    <a th:href="@{'/uploads/' + ${img.imagePath}}" target="_blank">
+                        <img th:src="@{'/uploads/' + ${img.imagePath}}" alt="Proof of fix photo">
+                    </a>
+                    <div class="caption">Proof of Fix Photo</div>
+                </div>
+                <div th:if="${#lists.isEmpty(fixImages)}" style="color:#94a3b8;grid-column:1/-1;">
+                    No proof of fix photos uploaded by technician yet.
+                </div>
+            </div>
+        </div>
+
+        <!-- Status History -->
+        <div class="card">
+            <div class="card-title">Ticket Activity History</div>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Updated By</th>
+                        <th>Status</th>
+                        <th>Note</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="h : ${ticket.history}">
+                        <td th:text="${#temporals.format(h.createdAt, 'yyyy-MM-dd HH:mm')}">2026-07-24</td>
+                        <td th:text="${h.updatedBy != null ? h.updatedBy.fullName : 'System'}">User</td>
+                        <td><span th:class="${'status-badge status-' + h.status}" th:text="${h.status}">PENDING</span>
+                        </td>
+                        <td th:text="${h.note}">Initial report</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+</body>
+
+</html>

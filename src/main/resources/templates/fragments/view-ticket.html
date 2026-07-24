@@ -17,7 +17,10 @@
                 </tr>
             </thead>
             <tbody>
-                <tr th:each="ticket : ${tickets}">
+                <tr th:each="ticket : ${tickets}"
+                    th:data-href="@{'/tickets/' + ${ticket.id}}"
+                    onclick="if (!event.target.closest('button, a, form, select, input, [data-modal-target]')) { window.location.href = this.getAttribute('data-href'); }"
+                    style="cursor:pointer;">
                     <td th:text="${ticket != null and ticket.room != null ? ticket.room.roomNumber : 'N/A'}">101</td>
                     <td th:text="${ticket != null and ticket.reportedBy != null ? ticket.reportedBy.fullName : 'N/A'}">
                         Tenant</td>

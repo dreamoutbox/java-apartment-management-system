@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+
+    <div th:fragment="createTicketForm(rooms, tenants, actionUrl)" class="card">
+        <div class="card-title">Create Maintenance Ticket</div>
+        <form th:action="@{${actionUrl}}" method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                <label>Room</label>
+                <select name="roomId" class="form-control" required>
+                    <option value="">-- Select Room --</option>
+                    <option th:each="r : ${rooms}" th:value="${r.id}"
+                        th:text="${'Room ' + r.roomNumber + ' (Floor ' + r.floor + ')'}"></option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Reported By (Tenant)</label>
+                <select name="tenantId" class="form-control" required>
+                    <option value="">-- Select Tenant --</option>
+                    <option th:each="t : ${tenants}" th:value="${t.id}"
+                        th:text="${t.fullName + (t.phone != null ? ' - ' + t.phone : '')}"></option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Issue Description</label>
+                <textarea name="description" class="form-control" rows="3"
+                    placeholder="Describe the maintenance issue..." required></textarea>
+            </div>
+            <div class="form-group">
+                <label>Photo (Optional)</label>
+                <input type="file" name="image" class="form-control" accept="image/*">
+            </div>
+            <button type="submit" class="btn">Create Ticket</button>
+        </form>
+    </div>
+
+</body>
+
+</html>
