@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+    <!-- User List View Fragment -->
+    <div th:fragment="userView(tenants)" class="card">
+        <div class="card-title">Registered Users</div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Full Name</th>
+                    <th>Phone</th>
+                    <th>Email</th>
+                    <th>ID Card #</th>
+                    <th>Credit Balance</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="t : ${tenants}">
+                    <td th:text="${t.fullName}">John Doe</td>
+                    <td th:text="${t.phone}">12345678</td>
+                    <td th:text="${t.email}">john@example.com</td>
+                    <td th:text="${t.idCardNumber}">ID123</td>
+                    <td th:text="${'$' + t.creditBalance}">$0.00</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Room List View Fragment -->
+    <div th:fragment="roomView(rooms)" class="card">
+        <div class="card-title">Room Portfolio</div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Room #</th>
+                    <th>Floor</th>
+                    <th>Base Rent</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="room : ${rooms}">
+                    <td th:text="${room.roomNumber}">101</td>
+                    <td th:text="${room.floor}">1</td>
+                    <td th:text="${'$' + room.baseRent}">$1000.00</td>
+                    <td><span th:class="${'status-badge status-' + room.status}" th:text="${room.status}">VACANT</span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Lease Contract View Fragment -->
+    <div th:fragment="contractView(contracts, expiringContracts)" class="card">
+        <div class="card-title">Active Lease Contracts</div>
+        <div th:if="${not #lists.isEmpty(expiringContracts)}" class="alert alert-info"
+            style="margin-bottom:16px;background:rgba(245, 158, 11, 0.15);color:#fcd34d;border:1px solid rgba(245, 158, 11, 0.3);padding:10px;border-radius:8px;">
+            Warning: <span th:text="${expiringContracts.size()}">0</span> lease(s) expiring within 30 days.
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Room</th>
+                    <th>Tenant</th>
+                    <th>Monthly Rent</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="c : ${contracts}">
+                    <td th:text="${c.room.roomNumber}">101</td>
+                    <td th:text="${c.tenant.fullName}">Tenant</td>
+                    <td th:text="${'$' + c.monthlyRent}">$1200</td>
+                    <td th:text="${c.startDate}">2026-01-01</td>
+                    <td th:text="${c.endDate}">2026-12-31</td>
+                    <td><span th:class="${'status-badge status-' + c.status}" th:text="${c.status}">ACTIVE</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Announcement List View Fragment -->
+    <div th:fragment="announcementView(announcements)" class="card">
+        <div class="card-title">Building Announcements</div>
+        <div th:each="a : ${announcements}"
+            style="margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--border-color);">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+                <strong style="font-size:16px;color:#f8fafc;" th:text="${a.title}">Title</strong>
+                <span style="font-size:12px;color:#94a3b8;"
+                    th:text="${a.publishedAt != null ? #temporals.format(a.publishedAt, 'yyyy-MM-dd HH:mm') : ''}">Date</span>
+            </div>
+            <p style="font-size:14px;color:#cbd5e1;margin-top:8px;" th:text="${a.content}">Content</p>
+        </div>
+        <div th:if="${#lists.isEmpty(announcements)}">
+            <p style="color:#94a3b8;">No announcements published yet.</p>
+        </div>
+    </div>
+
+    <!-- Maintenance Ticket View & Assign Fragment -->
+    <div th:fragment="ticketView(tickets, technicians, assignActionUrl)" class="card">
+        <div class="card-title">Maintenance Tickets</div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Room</th>
+                    <th>Reported By</th>
+                    <th>Description</th>
+                    <th>Assigned Technician</th>
+                    <th>Status</th>
+                    <th th:if="${assignActionUrl != null}">Assign Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="ticket : ${tickets}">
+                    <td th:text="${ticket.room.roomNumber}">101</td>
+                    <td th:text="${ticket.reportedBy.fullName}">Tenant</td>
+                    <td th:text="${ticket.description}">Issue</td>
+                    <td
+                        th:text="${ticket.assignedTechnician != null ? ticket.assignedTechnician.fullName : 'Unassigned'}">
+                        Unassigned</td>
+                    <td><span th:class="${'status-badge status-' + ticket.status}"
+                            th:text="${ticket.status}">PENDING</span></td>
+                    <td th:if="${assignActionUrl != null}">
+                        <form th:action="@{${assignActionUrl}}" method="post" style="display:flex;gap:8px;">
+                            <input type="hidden" name="ticketId" th:value="${ticket.id}">
+                            <select name="technicianId" class="form-control" style="padding:4px 8px;font-size:12px;"
+                                required>
+                                <option th:each="tech : ${technicians}" th:value="${tech.id}"
+                                    th:text="${tech.fullName}"></option>
+                            </select>
+                            <button type="submit" class="btn" style="padding:4px 10px;font-size:12px;">Assign</button>
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</body>
+
+</html>

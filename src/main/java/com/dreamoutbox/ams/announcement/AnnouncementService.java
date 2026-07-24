@@ -17,7 +17,7 @@ public class AnnouncementService {
     private final AnnouncementRepository announcementRepository;
 
     @Transactional
-    @PreAuthorize("hasRole('MANAGER')")
+    @PreAuthorize("hasAnyRole('MANAGER', 'LANDLORD')")
     public Announcement createAnnouncement(String title, String content, AnnouncementType type, boolean pinned, User publishedBy) {
         Announcement announcement = Announcement.builder()
                 .title(title)
