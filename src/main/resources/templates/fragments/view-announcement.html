@@ -1,71 +1,81 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <body>
 
-<div th:fragment="announcementView(announcements)" class="card">
-    <div class="card-title">Building Announcements</div>
+    <div th:fragment="announcementView(announcements)" class="card">
+        <div class="card-title">Building Announcements</div>
 
-    <div th:if="${announcements == null or #lists.isEmpty(announcements)}">
-        <p style="color:#94a3b8;">No announcements published yet.</p>
-    </div>
+        <div th:if="${announcements == null or #lists.isEmpty(announcements)}">
+            <p style="color:#94a3b8;">No announcements published yet.</p>
+        </div>
 
-    <div th:each="a : ${announcements}" th:if="${a != null}" style="margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border-color);">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;">
-            <div>
-                <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
-                    <span th:if="${a.pinned}" style="font-size:11px;color:#fcd34d;">📌 Pinned</span>
-                    <span class="status-badge status-OCCUPIED" th:text="${a.type}" style="font-size:11px;">NEWS</span>
+        <div th:each="a : ${announcements}" th:if="${a != null}"
+            style="margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border-color);">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;">
+                <div>
+                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+                        <span th:if="${a.pinned}" style="font-size:11px;color:#fcd34d;">📌 Pinned</span>
+                        <span class="status-badge status-OCCUPIED" th:text="${a.type}"
+                            style="font-size:11px;">NEWS</span>
+                    </div>
+                    <div style="font-weight:600;font-size:15px;margin-bottom:4px;" th:text="${a.title}">Title</div>
+                    <div style="color:#94a3b8;font-size:13px;" th:text="${a.content}">Content</div>
                 </div>
-                <div style="font-weight:600;font-size:15px;margin-bottom:4px;" th:text="${a.title}">Title</div>
-                <div style="color:#94a3b8;font-size:13px;" th:text="${a.content}">Content</div>
+                <div style="display:flex;gap:6px;flex-shrink:0;">
+                    <button type="button" class="btn" style="padding:4px 10px;font-size:12px;"
+                        th:data-modal-target="'modal-ann-' + ${a.id}"
+                        onclick="openModal(this.dataset.modalTarget)">Update</button>
+                    <form th:action="@{'/Announcements/' + ${a.id} + '/delete'}" method="post"
+                        onsubmit="return confirm('Delete this announcement?');">
+                        <button type="submit" class="btn"
+                            style="padding:4px 10px;font-size:12px;background:#ef4444;">Delete</button>
+                    </form>
+                </div>
             </div>
-            <div style="display:flex;gap:6px;flex-shrink:0;">
-                <button type="button" class="btn"
-                        style="padding:4px 10px;font-size:12px;"
-                        th:onclick="'openModal(\'modal-ann-' + ${a.id} + '\')'">Update</button>
-                <form th:action="@{'/Announcements/' + ${a.id} + '/delete'}" method="post"
-                      onsubmit="return confirm('Delete this announcement?');">
-                    <button type="submit" class="btn" style="padding:4px 10px;font-size:12px;background:#ef4444;">Delete</button>
-                </form>
+        </div>
+
+        <!-- Update Modals for each Announcement -->
+        <div th:each="a : ${announcements}" th:if="${a != null}">
+            <div class="ams-modal-overlay" th:id="'modal-ann-' + ${a.id}" style="display:none;">
+                <div class="ams-modal-box">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+                        <div class="card-title" style="margin:0;">Update Announcement</div>
+                        <button type="button" class="btn" style="background:#ef4444;padding:4px 12px;font-size:12px;"
+                            th:data-modal-target="'modal-ann-' + ${a.id}"
+                            onclick="closeModal(this.dataset.modalTarget)">✕ Close</button>
+                    </div>
+                    <form th:action="@{'/Announcements/' + ${a.id} + '/update'}" method="post">
+                        <div class="form-group">
+                            <label>Title</label>
+                            <input type="text" name="title" th:value="${a.title}" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Type</label>
+                            <select name="type" class="form-control">
+                                <option value="NEWS" th:selected="${a.type != null and a.type.name() == 'NEWS'}">NEWS
+                                </option>
+                                <option value="RULE" th:selected="${a.type != null and a.type.name() == 'RULE'}">RULE
+                                </option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Content</label>
+                            <textarea name="content" class="form-control" rows="3" required
+                                th:text="${a.content}"></textarea>
+                        </div>
+                        <div class="form-group" style="flex-direction:row;align-items:center;gap:10px;">
+                            <input type="checkbox" name="pinned" th:id="${'upd-pinned-' + a.id}"
+                                th:checked="${a.pinned}" value="true">
+                            <label th:for="${'upd-pinned-' + a.id}" style="margin:0;">Pinned</label>
+                        </div>
+                        <button type="submit" class="btn">Save Changes</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-
-    <!-- Update Modals for each Announcement -->
-    <div th:each="a : ${announcements}" th:if="${a != null}">
-        <div class="ams-modal-overlay" th:id="'modal-ann-' + ${a.id}" style="display:none;">
-            <div class="ams-modal-box">
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
-                    <div class="card-title" style="margin:0;">Update Announcement</div>
-                    <button type="button" class="btn" style="background:#ef4444;padding:4px 12px;font-size:12px;"
-                            th:onclick="'closeModal(\'modal-ann-' + ${a.id} + '\')'">✕ Close</button>
-                </div>
-                <form th:action="@{'/Announcements/' + ${a.id} + '/update'}" method="post">
-                    <div class="form-group">
-                        <label>Title</label>
-                        <input type="text" name="title" th:value="${a.title}" class="form-control" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Type</label>
-                        <select name="type" class="form-control">
-                            <option value="NEWS" th:selected="${a.type != null and a.type.name() == 'NEWS'}">NEWS</option>
-                            <option value="RULE" th:selected="${a.type != null and a.type.name() == 'RULE'}">RULE</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Content</label>
-                        <textarea name="content" class="form-control" rows="3" required th:text="${a.content}"></textarea>
-                    </div>
-                    <div class="form-group" style="flex-direction:row;align-items:center;gap:10px;">
-                        <input type="checkbox" name="pinned" th:id="${'upd-pinned-' + a.id}" th:checked="${a.pinned}" value="true">
-                        <label th:for="${'upd-pinned-' + a.id}" style="margin:0;">Pinned</label>
-                    </div>
-                    <button type="submit" class="btn">Save Changes</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
 
 </body>
+
 </html>

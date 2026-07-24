@@ -1,12 +1,19 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <body>
 
-<div th:fragment="createUserForm(actionUrl)" th:replace="~{fragments/form-create-user :: createUserForm(${actionUrl})}"></div>
-<div th:fragment="createTenantForm(actionUrl)" th:replace="~{fragments/form-create-tenant :: createTenantForm(${actionUrl})}"></div>
-<div th:fragment="createRoomForm(actionUrl)" th:replace="~{fragments/form-create-room :: createRoomForm(${actionUrl})}"></div>
-<div th:fragment="createContractForm(rooms, tenants, actionUrl)" th:replace="~{fragments/form-create-contract :: createContractForm(${rooms}, ${tenants}, ${actionUrl})}"></div>
-<div th:fragment="publishAnnouncementForm(actionUrl)" th:replace="~{fragments/form-publish-announcement :: publishAnnouncementForm(${actionUrl})}"></div>
+    <div th:fragment="createUserForm(actionUrl)"
+        th:replace="~{fragments/form-create-user :: createUserForm(${actionUrl})}"></div>
+    <div th:fragment="createTenantForm(actionUrl)"
+        th:replace="~{fragments/form-create-tenant :: createTenantForm(${actionUrl})}"></div>
+    <div th:fragment="createRoomForm(actionUrl)"
+        th:replace="~{fragments/form-create-room :: createRoomForm(${actionUrl})}"></div>
+    <div th:fragment="createContractForm(rooms, tenants, actionUrl)"
+        th:replace="~{fragments/form-create-contract :: createContractForm(${rooms}, ${tenants}, ${actionUrl})}"></div>
+    <div th:fragment="publishAnnouncementForm(actionUrl)"
+        th:replace="~{fragments/form-publish-announcement :: publishAnnouncementForm(${actionUrl})}"></div>
 
 </body>
+
 </html>

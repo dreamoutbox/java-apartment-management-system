@@ -25,7 +25,8 @@
                 <td th:if="${assignActionUrl != null and ticket != null}">
                     <button type="button" class="btn"
                             style="padding:4px 10px;font-size:12px;"
-                            th:onclick="'openModal(\'modal-ticket-' + ${ticket.id} + '\')'">Assign</button>
+                            th:data-modal-target="'modal-ticket-' + ${ticket.id}"
+                            onclick="openModal(this.dataset.modalTarget)">Assign</button>
                 </td>
             </tr>
         </tbody>
@@ -38,7 +39,8 @@
                 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
                     <div class="card-title" style="margin:0;">Assign Technician — Room <span th:text="${ticket.room != null ? ticket.room.roomNumber : ''}"></span></div>
                     <button type="button" class="btn" style="background:#ef4444;padding:4px 12px;font-size:12px;"
-                            th:onclick="'closeModal(\'modal-ticket-' + ${ticket.id} + '\')'">✕ Close</button>
+                            th:data-modal-target="'modal-ticket-' + ${ticket.id}"
+                            onclick="closeModal(this.dataset.modalTarget)">✕ Close</button>
                 </div>
                 <p style="color:#94a3b8;font-size:13px;margin-bottom:16px;" th:text="${ticket.description}">Description</p>
                 <form th:action="@{${assignActionUrl}}" method="post">

@@ -35,7 +35,8 @@
                     <div th:if="${t != null}" style="display:flex;gap:6px;">
                         <button type="button" class="btn"
                                 style="padding:4px 10px;font-size:12px;"
-                                th:onclick="'openModal(\'modal-tenant-' + ${t.id} + '\')'">Update</button>
+                                th:data-modal-target="'modal-tenant-' + ${t.id}"
+                                onclick="openModal(this.dataset.modalTarget)">Update</button>
                         <form th:action="@{'/tenants/' + ${t.id} + '/delete'}" method="post"
                               onsubmit="return confirm('Delete tenant and their user account?');">
                             <button type="submit" class="btn" style="padding:4px 10px;font-size:12px;background:#ef4444;">Delete</button>
@@ -53,7 +54,8 @@
                 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
                     <div class="card-title" style="margin:0;">Update Tenant</div>
                     <button type="button" class="btn" style="background:#ef4444;padding:4px 12px;font-size:12px;"
-                            th:onclick="'closeModal(\'modal-tenant-' + ${t.id} + '\')'">✕ Close</button>
+                            th:data-modal-target="'modal-tenant-' + ${t.id}"
+                            onclick="closeModal(this.dataset.modalTarget)">✕ Close</button>
                 </div>
                 <form th:action="@{'/tenants/' + ${t.id} + '/update'}" method="post" enctype="multipart/form-data">
                     <div class="form-group">

@@ -26,7 +26,8 @@
                     <div th:if="${room != null}" style="display:flex;gap:6px;">
                         <button type="button" class="btn"
                                 style="padding:4px 10px;font-size:12px;"
-                                th:onclick="'openModal(\'modal-room-' + ${room.id} + '\')'">Update</button>
+                                th:data-modal-target="'modal-room-' + ${room.id}"
+                                onclick="openModal(this.dataset.modalTarget)">Update</button>
                         <form th:action="@{'/rooms/' + ${room.id} + '/delete'}" method="post"
                               onsubmit="return confirm('Delete this room?');">
                             <button type="submit" class="btn" style="padding:4px 10px;font-size:12px;background:#ef4444;">Delete</button>
@@ -44,7 +45,8 @@
                 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
                     <div class="card-title" style="margin:0;">Update Room <span th:text="${room.roomNumber}"></span></div>
                     <button type="button" class="btn" style="background:#ef4444;padding:4px 12px;font-size:12px;"
-                            th:onclick="'closeModal(\'modal-room-' + ${room.id} + '\')'">✕ Close</button>
+                            th:data-modal-target="'modal-room-' + ${room.id}"
+                            onclick="closeModal(this.dataset.modalTarget)">✕ Close</button>
                 </div>
                 <form th:action="@{'/rooms/' + ${room.id} + '/update'}" method="post">
                     <div class="form-group">

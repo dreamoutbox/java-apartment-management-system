@@ -1,13 +1,18 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <body>
 
-<div th:fragment="tenantView(tenants)" th:replace="~{fragments/view-tenant :: tenantView(${tenants})}"></div>
-<div th:fragment="userView(users)" th:replace="~{fragments/view-user :: userView(${users})}"></div>
-<div th:fragment="roomView(rooms)" th:replace="~{fragments/view-room :: roomView(${rooms})}"></div>
-<div th:fragment="contractView(contracts, expiringContracts)" th:replace="~{fragments/view-contract :: contractView(${contracts}, ${expiringContracts})}"></div>
-<div th:fragment="announcementView(announcements)" th:replace="~{fragments/view-announcement :: announcementView(${announcements})}"></div>
-<div th:fragment="ticketView(tickets, technicians, assignActionUrl)" th:replace="~{fragments/view-ticket :: ticketView(${tickets}, ${technicians}, ${assignActionUrl})}"></div>
+    <div th:fragment="tenantView(tenants)" th:replace="~{fragments/view-tenant :: tenantView(${tenants})}"></div>
+    <div th:fragment="userView(users)" th:replace="~{fragments/view-user :: userView(${users})}"></div>
+    <div th:fragment="roomView(rooms)" th:replace="~{fragments/view-room :: roomView(${rooms})}"></div>
+    <div th:fragment="contractView(contracts, expiringContracts)"
+        th:replace="~{fragments/view-contract :: contractView(${contracts}, ${expiringContracts})}"></div>
+    <div th:fragment="announcementView(announcements)"
+        th:replace="~{fragments/view-announcement :: announcementView(${announcements})}"></div>
+    <div th:fragment="ticketView(tickets, technicians, assignActionUrl)"
+        th:replace="~{fragments/view-ticket :: ticketView(${tickets}, ${technicians}, ${assignActionUrl})}"></div>
 
 </body>
+
 </html>
