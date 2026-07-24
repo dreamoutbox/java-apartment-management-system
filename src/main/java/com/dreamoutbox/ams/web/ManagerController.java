@@ -37,6 +37,7 @@ public class ManagerController {
 
     @GetMapping("/dashboard")
     public String dashboard(Model model) {
+        model.addAttribute("users", userService.getAllUsers());
         model.addAttribute("announcements", announcementService.getAllAnnouncements());
         model.addAttribute("rooms", roomService.getAllRooms());
         model.addAttribute("tenants", tenantService.getAllTenants());

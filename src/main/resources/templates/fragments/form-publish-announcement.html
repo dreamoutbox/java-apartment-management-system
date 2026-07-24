@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div th:fragment="publishAnnouncementForm(actionUrl)" class="card">
+    <div class="card-title">Publish Announcement</div>
+    <form th:action="@{${actionUrl}}" method="post">
+        <div class="form-group">
+            <label>Title</label>
+            <input type="text" name="title" class="form-control" placeholder="Important Notice" required>
+        </div>
+        <div class="form-group">
+            <label>Type</label>
+            <select name="type" class="form-control">
+                <option value="NEWS">NEWS</option>
+                <option value="RULE">RULE</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Content</label>
+            <textarea name="content" class="form-control" rows="3" placeholder="Enter announcement text..." required></textarea>
+        </div>
+        <div class="form-group" style="flex-direction:row;align-items:center;gap:10px;">
+            <input type="checkbox" name="pinned" id="pinned-new" value="true">
+            <label for="pinned-new" style="margin:0;">Pin to top</label>
+        </div>
+        <button type="submit" class="btn">Publish Announcement</button>
+    </form>
+</div>
+
+</body>
+</html>

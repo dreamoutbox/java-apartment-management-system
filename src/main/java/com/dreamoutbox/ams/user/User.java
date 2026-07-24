@@ -35,4 +35,12 @@ public class User extends BaseEntity {
 
     @Builder.Default
     private boolean enabled = true;
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public boolean getEnabled() {
+        return enabled;
+    }
 }

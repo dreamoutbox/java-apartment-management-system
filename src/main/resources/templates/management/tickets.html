@@ -1,24 +1,27 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
 <head>
     <meta charset="UTF-8">
-    <title>Maintenance Tickets - Apartment Management</title>
+    <title>Maintenance Tickets - Apartment Hub</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
+
 <body>
 
-<div th:replace="~{fragments/sidebar :: sidebar('ADMIN', 'tickets')}"></div>
+    <div th:replace="~{fragments/sidebar :: sidebar('ADMIN', 'tickets')}"></div>
 
-<div class="main-content">
-    <div class="header">
-        <h1>Maintenance Tickets</h1>
-        <p>View reported property issues and assign technicians to open work orders</p>
+    <div class="main-content">
+        <div class="header">
+            <h1>Maintenance Tickets Triage</h1>
+            <p>Review resident issues and assign work orders to qualified technicians</p>
+        </div>
+        <div th:replace="~{fragments/view-ticket :: ticketView(${tickets}, ${technicians}, null)}"></div>
     </div>
-    <div th:replace="~{fragments/views :: ticketView(${tickets}, ${technicians}, '/tickets/assign')}"></div>
-</div>
 
-<script th:src="@{/js/tables.js}"></script>
+    <script th:src="@{/js/tables.js}"></script>
 </body>
+
 </html>

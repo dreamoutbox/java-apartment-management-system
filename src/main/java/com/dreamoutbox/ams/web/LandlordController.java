@@ -39,6 +39,7 @@ public class LandlordController {
 
     @GetMapping("/dashboard")
     public String dashboard(Model model) {
+        model.addAttribute("users", userService.getAllUsers());
         model.addAttribute("rooms", roomService.getAllRooms());
         model.addAttribute("tenants", tenantService.getAllTenants());
         model.addAttribute("activeContracts", contractService.getAllActiveContracts());
@@ -47,7 +48,6 @@ public class LandlordController {
         model.addAttribute("tickets", maintenanceService.getAllTickets());
         model.addAttribute("announcements", announcementService.getAllAnnouncements());
         model.addAttribute("technicians", userService.getUsersByRole(Role.TECHNICIAN));
-        model.addAttribute("allUsers", userService.getUsersByRole(Role.LANDLORD));
         return "landlord/dashboard";
     }
 

@@ -7,6 +7,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.DefaultRedirectStrategy;
+import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
@@ -14,6 +16,8 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
+
+    private final RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -23,33 +27,35 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.ignoringRequestMatchers("/h2-console/**"))
-            .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/login", "/css/**", "/js/**", "/h2-console/**", "/error").permitAll()
-                .requestMatchers("/users/**").hasAnyRole("LANDLORD", "MANAGER")
-                .requestMatchers("/tenants/**").hasAnyRole("LANDLORD", "MANAGER")
-                .requestMatchers("/rooms/**").hasAnyRole("LANDLORD", "MANAGER")
-                .requestMatchers("/contracts/**").hasAnyRole("LANDLORD", "MANAGER")
-                .requestMatchers("/Announcements/**").hasAnyRole("LANDLORD", "MANAGER", "ACCOUNTANT", "TECHNICIAN", "TENANT")
-                .requestMatchers("/tickets/**").hasAnyRole("LANDLORD", "MANAGER", "ACCOUNTANT", "TECHNICIAN", "TENANT")
-                .requestMatchers("/landlord/**").hasAnyRole("LANDLORD", "MANAGER")
-                .requestMatchers("/manager/**").hasRole("MANAGER")
-                .requestMatchers("/accountant/**").hasAnyRole("ACCOUNTANT", "MANAGER", "LANDLORD")
-                .requestMatchers("/technician/**").hasAnyRole("TECHNICIAN", "MANAGER", "LANDLORD")
-                .requestMatchers("/tenant/**").hasRole("TENANT")
-                .anyRequest().authenticated()
-            )
-            .formLogin(form -> form
-                .loginPage("/login")
-                .successHandler(customAuthenticationSuccessHandler())
-                .permitAll()
-            )
-            .logout(logout -> logout
-                .logoutUrl("/logout")
-                .logoutSuccessUrl("/login?logout")
-                .permitAll()
-            );
+                .csrf(csrf -> csrf.ignoringRequestMatchers("/h2-console/**"))
+                .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/login", "/css/**", "/js/**", "/uploads/**", "/h2-console/**", "/error")
+                        .permitAll()
+                        .requestMatchers("/users", "/users/**").hasAnyRole("LANDLORD", "MANAGER")
+                        .requestMatchers("/tenants", "/tenants/**").hasAnyRole("LANDLORD", "MANAGER")
+                        .requestMatchers("/rooms", "/rooms/**").hasAnyRole("LANDLORD", "MANAGER")
+                        .requestMatchers("/contracts", "/contracts/**").hasAnyRole("LANDLORD", "MANAGER")
+                        .requestMatchers("/Announcements", "/Announcements/**")
+                        .hasAnyRole("LANDLORD", "MANAGER", "ACCOUNTANT", "TECHNICIAN", "TENANT")
+                        .requestMatchers("/tickets", "/tickets/**")
+                        .hasAnyRole("LANDLORD", "MANAGER", "ACCOUNTANT", "TECHNICIAN", "TENANT")
+                        .requestMatchers("/landlord", "/landlord/**").hasAnyRole("LANDLORD", "MANAGER")
+                        .requestMatchers("/manager", "/manager/**").hasRole("MANAGER")
+                        .requestMatchers("/accountant", "/accountant/**")
+                        .hasAnyRole("ACCOUNTANT", "MANAGER", "LANDLORD")
+                        .requestMatchers("/technician", "/technician/**")
+                        .hasAnyRole("TECHNICIAN", "MANAGER", "LANDLORD")
+                        .requestMatchers("/tenant", "/tenant/**").hasRole("TENANT")
+                        .anyRequest().authenticated())
+                .formLogin(form -> form
+                        .loginPage("/login")
+                        .successHandler(customAuthenticationSuccessHandler())
+                        .permitAll())
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/login?logout")
+                        .permitAll());
 
         return http.build();
     }
@@ -75,7 +81,7 @@ public class SecurityConfig {
                     break;
                 }
             }
-            response.sendRedirect(redirectUrl);
+            redirectStrategy.sendRedirect(request, response, redirectUrl);
         };
     }
 }

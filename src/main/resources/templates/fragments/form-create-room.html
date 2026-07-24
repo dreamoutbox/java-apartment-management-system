@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div th:fragment="createRoomForm(actionUrl)" class="card">
+    <div class="card-title">Add New Room</div>
+    <form th:action="@{${actionUrl}}" method="post">
+        <div class="form-group">
+            <label>Room Number</label>
+            <input type="text" name="roomNumber" class="form-control" placeholder="101" required>
+        </div>
+        <div class="form-group">
+            <label>Floor</label>
+            <input type="text" name="floor" class="form-control" placeholder="1" required>
+        </div>
+        <div class="form-group">
+            <label>Base Rent ($)</label>
+            <input type="number" step="0.01" name="baseRent" class="form-control" placeholder="1200.00" required>
+        </div>
+        <button type="submit" class="btn">Create Room</button>
+    </form>
+</div>
+
+</body>
+</html>

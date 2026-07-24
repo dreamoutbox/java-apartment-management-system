@@ -1,25 +1,28 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
 <head>
     <meta charset="UTF-8">
-    <title>Rooms - Apartment Management</title>
+    <title>Rooms Portfolio - Apartment Hub</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
+
 <body>
 
-<div th:replace="~{fragments/sidebar :: sidebar('ADMIN', 'rooms')}"></div>
+    <div th:replace="~{fragments/sidebar :: sidebar('ADMIN', 'rooms')}"></div>
 
-<div class="main-content">
-    <div class="header">
-        <h1>Room Portfolio</h1>
-        <p>Add new apartment units, update base pricing, and adjust room status</p>
+    <div class="main-content">
+        <div class="header">
+            <h1>Room Portfolio Management</h1>
+            <p>Add new units, adjust rent rates, and update room availability status</p>
+        </div>
+        <div th:replace="~{fragments/form-create-room :: createRoomForm('/rooms')}"></div>
+        <div th:replace="~{fragments/view-room :: roomView(${rooms})}"></div>
     </div>
-    <div th:replace="~{fragments/forms :: createRoomForm('/rooms')}"></div>
-    <div th:replace="~{fragments/views :: roomView(${rooms})}"></div>
-</div>
 
-<script th:src="@{/js/tables.js}"></script>
+    <script th:src="@{/js/tables.js}"></script>
 </body>
+
 </html>

@@ -21,7 +21,7 @@
     </div>
 
     <div class="user-profile">
-        <div class="user-name" sec:authentication="name">Accountant</div>
+        <div class="user-name" th:text="${#authentication != null ? #authentication.name : 'Accountant'}">Accountant</div>
         <form th:action="@{/logout}" method="post">
             <button type="submit" class="logout-btn" style="background:none;border:none;cursor:pointer;">Sign Out</button>
         </form>
@@ -41,7 +41,7 @@
         </div>
         <div class="stat-card">
             <div class="stat-label">Overdue Invoices</div>
-            <div class="stat-value" th:text="${overdueInvoices.size()}">0</div>
+            <div class="stat-value" th:text="${overdueInvoices != null ? overdueInvoices.size() : 0}">0</div>
         </div>
     </div>
 
@@ -117,8 +117,8 @@
             </thead>
             <tbody>
                 <tr th:each="inv : ${overdueInvoices}">
-                    <td th:text="${inv.contract.tenant.fullName}">Tenant</td>
-                    <td th:text="${inv.contract.room.roomNumber}">101</td>
+                    <td th:text="${inv.contract != null and inv.contract.tenant != null ? inv.contract.tenant.fullName : 'N/A'}">Tenant</td>
+                    <td th:text="${inv.contract != null and inv.contract.room != null ? inv.contract.room.roomNumber : 'N/A'}">101</td>
                     <td th:text="${inv.period}">2026-07</td>
                     <td th:text="${'$' + inv.totalAmount}">$1000.00</td>
                     <td th:text="${'$' + inv.balanceRemaining}">$500.00</td>
@@ -130,5 +130,6 @@
 
 </div>
 
+<script th:src="@{/js/tables.js}"></script>
 </body>
 </html>

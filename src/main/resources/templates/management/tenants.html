@@ -1,25 +1,28 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
 <head>
     <meta charset="UTF-8">
-    <title>Tenants - Apartment Management</title>
+    <title>Tenant Management - Apartment Hub</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
+
 <body>
 
-<div th:replace="~{fragments/sidebar :: sidebar('ADMIN', 'tenants')}"></div>
+    <div th:replace="~{fragments/sidebar :: sidebar('ADMIN', 'tenants')}"></div>
 
-<div class="main-content">
-    <div class="header">
-        <h1>Tenant Profiles &amp; Accounts</h1>
-        <p>Create tenant accounts with ID card uploads, update contact details, and manage profiles</p>
+    <div class="main-content">
+        <div class="header">
+            <h1>Tenant Profiles Management</h1>
+            <p>Create tenant user accounts, upload ID proof, and update tenant details</p>
+        </div>
+        <div th:replace="~{fragments/form-create-tenant :: createTenantForm('/tenants')}"></div>
+        <div th:replace="~{fragments/view-tenant :: tenantView(${tenants})}"></div>
     </div>
-    <div th:replace="~{fragments/forms :: createTenantForm('/tenants')}"></div>
-    <div th:replace="~{fragments/views :: tenantView(${tenants})}"></div>
-</div>
 
-<script th:src="@{/js/tables.js}"></script>
+    <script th:src="@{/js/tables.js}"></script>
 </body>
+
 </html>

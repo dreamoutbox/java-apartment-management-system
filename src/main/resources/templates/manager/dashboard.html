@@ -20,33 +20,34 @@
 
     <!-- User Component Section -->
     <div id="users-section" class="tab-section">
-        <div th:replace="~{fragments/forms :: createUserForm('/manager/users')}"></div>
-        <div th:replace="~{fragments/views :: userView(${tenants})}"></div>
+        <div th:replace="~{fragments/form-create-user :: createUserForm('/manager/users')}"></div>
+        <div th:replace="~{fragments/view-user :: userView(${users})}"></div>
     </div>
 
     <!-- Room Component Section -->
     <div id="rooms-section" class="tab-section" style="display:none;">
-        <div th:replace="~{fragments/forms :: createRoomForm('/manager/rooms')}"></div>
-        <div th:replace="~{fragments/views :: roomView(${rooms})}"></div>
+        <div th:replace="~{fragments/form-create-room :: createRoomForm('/manager/rooms')}"></div>
+        <div th:replace="~{fragments/view-room :: roomView(${rooms})}"></div>
     </div>
 
     <!-- Lease Contract Component Section -->
     <div id="contracts-section" class="tab-section" style="display:none;">
-        <div th:replace="~{fragments/forms :: createContractForm(${rooms}, ${tenants}, '/manager/contracts')}"></div>
-        <div th:replace="~{fragments/views :: contractView(${activeContracts}, ${null})}"></div>
+        <div th:replace="~{fragments/form-create-contract :: createContractForm(${rooms}, ${tenants}, '/manager/contracts')}"></div>
+        <div th:replace="~{fragments/view-contract :: contractView(${activeContracts}, ${null})}"></div>
     </div>
 
     <!-- Announcement Component Section -->
     <div id="announcements-section" class="tab-section" style="display:none;">
-        <div th:replace="~{fragments/forms :: publishAnnouncementForm('/manager/announcements')}"></div>
-        <div th:replace="~{fragments/views :: announcementView(${announcements})}"></div>
+        <div th:replace="~{fragments/form-publish-announcement :: publishAnnouncementForm('/manager/announcements')}"></div>
+        <div th:replace="~{fragments/view-announcement :: announcementView(${announcements})}"></div>
     </div>
 
     <!-- Maintenance Tickets Component Section -->
     <div id="tickets-section" class="tab-section" style="display:none;">
-        <div th:replace="~{fragments/views :: ticketView(${tickets}, ${technicians}, '/manager/tickets/assign')}"></div>
+        <div th:replace="~{fragments/view-ticket :: ticketView(${tickets}, ${technicians}, '/manager/tickets/assign')}"></div>
     </div>
 </div>
 
+<script th:src="@{/js/tables.js}"></script>
 </body>
 </html>

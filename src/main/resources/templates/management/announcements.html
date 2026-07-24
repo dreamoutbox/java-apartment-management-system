@@ -1,25 +1,28 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
 <head>
     <meta charset="UTF-8">
-    <title>Announcements - Apartment Management</title>
+    <title>Announcements - Apartment Hub</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
+
 <body>
 
-<div th:replace="~{fragments/sidebar :: sidebar('ADMIN', 'announcements')}"></div>
+    <div th:replace="~{fragments/sidebar :: sidebar('ADMIN', 'announcements')}"></div>
 
-<div class="main-content">
-    <div class="header">
-        <h1>Building Announcements</h1>
-        <p>Publish news or rules, update existing posts, and manage pinned items</p>
+    <div class="main-content">
+        <div class="header">
+            <h1>Building Announcements</h1>
+            <p>Publish notices, building rules, and updates for all residents and staff</p>
+        </div>
+        <div th:replace="~{fragments/form-publish-announcement :: publishAnnouncementForm('/Announcements')}"></div>
+        <div th:replace="~{fragments/view-announcement :: announcementView(${announcements})}"></div>
     </div>
-    <div th:replace="~{fragments/forms :: publishAnnouncementForm('/Announcements')}"></div>
-    <div th:replace="~{fragments/views :: announcementView(${announcements})}"></div>
-</div>
 
-<script th:src="@{/js/tables.js}"></script>
+    <script th:src="@{/js/tables.js}"></script>
 </body>
+
 </html>

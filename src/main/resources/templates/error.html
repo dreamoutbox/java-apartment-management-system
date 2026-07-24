@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title th:text="'Error ' + ${statusCode}">Error</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body style="display:flex;align-items:center;justify-content:center;min-height:100vh;background:#0f172a;">
+    <div class="card" style="max-width:600px;width:90%;text-align:center;">
+        <div style="font-size:64px;margin-bottom:16px;" th:text="${statusCode ?: 500}">500</div>
+        <div class="card-title" th:text="${statusText ?: 'Internal Server Error'}">Internal Server Error</div>
+        <p style="color:#94a3b8;margin:12px 0;" th:if="${exceptionClass}"
+            th:text="${exceptionClass + ': ' + errorMessage}"></p>
+        <p style="color:#94a3b8;margin:12px 0;" th:if="${errorMessage != null and exceptionClass == null}"
+            th:text="${errorMessage}"></p>
+        <a th:href="@{/users}" class="btn" style="display:inline-block;margin-top:16px;text-decoration:none;">← Back to
+            Dashboard</a>
+    </div>
+</body>
+
+</html>

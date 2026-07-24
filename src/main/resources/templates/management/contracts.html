@@ -1,25 +1,28 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
 <head>
     <meta charset="UTF-8">
-    <title>Lease Contracts - Apartment Management</title>
+    <title>Lease Contracts - Apartment Hub</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
+
 <body>
 
-<div th:replace="~{fragments/sidebar :: sidebar('ADMIN', 'contracts')}"></div>
+    <div th:replace="~{fragments/sidebar :: sidebar('ADMIN', 'contracts')}"></div>
 
-<div class="main-content">
-    <div class="header">
-        <h1>Lease Contracts</h1>
-        <p>Issue new lease agreements, modify active dates/amounts, and track expiration warnings</p>
+    <div class="main-content">
+        <div class="header">
+            <h1>Lease Contracts Management</h1>
+            <p>Issue lease agreements, configure monthly rent, and manage active contracts</p>
+        </div>
+        <div th:replace="~{fragments/form-create-contract :: createContractForm(${rooms}, ${tenants}, '/contracts')}"></div>
+        <div th:replace="~{fragments/view-contract :: contractView(${contracts}, ${expiringContracts})}"></div>
     </div>
-    <div th:replace="~{fragments/forms :: createContractForm(${rooms}, ${tenants}, '/contracts')}"></div>
-    <div th:replace="~{fragments/views :: contractView(${contracts}, ${expiringContracts})}"></div>
-</div>
 
-<script th:src="@{/js/tables.js}"></script>
+    <script th:src="@{/js/tables.js}"></script>
 </body>
+
 </html>
