@@ -1,0 +1,23 @@
+# /etc/systemd/system/ams.service
+
+[Unit]
+Description=Apartment Management System
+After=network.target postgresql.service
+
+[Service]
+Type=simple
+User=appuser
+WorkingDirectory=/opt/ams
+ExecStart=/usr/bin/java -XX:+UseG1GC -XX:MaxRAMPercentage=75.0 \
+  -Dspring.profiles.active=prod \
+  -jar /opt/ams/app.jar
+SuccessExitStatus=143
+Restart=on-failure
+RestartSec=5
+EnvironmentFile=/opt/ams/env
+
+TimeoutStopSec=30
+KillSignal=SIGTERM
+
+[Install]
+WantedBy=multi-user.target
