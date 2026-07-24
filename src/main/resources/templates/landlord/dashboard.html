@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Landlord Dashboard - Apartment Management</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<div class="sidebar">
+    <div class="sidebar-brand">
+        <div class="brand-icon">
+            <svg viewBox="0 0 24 24"><path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11M8 14h2v3H8zM14 14h2v3h-2z"/></svg>
+        </div>
+        <div>
+            <div class="brand-title">Apartment Hub</div>
+            <div class="role-badge">Landlord</div>
+        </div>
+    </div>
+
+    <div class="user-profile">
+        <div class="user-name" sec:authentication="name">Landlord</div>
+        <form th:action="@{/logout}" method="post">
+            <button type="submit" class="logout-btn" style="background:none;border:none;cursor:pointer;">Sign Out</button>
+        </form>
+    </div>
+</div>
+
+<div class="main-content">
+    <div class="header">
+        <h1>Landlord Overview</h1>
+        <p>Monitor high-level property status, revenue, and active tickets</p>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-label">Total Rooms</div>
+            <div class="stat-value" th:text="${rooms.size()}">0</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Active Contracts</div>
+            <div class="stat-value" th:text="${activeContracts.size()}">0</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Expiring Soon (30d)</div>
+            <div class="stat-value" th:text="${expiringContracts.size()}">0</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Outstanding Rent Balance</div>
+            <div class="stat-value" th:text="${'$' + #numbers.formatDecimal(totalOutstanding != null ? totalOutstanding : 0, 1, 2)}">$0.00</div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-title">Room Portfolio</div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Room #</th>
+                    <th>Floor</th>
+                    <th>Base Rent</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="room : ${rooms}">
+                    <td th:text="${room.roomNumber}">101</td>
+                    <td th:text="${room.floor}">1</td>
+                    <td th:text="${'$' + room.baseRent}">$1000.00</td>
+                    <td><span th:class="${'status-badge status-' + room.status}" th:text="${room.status}">VACANT</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="card">
+        <div class="card-title">Maintenance Tickets</div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Room</th>
+                    <th>Reported By</th>
+                    <th>Description</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="t : ${tickets}">
+                    <td th:text="${t.room.roomNumber}">101</td>
+                    <td th:text="${t.reportedBy.fullName}">Tenant</td>
+                    <td th:text="${t.description}">Issue</td>
+                    <td><span th:class="${'status-badge status-' + t.status}" th:text="${t.status}">PENDING</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Manager Portal - Apartment Management</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<div class="sidebar">
+    <div class="sidebar-brand">
+        <div class="brand-icon">
+            <svg viewBox="0 0 24 24"><path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11M8 14h2v3H8zM14 14h2v3h-2z"/></svg>
+        </div>
+        <div>
+            <div class="brand-title">Apartment Hub</div>
+            <div class="role-badge">Manager</div>
+        </div>
+    </div>
+
+    <div class="user-profile">
+        <div class="user-name" sec:authentication="name">Manager</div>
+        <form th:action="@{/logout}" method="post">
+            <button type="submit" class="logout-btn" style="background:none;border:none;cursor:pointer;">Sign Out</button>
+        </form>
+    </div>
+</div>
+
+<div class="main-content">
+    <div class="header">
+        <h1>Manager Operations Portal</h1>
+        <p>Full control over users, rooms, lease agreements, announcements, and work orders</p>
+    </div>
+
+    <!-- Create User Form -->
+    <div class="card">
+        <div class="card-title">Create User Account</div>
+        <form th:action="@{/manager/users}" method="post">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" name="username" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" name="password" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" name="fullName" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>Role</label>
+                    <select name="role" class="form-control" required>
+                        <option value="LANDLORD">LANDLORD</option>
+                        <option value="MANAGER">MANAGER</option>
+                        <option value="ACCOUNTANT">ACCOUNTANT</option>
+                        <option value="TECHNICIAN">TECHNICIAN</option>
+                        <option value="TENANT">TENANT</option>
+                    </select>
+                </div>
+            </div>
+            <button type="submit" class="btn">Create User</button>
+        </form>
+    </div>
+
+    <!-- Create Room Form -->
+    <div class="card">
+        <div class="card-title">Add New Room</div>
+        <form th:action="@{/manager/rooms}" method="post">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Room Number</label>
+                    <input type="text" name="roomNumber" class="form-control" placeholder="101" required>
+                </div>
+                <div class="form-group">
+                    <label>Floor</label>
+                    <input type="text" name="floor" class="form-control" placeholder="1" required>
+                </div>
+                <div class="form-group">
+                    <label>Base Rent ($)</label>
+                    <input type="number" step="0.01" name="baseRent" class="form-control" placeholder="1200.00" required>
+                </div>
+            </div>
+            <button type="submit" class="btn">Create Room</button>
+        </form>
+    </div>
+
+    <!-- Create Contract Form -->
+    <div class="card">
+        <div class="card-title">Create Lease Contract</div>
+        <form th:action="@{/manager/contracts}" method="post">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Room</label>
+                    <select name="roomId" class="form-control" required>
+                        <option th:each="r : ${rooms}" th:value="${r.id}" th:text="${r.roomNumber + ' (' + r.status + ')'}"></option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Tenant</label>
+                    <select name="tenantId" class="form-control" required>
+                        <option th:each="t : ${tenants}" th:value="${t.id}" th:text="${t.fullName}"></option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Monthly Rent ($)</label>
+                    <input type="number" step="0.01" name="monthlyRent" class="form-control" placeholder="1200.00">
+                </div>
+                <div class="form-group">
+                    <label>Start Date</label>
+                    <input type="date" name="startDate" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>End Date</label>
+                    <input type="date" name="endDate" class="form-control" required>
+                </div>
+            </div>
+            <button type="submit" class="btn">Issue Contract</button>
+        </form>
+    </div>
+
+    <!-- Publish Announcement Form -->
+    <div class="card">
+        <div class="card-title">Publish Announcement</div>
+        <form th:action="@{/manager/announcements}" method="post">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Title</label>
+                    <input type="text" name="title" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>Type</label>
+                    <select name="type" class="form-control">
+                        <option value="NEWS">NEWS</option>
+                        <option value="RULE">RULE</option>
+                    </select>
+                </div>
+                <div class="form-group" style="flex-direction:row;align-items:center;gap:10px;margin-top:24px;">
+                    <input type="checkbox" name="pinned" id="pinned" value="true">
+                    <label for="pinned">Pin to top</label>
+                </div>
+            </div>
+            <div class="form-group" style="margin-bottom:16px;">
+                <label>Content</label>
+                <textarea name="content" class="form-control" rows="3" required></textarea>
+            </div>
+            <button type="submit" class="btn">Publish Announcement</button>
+        </form>
+    </div>
+
+    <!-- Maintenance Ticket Assignment -->
+    <div class="card">
+        <div class="card-title">Assign Maintenance Tickets</div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Room</th>
+                    <th>Reported By</th>
+                    <th>Description</th>
+                    <th>Assigned Technician</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="ticket : ${tickets}">
+                    <td th:text="${ticket.room.roomNumber}">101</td>
+                    <td th:text="${ticket.reportedBy.fullName}">Tenant</td>
+                    <td th:text="${ticket.description}">Issue</td>
+                    <td th:text="${ticket.assignedTechnician != null ? ticket.assignedTechnician.fullName : 'Unassigned'}">Unassigned</td>
+                    <td><span th:class="${'status-badge status-' + ticket.status}" th:text="${ticket.status}">PENDING</span></td>
+                    <td>
+                        <form th:action="@{/manager/tickets/assign}" method="post" style="display:flex;gap:8px;">
+                            <input type="hidden" name="ticketId" th:value="${ticket.id}">
+                            <select name="technicianId" class="form-control" style="padding:4px 8px;font-size:12px;" required>
+                                <option th:each="tech : ${technicians}" th:value="${tech.id}" th:text="${tech.fullName}"></option>
+                            </select>
+                            <button type="submit" class="btn" style="padding:4px 10px;font-size:12px;">Assign</button>
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+</body>
+</html>

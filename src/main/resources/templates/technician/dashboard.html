@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Technician Workspace - Apartment Management</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<div class="sidebar">
+    <div class="sidebar-brand">
+        <div class="brand-icon">
+            <svg viewBox="0 0 24 24"><path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11M8 14h2v3H8zM14 14h2v3h-2z"/></svg>
+        </div>
+        <div>
+            <div class="brand-title">Apartment Hub</div>
+            <div class="role-badge">Technician</div>
+        </div>
+    </div>
+
+    <div class="user-profile">
+        <div class="user-name" sec:authentication="name">Technician</div>
+        <form th:action="@{/logout}" method="post">
+            <button type="submit" class="logout-btn" style="background:none;border:none;cursor:pointer;">Sign Out</button>
+        </form>
+    </div>
+</div>
+
+<div class="main-content">
+    <div class="header">
+        <h1>Assigned Work Orders</h1>
+        <p>Update progress and upload proof-of-fix photos upon completion</p>
+    </div>
+
+    <div class="card" th:each="ticket : ${tickets}">
+        <div class="card-title">
+            <span>Room <span th:text="${ticket.room.roomNumber}">101</span> — Ticket #<span th:text="${ticket.id}">123</span></span>
+            <span th:class="${'status-badge status-' + ticket.status}" th:text="${ticket.status}">PENDING</span>
+        </div>
+
+        <p style="margin-bottom:16px;color:#cbd5e1;" th:text="${ticket.description}">Description</p>
+        <p style="font-size:12px;color:#94a3b8;margin-bottom:16px;">Reported by: <span th:text="${ticket.reportedBy.fullName}">Tenant</span></p>
+
+        <form th:action="@{/technician/tickets/update}" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="ticketId" th:value="${ticket.id}">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Update Status</label>
+                    <select name="status" class="form-control" required>
+                        <option value="PENDING" th:selected="${ticket.status.name() == 'PENDING'}">PENDING</option>
+                        <option value="IN_PROGRESS" th:selected="${ticket.status.name() == 'IN_PROGRESS'}">IN_PROGRESS</option>
+                        <option value="COMPLETED" th:selected="${ticket.status.name() == 'COMPLETED'}">COMPLETED</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Proof of Fix Photo (Required for Completion)</label>
+                    <input type="file" name="proofImage" class="form-control" accept="image/*">
+                </div>
+            </div>
+            <div class="form-group" style="margin-bottom:16px;">
+                <label>Status Note</label>
+                <input type="text" name="note" class="form-control" placeholder="Replaced pipe washer..." required>
+            </div>
+            <button type="submit" class="btn">Update Ticket</button>
+        </form>
+    </div>
+
+    <div th:if="${#lists.isEmpty(tickets)}" class="card">
+        <p style="color:#94a3b8;">No maintenance tickets currently assigned to you.</p>
+    </div>
+</div>
+
+</body>
+</html>
