@@ -1,5 +1,6 @@
 package com.dreamoutbox.ams.maintenance;
 
+import com.dreamoutbox.ams.room.Room;
 import com.dreamoutbox.ams.tenant.Tenant;
 import com.dreamoutbox.ams.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,4 +12,5 @@ public interface MaintenanceTicketRepository extends JpaRepository<MaintenanceTi
     List<MaintenanceTicket> findByReportedByOrderByCreatedAtDesc(Tenant reportedBy);
     List<MaintenanceTicket> findByAssignedTechnicianOrderByCreatedAtDesc(User technician);
     List<MaintenanceTicket> findByStatus(TicketStatus status);
+    List<MaintenanceTicket> findByRoom(Room room);
 }

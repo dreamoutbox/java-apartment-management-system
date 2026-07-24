@@ -17,6 +17,8 @@ public interface InvoiceRepository extends JpaRepository<Invoice, UUID> {
 
     Optional<Invoice> findByContractAndPeriod(Contract contract, String period);
 
+    List<Invoice> findByContract(Contract contract);
+
     List<Invoice> findByContractTenantOrderByPeriodAsc(Tenant tenant);
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)

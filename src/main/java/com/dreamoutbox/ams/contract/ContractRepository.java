@@ -19,6 +19,8 @@ public interface ContractRepository extends JpaRepository<Contract, UUID> {
 
     Optional<Contract> findFirstByRoomAndStatus(Room room, ContractStatus status);
 
+    List<Contract> findByRoom(Room room);
+
     @Query("SELECT c FROM Contract c WHERE c.room = :room AND c.status = 'ACTIVE' "
             + "AND (:startDate <= c.endDate AND :endDate >= c.startDate)")
     List<Contract> findOverlappingActiveContracts(

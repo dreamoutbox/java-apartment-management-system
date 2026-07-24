@@ -1,5 +1,10 @@
 package com.dreamoutbox.ams.room;
 
+import com.dreamoutbox.ams.contract.ContractRepository;
+import com.dreamoutbox.ams.contract.ContractStatus;
+import com.dreamoutbox.ams.finance.InvoiceRepository;
+import com.dreamoutbox.ams.finance.MeterReadingRepository;
+import com.dreamoutbox.ams.maintenance.MaintenanceTicketRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,6 +18,10 @@ import java.util.UUID;
 public class RoomService {
 
     private final RoomRepository roomRepository;
+    private final ContractRepository contractRepository;
+    private final MaintenanceTicketRepository ticketRepository;
+    private final MeterReadingRepository meterReadingRepository;
+    private final InvoiceRepository invoiceRepository;
 
     @Transactional
     public Room createRoom(String roomNumber, String floor, BigDecimal baseRent) {
@@ -46,6 +55,33 @@ public class RoomService {
     public void deleteRoom(UUID id) {
         Room room = roomRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Room not found: " + id));
+
+        var contracts = contractRepository.findByRoom(room);
+        boolean hasActiveContract = room.getStatus() == RoomStatus.OCCUPIED ||
+                contracts.stream().anyMatch(c -> c.getStatus() == ContractStatus.ACTIVE);
+
+        if (hasActiveContract) {
+            throw new IllegalStateException(
+                    "Cannot delete room while it has an active lease contract. Please terminate or expire the contract first.");
+        }
+
+        // 1. Delete associated maintenance tickets (cascades to ticket images &
+        // history)
+        var tickets = ticketRepository.findByRoom(room);
+        ticketRepository.deleteAll(tickets);
+
+        // 2. Delete associated meter readings
+        var readings = meterReadingRepository.findByRoom(room);
+        meterReadingRepository.deleteAll(readings);
+
+        // 3. Delete inactive/historical contracts and their invoices
+        for (var contract : contracts) {
+            var invoices = invoiceRepository.findByContract(contract);
+            invoiceRepository.deleteAll(invoices);
+        }
+        contractRepository.deleteAll(contracts);
+
+        // 4. Delete room
         roomRepository.delete(room);
     }
 
@@ -69,7 +105,8 @@ public class RoomService {
             // New active contract transition allowed
         } else if (targetStatus == RoomStatus.MAINTENANCE) {
             if (current == RoomStatus.OCCUPIED) {
-                throw new IllegalStateException("Cannot set occupied room directly to maintenance without terminating lease");
+                throw new IllegalStateException(
+                        "Cannot set occupied room directly to maintenance without terminating lease");
             }
         } else if (current == RoomStatus.MAINTENANCE && targetStatus == RoomStatus.VACANT) {
             // Maintenance completed transition allowed
