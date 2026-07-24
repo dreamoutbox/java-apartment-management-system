@@ -302,3 +302,66 @@ tr:hover td {
 .btn:hover {
     opacity: 0.9;
 }
+
+/* ── Vertical Forms ─────────────────────────────────────────── */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 16px;
+    width: 100%;
+}
+
+.form-group label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-muted);
+}
+
+.form-control {
+    width: 100%;
+    padding: 10px 12px;
+    background: var(--bg-dark);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--text-main);
+    font-size: 14px;
+    transition: border-color 0.2s;
+    box-sizing: border-box;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+/* ── Modal Overlay & Box ─────────────────────────────────────── */
+.ams-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.75);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* No pointer events on overlay itself so clicking shadow does nothing */
+    pointer-events: none;
+}
+
+.ams-modal-overlay[style*="flex"] {
+    pointer-events: all;
+}
+
+.ams-modal-box {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 28px;
+    width: 90%;
+    max-width: 560px;
+    max-height: 88vh;
+    overflow-y: auto;
+    pointer-events: all;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);
+}
+

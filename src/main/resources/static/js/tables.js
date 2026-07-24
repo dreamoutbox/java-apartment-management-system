@@ -1,7 +1,19 @@
 /**
- * Apartment Hub — Table Utilities
+ * Apartment Hub — Table Utilities + Modal Helpers
  * Adds a live search bar and sortable column headers to every <table> on the page.
+ * Also provides openModal / closeModal used by per-row Update buttons.
  */
+
+function openModal(id) {
+    var el = document.getElementById(id);
+    if (el) el.style.display = 'flex';
+}
+
+function closeModal(id) {
+    var el = document.getElementById(id);
+    if (el) el.style.display = 'none';
+}
+
 (function () {
     'use strict';
 

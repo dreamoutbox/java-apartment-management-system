@@ -6,29 +6,27 @@
 <div th:fragment="createUserForm(actionUrl)" class="card">
     <div class="card-title">Create User Account</div>
     <form th:action="@{${actionUrl}}" method="post">
-        <div class="form-row">
-            <div class="form-group">
-                <label>Username</label>
-                <input type="text" name="username" class="form-control" placeholder="john_doe" required>
-            </div>
-            <div class="form-group">
-                <label>Password</label>
-                <input type="password" name="password" class="form-control" required>
-            </div>
-            <div class="form-group">
-                <label>Full Name</label>
-                <input type="text" name="fullName" class="form-control" placeholder="John Doe" required>
-            </div>
-            <div class="form-group">
-                <label>Role</label>
-                <select name="role" class="form-control" required>
-                    <option value="LANDLORD">LANDLORD</option>
-                    <option value="MANAGER">MANAGER</option>
-                    <option value="ACCOUNTANT">ACCOUNTANT</option>
-                    <option value="TECHNICIAN">TECHNICIAN</option>
-                    <option value="TENANT">TENANT</option>
-                </select>
-            </div>
+        <div class="form-group">
+            <label>Username</label>
+            <input type="text" name="username" class="form-control" placeholder="john_doe" required>
+        </div>
+        <div class="form-group">
+            <label>Password</label>
+            <input type="password" name="password" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label>Full Name</label>
+            <input type="text" name="fullName" class="form-control" placeholder="John Doe" required>
+        </div>
+        <div class="form-group">
+            <label>Role</label>
+            <select name="role" class="form-control" required>
+                <option value="LANDLORD">LANDLORD</option>
+                <option value="MANAGER">MANAGER</option>
+                <option value="ACCOUNTANT">ACCOUNTANT</option>
+                <option value="TECHNICIAN">TECHNICIAN</option>
+                <option value="TENANT">TENANT</option>
+            </select>
         </div>
         <button type="submit" class="btn">Create User</button>
     </form>
@@ -36,37 +34,35 @@
 
 <!-- Create Tenant Form Fragment (Creates User + Tenant Profile + Image Upload) -->
 <div th:fragment="createTenantForm(actionUrl)" class="card">
-    <div class="card-title">Create Tenant & Account</div>
+    <div class="card-title">Create Tenant &amp; Account</div>
     <form th:action="@{${actionUrl}}" method="post" enctype="multipart/form-data">
-        <div class="form-row">
-            <div class="form-group">
-                <label>Username</label>
-                <input type="text" name="username" class="form-control" placeholder="tenant1" required>
-            </div>
-            <div class="form-group">
-                <label>Password</label>
-                <input type="password" name="password" class="form-control" required>
-            </div>
-            <div class="form-group">
-                <label>Full Name</label>
-                <input type="text" name="fullName" class="form-control" placeholder="Alice Smith" required>
-            </div>
-            <div class="form-group">
-                <label>Phone</label>
-                <input type="text" name="phone" class="form-control" placeholder="555-0199">
-            </div>
-            <div class="form-group">
-                <label>Email</label>
-                <input type="email" name="email" class="form-control" placeholder="alice@example.com">
-            </div>
-            <div class="form-group">
-                <label>ID Card Number</label>
-                <input type="text" name="idCardNumber" class="form-control" placeholder="ID9876543">
-            </div>
-            <div class="form-group">
-                <label>Proof Tenant ID Card Photo</label>
-                <input type="file" name="idCardImage" class="form-control" accept="image/*">
-            </div>
+        <div class="form-group">
+            <label>Username</label>
+            <input type="text" name="username" class="form-control" placeholder="tenant1" required>
+        </div>
+        <div class="form-group">
+            <label>Password</label>
+            <input type="password" name="password" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label>Full Name</label>
+            <input type="text" name="fullName" class="form-control" placeholder="Alice Smith" required>
+        </div>
+        <div class="form-group">
+            <label>Phone</label>
+            <input type="text" name="phone" class="form-control" placeholder="555-0199">
+        </div>
+        <div class="form-group">
+            <label>Email</label>
+            <input type="email" name="email" class="form-control" placeholder="alice@example.com">
+        </div>
+        <div class="form-group">
+            <label>ID Card Number</label>
+            <input type="text" name="idCardNumber" class="form-control" placeholder="ID9876543">
+        </div>
+        <div class="form-group">
+            <label>Proof Tenant ID Card Photo</label>
+            <input type="file" name="idCardImage" class="form-control" accept="image/*">
         </div>
         <button type="submit" class="btn">Create Tenant</button>
     </form>
@@ -76,19 +72,17 @@
 <div th:fragment="createRoomForm(actionUrl)" class="card">
     <div class="card-title">Add New Room</div>
     <form th:action="@{${actionUrl}}" method="post">
-        <div class="form-row">
-            <div class="form-group">
-                <label>Room Number</label>
-                <input type="text" name="roomNumber" class="form-control" placeholder="101" required>
-            </div>
-            <div class="form-group">
-                <label>Floor</label>
-                <input type="text" name="floor" class="form-control" placeholder="1" required>
-            </div>
-            <div class="form-group">
-                <label>Base Rent ($)</label>
-                <input type="number" step="0.01" name="baseRent" class="form-control" placeholder="1200.00" required>
-            </div>
+        <div class="form-group">
+            <label>Room Number</label>
+            <input type="text" name="roomNumber" class="form-control" placeholder="101" required>
+        </div>
+        <div class="form-group">
+            <label>Floor</label>
+            <input type="text" name="floor" class="form-control" placeholder="1" required>
+        </div>
+        <div class="form-group">
+            <label>Base Rent ($)</label>
+            <input type="number" step="0.01" name="baseRent" class="form-control" placeholder="1200.00" required>
         </div>
         <button type="submit" class="btn">Create Room</button>
     </form>
@@ -98,45 +92,43 @@
 <div th:fragment="createContractForm(rooms, tenants, actionUrl)" class="card">
     <div class="card-title">Create Lease Contract</div>
     <form th:action="@{${actionUrl}}" method="post">
-        <div class="form-row">
-            <div class="form-group">
-                <label>Room</label>
-                <select name="roomId" class="form-control" required>
-                    <option th:each="r : ${rooms}" th:value="${r.id}" th:text="${r.roomNumber + ' (' + r.status + ')'}"></option>
+        <div class="form-group">
+            <label>Room</label>
+            <select name="roomId" class="form-control" required>
+                <option th:each="r : ${rooms}" th:value="${r.id}" th:text="${r.roomNumber + ' (' + r.status + ')'}"></option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Tenant</label>
+            <div style="display:flex;gap:8px;">
+                <select id="contractTenantSelect" name="tenantId" class="form-control" required>
+                    <option value="">-- Select Tenant --</option>
+                    <option th:each="t : ${tenants}" th:value="${t.id}" th:text="${t.fullName + ' (' + (t.user != null ? t.user.username : 'No User') + ')'}"></option>
                 </select>
+                <button type="button" class="btn" style="white-space:nowrap;" onclick="openTenantPickerModal()">Browse</button>
             </div>
-            <div class="form-group">
-                <label>Tenant</label>
-                <div style="display:flex;gap:8px;">
-                    <select id="contractTenantSelect" name="tenantId" class="form-control" required>
-                        <option value="">-- Select Tenant --</option>
-                        <option th:each="t : ${tenants}" th:value="${t.id}" th:text="${t.fullName + ' (' + (t.user != null ? t.user.username : 'No User') + ')'}"></option>
-                    </select>
-                    <button type="button" class="btn" style="white-space:nowrap;padding:8px 12px;font-size:12px;" onclick="openTenantModal()">Browse Tenants</button>
-                </div>
-            </div>
-            <div class="form-group">
-                <label>Monthly Rent ($)</label>
-                <input type="number" step="0.01" name="monthlyRent" class="form-control" placeholder="1200.00">
-            </div>
-            <div class="form-group">
-                <label>Start Date</label>
-                <input type="date" name="startDate" class="form-control" required>
-            </div>
-            <div class="form-group">
-                <label>End Date</label>
-                <input type="date" name="endDate" class="form-control" required>
-            </div>
+        </div>
+        <div class="form-group">
+            <label>Monthly Rent ($)</label>
+            <input type="number" step="0.01" name="monthlyRent" class="form-control" placeholder="1200.00">
+        </div>
+        <div class="form-group">
+            <label>Start Date</label>
+            <input type="date" name="startDate" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label>End Date</label>
+            <input type="date" name="endDate" class="form-control" required>
         </div>
         <button type="submit" class="btn">Issue Contract</button>
     </form>
 
     <!-- Modal for selecting tenant -->
-    <div id="tenantModal" class="modal-overlay" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:1000;align-items:center;justify-content:center;">
-        <div class="card" style="width:90%;max-width:800px;max-height:85vh;overflow-y:auto;background:#1e293b;margin:0;">
-            <div class="card-title">
-                <span>Select Tenant for Lease</span>
-                <button type="button" class="btn" style="background:#ef4444;padding:4px 10px;font-size:12px;" onclick="closeTenantModal()">Close</button>
+    <div id="tenantPickerModal" class="ams-modal-overlay" style="display:none;">
+        <div class="ams-modal-box">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+                <div class="card-title" style="margin:0;">Select Tenant</div>
+                <button type="button" class="btn" style="background:#ef4444;padding:4px 12px;font-size:12px;" onclick="closeTenantPickerModal()">✕ Close</button>
             </div>
             <table>
                 <thead>
@@ -155,9 +147,9 @@
                         <td th:text="${t.email}">Email</td>
                         <td th:text="${t.idCardNumber}">ID</td>
                         <td>
-                            <button type="button" class="btn" style="padding:4px 10px;font-size:12px;" 
+                            <button type="button" class="btn" style="padding:4px 10px;font-size:12px;"
                                     th:data-id="${t.id}" th:data-name="${t.fullName}"
-                                    onclick="selectTenantFromModal(this.getAttribute('data-id'), this.getAttribute('data-name'))">Select</button>
+                                    onclick="selectTenantFromModal(this.getAttribute('data-id'))">Select</button>
                         </td>
                     </tr>
                 </tbody>
@@ -166,16 +158,11 @@
     </div>
 
     <script>
-        function openTenantModal() {
-            document.getElementById('tenantModal').style.display = 'flex';
-        }
-        function closeTenantModal() {
-            document.getElementById('tenantModal').style.display = 'none';
-        }
-        function selectTenantFromModal(id, name) {
-            const select = document.getElementById('contractTenantSelect');
-            select.value = id;
-            closeTenantModal();
+        function openTenantPickerModal() { document.getElementById('tenantPickerModal').style.display = 'flex'; }
+        function closeTenantPickerModal() { document.getElementById('tenantPickerModal').style.display = 'none'; }
+        function selectTenantFromModal(id) {
+            document.getElementById('contractTenantSelect').value = id;
+            closeTenantPickerModal();
         }
     </script>
 </div>
@@ -184,26 +171,24 @@
 <div th:fragment="publishAnnouncementForm(actionUrl)" class="card">
     <div class="card-title">Publish Announcement</div>
     <form th:action="@{${actionUrl}}" method="post">
-        <div class="form-row">
-            <div class="form-group">
-                <label>Title</label>
-                <input type="text" name="title" class="form-control" placeholder="Important Notice" required>
-            </div>
-            <div class="form-group">
-                <label>Type</label>
-                <select name="type" class="form-control">
-                    <option value="NEWS">NEWS</option>
-                    <option value="RULE">RULE</option>
-                </select>
-            </div>
-            <div class="form-group" style="flex-direction:row;align-items:center;gap:10px;margin-top:24px;">
-                <input type="checkbox" name="pinned" id="pinned" value="true">
-                <label for="pinned">Pin to top</label>
-            </div>
+        <div class="form-group">
+            <label>Title</label>
+            <input type="text" name="title" class="form-control" placeholder="Important Notice" required>
         </div>
-        <div class="form-group" style="margin-bottom:16px;">
+        <div class="form-group">
+            <label>Type</label>
+            <select name="type" class="form-control">
+                <option value="NEWS">NEWS</option>
+                <option value="RULE">RULE</option>
+            </select>
+        </div>
+        <div class="form-group">
             <label>Content</label>
             <textarea name="content" class="form-control" rows="3" placeholder="Enter announcement text..." required></textarea>
+        </div>
+        <div class="form-group" style="flex-direction:row;align-items:center;gap:10px;">
+            <input type="checkbox" name="pinned" id="pinned-new" value="true">
+            <label for="pinned-new" style="margin:0;">Pin to top</label>
         </div>
         <button type="submit" class="btn">Publish Announcement</button>
     </form>
