@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -32,8 +33,14 @@ public class RoomController {
     public String createRoom(
             @RequestParam String roomNumber,
             @RequestParam String floor,
-            @RequestParam BigDecimal baseRent) {
-        roomService.createRoom(roomNumber, floor, baseRent);
+            @RequestParam BigDecimal baseRent,
+            RedirectAttributes redirectAttributes) {
+        try {
+            roomService.createRoom(roomNumber, floor, baseRent);
+            redirectAttributes.addFlashAttribute("successMessage", "Room created successfully.");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        }
         return "redirect:/rooms";
     }
 
@@ -43,14 +50,25 @@ public class RoomController {
             @RequestParam String roomNumber,
             @RequestParam String floor,
             @RequestParam BigDecimal baseRent,
-            @RequestParam RoomStatus status) {
-        roomService.updateRoom(id, roomNumber, floor, baseRent, status);
+            @RequestParam RoomStatus status,
+            RedirectAttributes redirectAttributes) {
+        try {
+            roomService.updateRoom(id, roomNumber, floor, baseRent, status);
+            redirectAttributes.addFlashAttribute("successMessage", "Room updated successfully.");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        }
         return "redirect:/rooms";
     }
 
     @PostMapping("/{id}/delete")
-    public String deleteRoom(@PathVariable UUID id) {
-        roomService.deleteRoom(id);
+    public String deleteRoom(@PathVariable UUID id, RedirectAttributes redirectAttributes) {
+        try {
+            roomService.deleteRoom(id);
+            redirectAttributes.addFlashAttribute("successMessage", "Room deleted successfully.");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Cannot delete room: it may have active contracts, invoices, or maintenance tickets.");
+        }
         return "redirect:/rooms";
     }
 }

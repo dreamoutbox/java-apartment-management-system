@@ -68,8 +68,14 @@ public class LandlordController {
     public String createRoom(
             @RequestParam String roomNumber,
             @RequestParam String floor,
-            @RequestParam BigDecimal baseRent) {
-        roomService.createRoom(roomNumber, floor, baseRent);
+            @RequestParam BigDecimal baseRent,
+            RedirectAttributes redirectAttributes) {
+        try {
+            roomService.createRoom(roomNumber, floor, baseRent);
+            redirectAttributes.addFlashAttribute("successMessage", "Room created successfully.");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        }
         return "redirect:/landlord/dashboard";
     }
 
