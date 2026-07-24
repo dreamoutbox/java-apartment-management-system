@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Announcements - Apartment Management</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<!-- Sidebar Fragment -->
+<div th:replace="~{fragments/sidebar :: sidebar('ADMIN', 'announcements')}"></div>
+
+<div class="main-content">
+    <div class="header">
+        <h1>Building Announcements</h1>
+        <p>Publish news or rules, update existing posts, and manage pinned items</p>
+    </div>
+
+    <!-- Publish Announcement Form Fragment -->
+    <div th:replace="~{fragments/forms :: publishAnnouncementForm('/Announcements')}"></div>
+
+    <!-- Announcement List Fragment with Update & Delete -->
+    <div th:replace="~{fragments/views :: announcementView(${announcements})}"></div>
+</div>
+
+</body>
+</html>

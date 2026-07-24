@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Tenants - Apartment Management</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<!-- Sidebar Fragment -->
+<div th:replace="~{fragments/sidebar :: sidebar('ADMIN', 'tenants')}"></div>
+
+<div class="main-content">
+    <div class="header">
+        <h1>Tenant Profiles & Accounts</h1>
+        <p>Create tenant accounts with ID card uploads, update contact details, and manage profiles</p>
+    </div>
+
+    <!-- Create Tenant Form (Creates User + Tenant Profile + ID Card Proof) -->
+    <div th:replace="~{fragments/forms :: createTenantForm('/tenants')}"></div>
+
+    <!-- Tenant Profiles Table Fragment with Edit, Delete, and Image Preview -->
+    <div th:replace="~{fragments/views :: tenantView(${tenants})}"></div>
+</div>
+
+</body>
+</html>

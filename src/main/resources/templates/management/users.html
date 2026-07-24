@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Users - Apartment Management</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<!-- Sidebar Fragment -->
+<div th:replace="~{fragments/sidebar :: sidebar('ADMIN', 'users')}"></div>
+
+<div class="main-content">
+    <div class="header">
+        <h1>User Accounts Management</h1>
+        <p>Create, update role details, and manage system user access</p>
+    </div>
+
+    <!-- Create User Form Fragment -->
+    <div th:replace="~{fragments/forms :: createUserForm('/users')}"></div>
+
+    <!-- Registered Users List Fragment with Update & Delete -->
+    <div th:replace="~{fragments/views :: userView(${users})}"></div>
+</div>
+
+</body>
+</html>

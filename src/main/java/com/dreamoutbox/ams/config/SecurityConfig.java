@@ -27,6 +27,12 @@ public class SecurityConfig {
             .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/login", "/css/**", "/js/**", "/h2-console/**", "/error").permitAll()
+                .requestMatchers("/users/**").hasAnyRole("LANDLORD", "MANAGER")
+                .requestMatchers("/tenants/**").hasAnyRole("LANDLORD", "MANAGER")
+                .requestMatchers("/rooms/**").hasAnyRole("LANDLORD", "MANAGER")
+                .requestMatchers("/contracts/**").hasAnyRole("LANDLORD", "MANAGER")
+                .requestMatchers("/Announcements/**").hasAnyRole("LANDLORD", "MANAGER", "ACCOUNTANT", "TECHNICIAN", "TENANT")
+                .requestMatchers("/tickets/**").hasAnyRole("LANDLORD", "MANAGER", "ACCOUNTANT", "TECHNICIAN", "TENANT")
                 .requestMatchers("/landlord/**").hasAnyRole("LANDLORD", "MANAGER")
                 .requestMatchers("/manager/**").hasRole("MANAGER")
                 .requestMatchers("/accountant/**").hasAnyRole("ACCOUNTANT", "MANAGER", "LANDLORD")
@@ -52,14 +58,11 @@ public class SecurityConfig {
     public AuthenticationSuccessHandler customAuthenticationSuccessHandler() {
         return (request, response, authentication) -> {
             var authorities = authentication.getAuthorities();
-            String redirectUrl = "/";
+            String redirectUrl = "/users";
             for (var authority : authorities) {
                 String role = authority.getAuthority();
-                if (role.equals("ROLE_MANAGER")) {
-                    redirectUrl = "/manager/dashboard";
-                    break;
-                } else if (role.equals("ROLE_LANDLORD")) {
-                    redirectUrl = "/landlord/dashboard";
+                if (role.equals("ROLE_MANAGER") || role.equals("ROLE_LANDLORD")) {
+                    redirectUrl = "/users";
                     break;
                 } else if (role.equals("ROLE_ACCOUNTANT")) {
                     redirectUrl = "/accountant/dashboard";

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Lease Contracts - Apartment Management</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<!-- Sidebar Fragment -->
+<div th:replace="~{fragments/sidebar :: sidebar('ADMIN', 'contracts')}"></div>
+
+<div class="main-content">
+    <div class="header">
+        <h1>Lease Contracts</h1>
+        <p>Issue new lease agreements, modify active dates/amounts, and track expiration warnings</p>
+    </div>
+
+    <!-- Create Contract Form Fragment -->
+    <div th:replace="~{fragments/forms :: createContractForm(${rooms}, ${tenants}, '/contracts')}"></div>
+
+    <!-- Lease Contract Table Fragment with Update & Delete -->
+    <div th:replace="~{fragments/views :: contractView(${contracts}, ${expiringContracts})}"></div>
+</div>
+
+</body>
+</html>

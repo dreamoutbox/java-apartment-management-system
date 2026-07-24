@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Rooms - Apartment Management</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<!-- Sidebar Fragment -->
+<div th:replace="~{fragments/sidebar :: sidebar('ADMIN', 'rooms')}"></div>
+
+<div class="main-content">
+    <div class="header">
+        <h1>Room Portfolio</h1>
+        <p>Add new apartment units, update base pricing, and adjust room status</p>
+    </div>
+
+    <!-- Create Room Form Fragment -->
+    <div th:replace="~{fragments/forms :: createRoomForm('/rooms')}"></div>
+
+    <!-- Room Portfolio Table Fragment with Update & Delete -->
+    <div th:replace="~{fragments/views :: roomView(${rooms})}"></div>
+</div>
+
+</body>
+</html>

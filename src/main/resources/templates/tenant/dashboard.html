@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
 <head>
     <meta charset="UTF-8">
     <title>Tenant Portal - Apartment Management</title>
@@ -7,155 +8,175 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
+
 <body>
 
-<div class="sidebar">
-    <div class="sidebar-brand">
-        <div class="brand-icon">
-            <svg viewBox="0 0 24 24"><path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11M8 14h2v3H8zM14 14h2v3h-2z"/></svg>
-        </div>
-        <div>
-            <div class="brand-title">Apartment Hub</div>
-            <div class="role-badge">Tenant Portal</div>
-        </div>
-    </div>
-
-    <div class="user-profile">
-        <div class="user-name" th:text="${tenant != null ? tenant.fullName : #authentication.name}">Tenant</div>
-        <form th:action="@{/logout}" method="post">
-            <button type="submit" class="logout-btn" style="background:none;border:none;cursor:pointer;">Sign Out</button>
-        </form>
-    </div>
-</div>
-
-<div class="main-content">
-    <div class="header">
-        <h1>Welcome Back, <span th:text="${tenant != null ? tenant.fullName : 'Resident'}">Resident</span></h1>
-        <p>View your lease agreements, invoices, payments, announcements, and maintenance requests</p>
-    </div>
-
-    <!-- Renewal Warning Banner -->
-    <div th:if="${not #lists.isEmpty(expiringContracts)}" class="card" style="border-color: #f59e0b; background: rgba(245, 158, 11, 0.1);">
-        <div style="display:flex;align-items:center;gap:12px;color:#fcd34d;">
-            <svg style="width:24px;height:24px;fill:currentColor;" viewBox="0 0 24 24"><path d="M12 2L1 21h22L12 2zm1 14h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
+    <div class="sidebar">
+        <div class="sidebar-brand">
+            <div class="brand-icon">
+                <svg viewBox="0 0 24 24">
+                    <path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11M8 14h2v3H8zM14 14h2v3h-2z" />
+                </svg>
+            </div>
             <div>
-                <strong>Lease Renewal Alert!</strong>
-                <p style="font-size:13px;margin-top:2px;color:#fef3c7;">Your lease agreement is expiring within 30 days. Please contact management to renew.</p>
+                <div class="brand-title">Apartment Hub</div>
+                <div class="role-badge">Tenant Portal</div>
             </div>
+        </div>
+
+        <div class="user-profile">
+            <div class="user-name" th:text="${tenant != null ? tenant.fullName : #authentication.name}">Tenant</div>
+            <form th:action="@{/logout}" method="post">
+                <button type="submit" class="logout-btn" style="background:none;border:none;cursor:pointer;">Sign
+                    Out</button>
+            </form>
         </div>
     </div>
 
-    <!-- Active Lease Info -->
-    <div class="card">
-        <div class="card-title">My Lease Details</div>
-        <div th:if="${not #lists.isEmpty(contracts)}">
-            <div th:each="c : ${contracts}" class="form-row">
+    <div class="main-content">
+        <div class="header">
+            <h1>Welcome Back, <span th:text="${tenant != null ? tenant.fullName : 'Resident'}">Resident</span></h1>
+            <p>View your lease agreements, invoices, payments, announcements, and maintenance requests</p>
+        </div>
+
+        <!-- Renewal Warning Banner -->
+        <div th:if="${not #lists.isEmpty(expiringContracts)}" class="card"
+            style="border-color: #f59e0b; background: rgba(245, 158, 11, 0.1);">
+            <div style="display:flex;align-items:center;gap:12px;color:#fcd34d;">
+                <svg style="width:24px;height:24px;fill:currentColor;" viewBox="0 0 24 24">
+                    <path d="M12 2L1 21h22L12 2zm1 14h-2v-2h2v2zm0-4h-2v-4h2v4z" />
+                </svg>
                 <div>
-                    <span class="stat-label">Room Number</span>
-                    <div style="font-size:18px;font-weight:600;margin-top:4px;" th:text="${c.room.roomNumber}">101</div>
-                </div>
-                <div>
-                    <span class="stat-label">Monthly Rent</span>
-                    <div style="font-size:18px;font-weight:600;margin-top:4px;" th:text="${'$' + c.monthlyRent}">$1200</div>
-                </div>
-                <div>
-                    <span class="stat-label">Lease End Date</span>
-                    <div style="font-size:18px;font-weight:600;margin-top:4px;" th:text="${c.endDate}">2026-12-31</div>
-                </div>
-                <div>
-                    <span class="stat-label">Account Credit Balance</span>
-                    <div style="font-size:18px;font-weight:600;margin-top:4px;color:#10b981;" th:text="${'$' + (tenant != null ? tenant.creditBalance : 0)}">$0.00</div>
+                    <strong>Lease Renewal Alert!</strong>
+                    <p style="font-size:13px;margin-top:2px;color:#fef3c7;">Your lease agreement is expiring within 30
+                        days. Please contact management to renew.</p>
                 </div>
             </div>
         </div>
-        <div th:if="${#lists.isEmpty(contracts)}">
-            <p style="color:#94a3b8;">No active lease agreement found.</p>
+
+        <!-- Active Lease Info -->
+        <div class="card">
+            <div class="card-title">My Lease Details</div>
+            <div th:if="${not #lists.isEmpty(contracts)}">
+                <div th:each="c : ${contracts}" class="form-row">
+                    <div>
+                        <span class="stat-label">Room Number</span>
+                        <div style="font-size:18px;font-weight:600;margin-top:4px;" th:text="${c.room.roomNumber}">101
+                        </div>
+                    </div>
+                    <div>
+                        <span class="stat-label">Monthly Rent</span>
+                        <div style="font-size:18px;font-weight:600;margin-top:4px;" th:text="${'$' + c.monthlyRent}">
+                            $1200</div>
+                    </div>
+                    <div>
+                        <span class="stat-label">Lease End Date</span>
+                        <div style="font-size:18px;font-weight:600;margin-top:4px;" th:text="${c.endDate}">2026-12-31
+                        </div>
+                    </div>
+                    <div>
+                        <span class="stat-label">Account Credit Balance</span>
+                        <div style="font-size:18px;font-weight:600;margin-top:4px;color:#10b981;"
+                            th:text="${'$' + (tenant != null ? tenant.creditBalance : 0)}">$0.00</div>
+                    </div>
+                </div>
+            </div>
+            <div th:if="${#lists.isEmpty(contracts)}">
+                <p style="color:#94a3b8;">No active lease agreement found.</p>
+            </div>
         </div>
-    </div>
 
-    <!-- Rent Statements & Invoices -->
-    <div class="card">
-        <div class="card-title">My Monthly Invoices</div>
-        <table>
-            <thead>
-                <tr>
-                    <th>Period</th>
-                    <th>Rent</th>
-                    <th>Electricity</th>
-                    <th>Water</th>
-                    <th>Total</th>
-                    <th>Balance Due</th>
-                    <th>Status</th>
-                    <th>Due Date</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="inv : ${invoices}">
-                    <td th:text="${inv.period}">2026-07</td>
-                    <td th:text="${'$' + inv.rentAmount}">$1000</td>
-                    <td th:text="${'$' + inv.electricityAmount}">$50</td>
-                    <td th:text="${'$' + inv.waterAmount}">$20</td>
-                    <td th:text="${'$' + inv.totalAmount}">$1070</td>
-                    <td th:text="${'$' + inv.balanceRemaining}">$0</td>
-                    <td><span th:class="${'status-badge status-' + inv.status}" th:text="${inv.status}">PAID</span></td>
-                    <td th:text="${inv.dueDate}">2026-07-10</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-
-    <!-- Report Maintenance Issue -->
-    <div class="card">
-        <div class="card-title">Report Maintenance Issue</div>
-        <form th:action="@{/tenant/tickets}" method="post" enctype="multipart/form-data">
-            <div class="form-group" style="margin-bottom:16px;">
-                <label>Issue Description</label>
-                <textarea name="description" class="form-control" rows="3" placeholder="Leaking tap in bathroom..." required></textarea>
-            </div>
-            <div class="form-group" style="margin-bottom:16px;">
-                <label>Photo (Optional)</label>
-                <input type="file" name="image" class="form-control" accept="image/*">
-            </div>
-            <button type="submit" class="btn">Submit Ticket</button>
-        </form>
-    </div>
-
-    <!-- My Tickets -->
-    <div class="card">
-        <div class="card-title">My Ticket Tracking</div>
-        <table>
-            <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>Description</th>
-                    <th>Assigned Technician</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="t : ${tickets}">
-                    <td th:text="${#temporals.format(t.createdAt, 'yyyy-MM-dd HH:mm')}">2026-07-24</td>
-                    <td th:text="${t.description}">Issue</td>
-                    <td th:text="${t.assignedTechnician != null ? t.assignedTechnician.fullName : 'Triage in progress'}">Tech</td>
-                    <td><span th:class="${'status-badge status-' + t.status}" th:text="${t.status}">PENDING</span></td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-
-    <!-- Building Announcements -->
-    <div class="card">
-        <div class="card-title">Building Announcements</div>
-        <div th:each="a : ${announcements}" style="margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--border-color);">
-            <div style="display:flex;justify-content:space-between;align-items:center;">
-                <strong style="font-size:16px;color:#f8fafc;" th:text="${a.title}">Title</strong>
-                <span style="font-size:12px;color:#94a3b8;" th:text="${a.publishedAt != null ? #temporals.format(a.publishedAt, 'yyyy-MM-dd') : ''}">Date</span>
-            </div>
-            <p style="font-size:14px;color:#cbd5e1;margin-top:8px;" th:text="${a.content}">Content</p>
+        <!-- Rent Statements & Invoices -->
+        <div class="card">
+            <div class="card-title">My Monthly Invoices</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Period</th>
+                        <th>Rent</th>
+                        <th>Electricity</th>
+                        <th>Water</th>
+                        <th>Total</th>
+                        <th>Balance Due</th>
+                        <th>Status</th>
+                        <th>Due Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="inv : ${invoices}">
+                        <td th:text="${inv.period}">2026-07</td>
+                        <td th:text="${'$' + inv.rentAmount}">$1000</td>
+                        <td th:text="${'$' + inv.electricityAmount}">$50</td>
+                        <td th:text="${'$' + inv.waterAmount}">$20</td>
+                        <td th:text="${'$' + inv.totalAmount}">$1070</td>
+                        <td th:text="${'$' + inv.balanceRemaining}">$0</td>
+                        <td><span th:class="${'status-badge status-' + inv.status}" th:text="${inv.status}">PAID</span>
+                        </td>
+                        <td th:text="${inv.dueDate}">2026-07-10</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
-    </div>
 
-</div>
+        <!-- Report Maintenance Issue -->
+        <div class="card">
+            <div class="card-title">Report Maintenance Issue</div>
+            <form th:action="@{/tenant/tickets}" method="post" enctype="multipart/form-data">
+                <div class="form-group" style="margin-bottom:16px;">
+                    <label>Issue Description</label>
+                    <textarea name="description" class="form-control" rows="3" placeholder="Leaking tap in bathroom..."
+                        required></textarea>
+                </div>
+                <div class="form-group" style="margin-bottom:16px;">
+                    <label>Photo (Optional)</label>
+                    <input type="file" name="image" class="form-control" accept="image/*">
+                </div>
+                <button type="submit" class="btn">Submit Ticket</button>
+            </form>
+        </div>
+
+        <!-- My Tickets -->
+        <div class="card">
+            <div class="card-title">My Ticket Tracking</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Description</th>
+                        <th>Assigned Technician</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="t : ${tickets}">
+                        <td th:text="${#temporals.format(t.createdAt, 'yyyy-MM-dd HH:mm')}">2026-07-24</td>
+                        <td th:text="${t.description}">Issue</td>
+                        <td
+                            th:text="${t.assignedTechnician != null ? t.assignedTechnician.fullName : 'Triage in progress'}">
+                            Tech</td>
+                        <td><span th:class="${'status-badge status-' + t.status}" th:text="${t.status}">PENDING</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Announcements -->
+        <div class="card">
+            <div class="card-title">Announcements</div>
+            <div th:each="a : ${announcements}"
+                style="margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--border-color);">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                    <strong style="font-size:16px;color:#f8fafc;" th:text="${a.title}">Title</strong>
+                    <span style="font-size:12px;color:#94a3b8;"
+                        th:text="${a.publishedAt != null ? #temporals.format(a.publishedAt, 'yyyy-MM-dd') : ''}">Date</span>
+                </div>
+                <p style="font-size:14px;color:#cbd5e1;margin-top:8px;" th:text="${a.content}">Content</p>
+            </div>
+        </div>
+
+    </div>
 
 </body>
+
 </html>

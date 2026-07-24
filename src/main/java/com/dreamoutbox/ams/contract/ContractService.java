@@ -60,6 +60,35 @@ public class ContractService {
     }
 
     @Transactional
+    public Contract updateContract(UUID contractId, BigDecimal monthlyRent, LocalDate startDate, LocalDate endDate, ContractStatus status) {
+        Contract contract = contractRepository.findById(contractId)
+                .orElseThrow(() -> new IllegalArgumentException("Contract not found: " + contractId));
+
+        contract.setMonthlyRent(monthlyRent);
+        contract.setStartDate(startDate);
+        contract.setEndDate(endDate);
+        if (status != null && contract.getStatus() != status) {
+            contract.setStatus(status);
+            if (status == ContractStatus.TERMINATED || status == ContractStatus.EXPIRED) {
+                roomService.transition(contract.getRoom(), RoomStatus.VACANT);
+            }
+        }
+
+        return contractRepository.save(contract);
+    }
+
+    @Transactional
+    public void deleteContract(UUID contractId) {
+        Contract contract = contractRepository.findById(contractId)
+                .orElseThrow(() -> new IllegalArgumentException("Contract not found: " + contractId));
+
+        if (contract.getStatus() == ContractStatus.ACTIVE) {
+            roomService.transition(contract.getRoom(), RoomStatus.VACANT);
+        }
+        contractRepository.delete(contract);
+    }
+
+    @Transactional
     public Contract terminateContract(UUID contractId) {
         Contract contract = contractRepository.findById(contractId)
                 .orElseThrow(() -> new IllegalArgumentException("Contract not found: " + contractId));
@@ -82,6 +111,11 @@ public class ContractService {
     @Transactional(readOnly = true)
     public List<Contract> getAllActiveContracts() {
         return contractRepository.findByStatus(ContractStatus.ACTIVE);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Contract> getAllContracts() {
+        return contractRepository.findAll();
     }
 
     @Transactional(readOnly = true)

@@ -1,144 +1,333 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-
 <body>
-    <!-- User List View Fragment -->
-    <div th:fragment="userView(tenants)" class="card">
-        <div class="card-title">Registered Users</div>
-        <table>
-            <thead>
-                <tr>
-                    <th>Full Name</th>
-                    <th>Phone</th>
-                    <th>Email</th>
-                    <th>ID Card #</th>
-                    <th>Credit Balance</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="t : ${tenants}">
-                    <td th:text="${t.fullName}">John Doe</td>
-                    <td th:text="${t.phone}">12345678</td>
-                    <td th:text="${t.email}">john@example.com</td>
-                    <td th:text="${t.idCardNumber}">ID123</td>
+
+<!-- Tenant List View Fragment with Edit, Delete, and Image Preview -->
+<div th:fragment="tenantView(tenants)" class="card">
+    <div class="card-title">Tenant Profiles</div>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Full Name</th>
+                <th>Username</th>
+                <th>Phone</th>
+                <th>Email</th>
+                <th>ID Card #</th>
+                <th>Proof ID Card</th>
+                <th>Credit Balance</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="t : ${tenants}">
+                <form th:action="@{'/tenants/' + ${t.id} + '/update'}" method="post" enctype="multipart/form-data">
+                    <td>
+                        <input type="text" name="fullName" th:value="${t.fullName}" class="form-control" style="padding:4px 8px;font-size:12px;width:110px;" required>
+                    </td>
+                    <td th:text="${t.user != null ? t.user.username : 'N/A'}">username</td>
+                    <td>
+                        <input type="text" name="phone" th:value="${t.phone}" class="form-control" style="padding:4px 8px;font-size:12px;width:90px;">
+                    </td>
+                    <td>
+                        <input type="email" name="email" th:value="${t.email}" class="form-control" style="padding:4px 8px;font-size:12px;width:130px;">
+                    </td>
+                    <td>
+                        <input type="text" name="idCardNumber" th:value="${t.idCardNumber}" class="form-control" style="padding:4px 8px;font-size:12px;width:100px;">
+                    </td>
+                    <td>
+                        <div th:if="${t.idCardImagePath != null}">
+                            <a th:href="@{'/uploads/' + ${t.idCardImagePath}}" target="_blank" style="color:var(--primary);font-size:12px;text-decoration:underline;">View Image</a>
+                        </div>
+                        <input type="file" name="idCardImage" class="form-control" style="padding:2px;font-size:11px;width:110px;" accept="image/*">
+                    </td>
                     <td th:text="${'$' + t.creditBalance}">$0.00</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-
-    <!-- Room List View Fragment -->
-    <div th:fragment="roomView(rooms)" class="card">
-        <div class="card-title">Room Portfolio</div>
-        <table>
-            <thead>
-                <tr>
-                    <th>Room #</th>
-                    <th>Floor</th>
-                    <th>Base Rent</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="room : ${rooms}">
-                    <td th:text="${room.roomNumber}">101</td>
-                    <td th:text="${room.floor}">1</td>
-                    <td th:text="${'$' + room.baseRent}">$1000.00</td>
-                    <td><span th:class="${'status-badge status-' + room.status}" th:text="${room.status}">VACANT</span>
+                    <td>
+                        <div style="display:flex;gap:6px;">
+                            <button type="submit" class="btn" style="padding:4px 10px;font-size:12px;">Save</button>
+                </form>
+                            <form th:action="@{'/tenants/' + ${t.id} + '/delete'}" method="post" onsubmit="return confirm('Delete tenant and user account?');">
+                                <button type="submit" class="btn" style="padding:4px 10px;font-size:12px;background:#ef4444;">Delete</button>
+                            </form>
+                        </div>
                     </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
+            </tr>
+        </tbody>
+    </table>
+</div>
 
-    <!-- Lease Contract View Fragment -->
-    <div th:fragment="contractView(contracts, expiringContracts)" class="card">
-        <div class="card-title">Active Lease Contracts</div>
-        <div th:if="${not #lists.isEmpty(expiringContracts)}" class="alert alert-info"
-            style="margin-bottom:16px;background:rgba(245, 158, 11, 0.15);color:#fcd34d;border:1px solid rgba(245, 158, 11, 0.3);padding:10px;border-radius:8px;">
-            Warning: <span th:text="${expiringContracts.size()}">0</span> lease(s) expiring within 30 days.
-        </div>
-        <table>
-            <thead>
-                <tr>
-                    <th>Room</th>
-                    <th>Tenant</th>
-                    <th>Monthly Rent</th>
-                    <th>Start Date</th>
-                    <th>End Date</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="c : ${contracts}">
-                    <td th:text="${c.room.roomNumber}">101</td>
-                    <td th:text="${c.tenant.fullName}">Tenant</td>
-                    <td th:text="${'$' + c.monthlyRent}">$1200</td>
-                    <td th:text="${c.startDate}">2026-01-01</td>
-                    <td th:text="${c.endDate}">2026-12-31</td>
-                    <td><span th:class="${'status-badge status-' + c.status}" th:text="${c.status}">ACTIVE</span></td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
+<!-- User List View Fragment with Update & Delete -->
+<div th:fragment="userView(users)" class="card">
+    <div class="card-title">Registered Users</div>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th>Full Name</th>
+                <th>Role</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="u : ${users}">
+                <td>
+                    <span th:text="${u.username}">username</span>
+                </td>
+                <form th:action="@{'/users/' + ${u.id} + '/update'}" method="post">
+                    <td>
+                        <input type="text" name="fullName" th:value="${u.fullName}" class="form-control" style="padding:4px 8px;font-size:12px;width:120px;" required>
+                    </td>
+                    <td>
+                        <select name="role" class="form-control" style="padding:4px 8px;font-size:12px;">
+                            <option value="LANDLORD" th:selected="${u.role.name() == 'LANDLORD'}">LANDLORD</option>
+                            <option value="MANAGER" th:selected="${u.role.name() == 'MANAGER'}">MANAGER</option>
+                            <option value="ACCOUNTANT" th:selected="${u.role.name() == 'ACCOUNTANT'}">ACCOUNTANT</option>
+                            <option value="TECHNICIAN" th:selected="${u.role.name() == 'TECHNICIAN'}">TECHNICIAN</option>
+                            <option value="TENANT" th:selected="${u.role.name() == 'TENANT'}">TENANT</option>
+                        </select>
+                    </td>
+                    <td>
+                        <span th:class="${u.enabled ? 'status-badge status-OCCUPIED' : 'status-badge status-VACANT'}"
+                              th:text="${u.enabled ? 'ACTIVE' : 'DISABLED'}">ACTIVE</span>
+                    </td>
+                    <td>
+                        <div style="display:flex;gap:6px;">
+                            <button type="submit" class="btn" style="padding:4px 10px;font-size:12px;">Save</button>
+                </form>
+                            <form th:action="@{'/users/' + ${u.id} + '/delete'}" method="post" onsubmit="return confirm('Delete user account?');">
+                                <button type="submit" class="btn" style="padding:4px 10px;font-size:12px;background:#ef4444;">Delete</button>
+                            </form>
+                        </div>
+                    </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
 
-    <!-- Announcement List View Fragment -->
-    <div th:fragment="announcementView(announcements)" class="card">
-        <div class="card-title">Building Announcements</div>
-        <div th:each="a : ${announcements}"
-            style="margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--border-color);">
-            <div style="display:flex;justify-content:space-between;align-items:center;">
-                <strong style="font-size:16px;color:#f8fafc;" th:text="${a.title}">Title</strong>
-                <span style="font-size:12px;color:#94a3b8;"
-                    th:text="${a.publishedAt != null ? #temporals.format(a.publishedAt, 'yyyy-MM-dd HH:mm') : ''}">Date</span>
+<!-- Room List View Fragment with Update & Delete -->
+<div th:fragment="roomView(rooms)" class="card">
+    <div class="card-title">Room Portfolio</div>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Room #</th>
+                <th>Floor</th>
+                <th>Base Rent</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="room : ${rooms}">
+                <form th:action="@{'/rooms/' + ${room.id} + '/update'}" method="post">
+                    <td>
+                        <input type="text" name="roomNumber" th:value="${room.roomNumber}" class="form-control" style="padding:4px 8px;font-size:12px;width:70px;" required>
+                    </td>
+                    <td>
+                        <input type="text" name="floor" th:value="${room.floor}" class="form-control" style="padding:4px 8px;font-size:12px;width:60px;" required>
+                    </td>
+                    <td>
+                        <input type="number" step="0.01" name="baseRent" th:value="${room.baseRent}" class="form-control" style="padding:4px 8px;font-size:12px;width:90px;" required>
+                    </td>
+                    <td>
+                        <select name="status" class="form-control" style="padding:4px 8px;font-size:12px;">
+                            <option value="VACANT" th:selected="${room.status.name() == 'VACANT'}">VACANT</option>
+                            <option value="OCCUPIED" th:selected="${room.status.name() == 'OCCUPIED'}">OCCUPIED</option>
+                            <option value="MAINTENANCE" th:selected="${room.status.name() == 'MAINTENANCE'}">MAINTENANCE</option>
+                        </select>
+                    </td>
+                    <td>
+                        <div style="display:flex;gap:6px;">
+                            <button type="submit" class="btn" style="padding:4px 10px;font-size:12px;">Save</button>
+                </form>
+                            <form th:action="@{'/rooms/' + ${room.id} + '/delete'}" method="post" onsubmit="return confirm('Delete room?');">
+                                <button type="submit" class="btn" style="padding:4px 10px;font-size:12px;background:#ef4444;">Delete</button>
+                            </form>
+                        </div>
+                    </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- Lease Contract View Fragment with Update & Delete -->
+<div th:fragment="contractView(contracts, expiringContracts)" class="card">
+    <div class="card-title">Lease Contracts</div>
+    <div th:if="${not #lists.isEmpty(expiringContracts)}" class="alert alert-info" style="margin-bottom:16px;background:rgba(245, 158, 11, 0.15);color:#fcd34d;border:1px solid rgba(245, 158, 11, 0.3);padding:10px;border-radius:8px;">
+        Warning: <span th:text="${expiringContracts.size()}">0</span> lease(s) expiring within 30 days.
+    </div>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Room</th>
+                <th>Tenant</th>
+                <th>Monthly Rent</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="c : ${contracts}">
+                <td th:text="${c.room.roomNumber}">101</td>
+                <td th:text="${c.tenant.fullName}">Tenant</td>
+                <form th:action="@{'/contracts/' + ${c.id} + '/update'}" method="post">
+                    <td>
+                        <input type="number" step="0.01" name="monthlyRent" th:value="${c.monthlyRent}" class="form-control" style="padding:4px 8px;font-size:12px;width:90px;" required>
+                    </td>
+                    <td>
+                        <input type="date" name="startDate" th:value="${c.startDate}" class="form-control" style="padding:4px 8px;font-size:12px;" required>
+                    </td>
+                    <td>
+                        <input type="date" name="endDate" th:value="${c.endDate}" class="form-control" style="padding:4px 8px;font-size:12px;" required>
+                    </td>
+                    <td>
+                        <select name="status" class="form-control" style="padding:4px 8px;font-size:12px;">
+                            <option value="ACTIVE" th:selected="${c.status.name() == 'ACTIVE'}">ACTIVE</option>
+                            <option value="EXPIRED" th:selected="${c.status.name() == 'EXPIRED'}">EXPIRED</option>
+                            <option value="TERMINATED" th:selected="${c.status.name() == 'TERMINATED'}">TERMINATED</option>
+                        </select>
+                    </td>
+                    <td>
+                        <div style="display:flex;gap:6px;">
+                            <button type="submit" class="btn" style="padding:4px 10px;font-size:12px;">Save</button>
+                </form>
+                            <form th:action="@{'/contracts/' + ${c.id} + '/delete'}" method="post" onsubmit="return confirm('Delete contract?');">
+                                <button type="submit" class="btn" style="padding:4px 10px;font-size:12px;background:#ef4444;">Delete</button>
+                            </form>
+                        </div>
+                    </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- Announcement View Fragment with Update & Delete -->
+<div th:fragment="announcementView(announcements)" class="card">
+    <div class="card-title">Building Announcements</div>
+    <div th:each="a : ${announcements}" style="margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border-color);">
+        <form th:action="@{'/Announcements/' + ${a.id} + '/update'}" method="post" style="margin-bottom:10px;">
+            <div class="form-row" style="margin-bottom:8px;">
+                <input type="text" name="title" th:value="${a.title}" class="form-control" style="font-weight:600;" required>
+                <select name="type" class="form-control">
+                    <option value="NEWS" th:selected="${a.type.name() == 'NEWS'}">NEWS</option>
+                    <option value="RULE" th:selected="${a.type.name() == 'RULE'}">RULE</option>
+                </select>
+                <div style="display:flex;align-items:center;gap:6px;">
+                    <input type="checkbox" name="pinned" th:id="${'pinned-' + a.id}" th:checked="${a.pinned}" value="true">
+                    <label th:for="${'pinned-' + a.id}" style="font-size:12px;color:var(--text-muted);">Pinned</label>
+                </div>
             </div>
-            <p style="font-size:14px;color:#cbd5e1;margin-top:8px;" th:text="${a.content}">Content</p>
-        </div>
-        <div th:if="${#lists.isEmpty(announcements)}">
-            <p style="color:#94a3b8;">No announcements published yet.</p>
-        </div>
+            <textarea name="content" class="form-control" rows="2" style="margin-bottom:8px;" required th:text="${a.content}"></textarea>
+            <div style="display:flex;gap:8px;justify-content:flex-end;">
+                <button type="submit" class="btn" style="padding:4px 12px;font-size:12px;">Save</button>
+        </form>
+                <form th:action="@{'/Announcements/' + ${a.id} + '/delete'}" method="post" onsubmit="return confirm('Delete announcement?');">
+                    <button type="submit" class="btn" style="padding:4px 12px;font-size:12px;background:#ef4444;">Delete</button>
+                </form>
+            </div>
     </div>
+    <div th:if="${#lists.isEmpty(announcements)}">
+        <p style="color:#94a3b8;">No announcements published yet.</p>
+    </div>
+</div>
 
-    <!-- Maintenance Ticket View & Assign Fragment -->
-    <div th:fragment="ticketView(tickets, technicians, assignActionUrl)" class="card">
-        <div class="card-title">Maintenance Tickets</div>
-        <table>
-            <thead>
-                <tr>
-                    <th>Room</th>
-                    <th>Reported By</th>
-                    <th>Description</th>
-                    <th>Assigned Technician</th>
-                    <th>Status</th>
-                    <th th:if="${assignActionUrl != null}">Assign Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="ticket : ${tickets}">
-                    <td th:text="${ticket.room.roomNumber}">101</td>
-                    <td th:text="${ticket.reportedBy.fullName}">Tenant</td>
-                    <td th:text="${ticket.description}">Issue</td>
-                    <td
-                        th:text="${ticket.assignedTechnician != null ? ticket.assignedTechnician.fullName : 'Unassigned'}">
-                        Unassigned</td>
-                    <td><span th:class="${'status-badge status-' + ticket.status}"
-                            th:text="${ticket.status}">PENDING</span></td>
-                    <td th:if="${assignActionUrl != null}">
-                        <form th:action="@{${assignActionUrl}}" method="post" style="display:flex;gap:8px;">
-                            <input type="hidden" name="ticketId" th:value="${ticket.id}">
-                            <select name="technicianId" class="form-control" style="padding:4px 8px;font-size:12px;"
-                                required>
-                                <option th:each="tech : ${technicians}" th:value="${tech.id}"
-                                    th:text="${tech.fullName}"></option>
-                            </select>
-                            <button type="submit" class="btn" style="padding:4px 10px;font-size:12px;">Assign</button>
-                        </form>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
+<!-- Maintenance Ticket View Fragment -->
+<div th:fragment="ticketView(tickets, technicians, assignActionUrl)" class="card">
+    <div class="card-title">Maintenance Tickets</div>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Room</th>
+                <th>Reported By</th>
+                <th>Description</th>
+                <th>Assigned Technician</th>
+                <th>Status</th>
+                <th th:if="${assignActionUrl != null}">Assign Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="ticket : ${tickets}">
+                <td th:text="${ticket.room.roomNumber}">101</td>
+                <td th:text="${ticket.reportedBy.fullName}">Tenant</td>
+                <td th:text="${ticket.description}">Issue</td>
+                <td th:text="${ticket.assignedTechnician != null ? ticket.assignedTechnician.fullName : 'Unassigned'}">Unassigned</td>
+                <td><span th:class="${'status-badge status-' + ticket.status}" th:text="${ticket.status}">PENDING</span></td>
+                <td th:if="${assignActionUrl != null}">
+                    <form th:action="@{${assignActionUrl}}" method="post" style="display:flex;gap:8px;">
+                        <input type="hidden" name="ticketId" th:value="${ticket.id}">
+                        <select name="technicianId" class="form-control" style="padding:4px 8px;font-size:12px;" required>
+                            <option th:each="tech : ${technicians}" th:value="${tech.id}" th:text="${tech.fullName}"></option>
+                        </select>
+                        <button type="submit" class="btn" style="padding:4px 10px;font-size:12px;">Assign</button>
+                    </form>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- Client-Side Search Bar & Column Sorting Script for Every Table -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('table').forEach((table) => {
+            if (table.querySelector('tbody') && !table.previousElementSibling?.classList?.contains('table-search-box')) {
+                // Insert Search Bar
+                const searchBox = document.createElement('div');
+                searchBox.className = 'table-search-box';
+                searchBox.style.marginBottom = '12px';
+                searchBox.innerHTML = '<input type="text" class="form-control" placeholder="🔍 Search in table..." style="max-width:280px;padding:6px 12px;font-size:13px;" onkeyup="filterTableRows(this)">';
+                table.parentNode.insertBefore(searchBox, table);
+
+                // Add Column Sorting
+                const headers = table.querySelectorAll('th');
+                headers.forEach((header, colIndex) => {
+                    header.style.cursor = 'pointer';
+                    header.title = 'Click to sort';
+                    header.addEventListener('click', function() {
+                        sortTableByColumn(table, colIndex);
+                    });
+                });
+            }
+        });
+    });
+
+    function filterTableRows(input) {
+        const query = input.value.toLowerCase();
+        const table = input.parentNode.nextElementSibling;
+        const rows = table.querySelectorAll('tbody tr');
+        rows.forEach(row => {
+            const text = row.innerText.toLowerCase();
+            row.style.display = text.includes(query) ? '' : 'none';
+        });
+    }
+
+    function sortTableByColumn(table, colIndex) {
+        const tbody = table.querySelector('tbody');
+        if (!tbody) return;
+        const rows = Array.from(tbody.querySelectorAll('tr'));
+        const asc = table.getAttribute('data-sort-col') != colIndex || table.getAttribute('data-sort-dir') != 'asc';
+        
+        rows.sort((a, b) => {
+            const valA = getCellText(a, colIndex);
+            const valB = getCellText(b, colIndex);
+            return asc ? valA.localeCompare(valB, undefined, {numeric: true}) : valB.localeCompare(valA, undefined, {numeric: true});
+        });
+
+        rows.forEach(row => tbody.appendChild(row));
+        table.setAttribute('data-sort-col', colIndex);
+        table.setAttribute('data-sort-dir', asc ? 'asc' : 'desc');
+    }
+
+    function getCellText(row, colIndex) {
+        const cell = row.children[colIndex];
+        if (!cell) return '';
+        const input = cell.querySelector('input, select');
+        if (input) return input.value || '';
+        return cell.innerText.trim();
+    }
+</script>
 
 </body>
-
 </html>

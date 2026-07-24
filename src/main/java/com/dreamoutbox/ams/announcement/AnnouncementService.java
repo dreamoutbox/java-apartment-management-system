@@ -30,6 +30,28 @@ public class AnnouncementService {
         return announcementRepository.save(announcement);
     }
 
+    @Transactional
+    @PreAuthorize("hasAnyRole('MANAGER', 'LANDLORD')")
+    public Announcement updateAnnouncement(UUID id, String title, String content, AnnouncementType type, boolean pinned) {
+        Announcement announcement = announcementRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Announcement not found: " + id));
+
+        announcement.setTitle(title);
+        announcement.setContent(content);
+        announcement.setType(type);
+        announcement.setPinned(pinned);
+
+        return announcementRepository.save(announcement);
+    }
+
+    @Transactional
+    @PreAuthorize("hasAnyRole('MANAGER', 'LANDLORD')")
+    public void deleteAnnouncement(UUID id) {
+        Announcement announcement = announcementRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Announcement not found: " + id));
+        announcementRepository.delete(announcement);
+    }
+
     @Transactional(readOnly = true)
     public List<Announcement> getAllAnnouncements() {
         return announcementRepository.findAllByOrderByPinnedDescPublishedAtDesc();

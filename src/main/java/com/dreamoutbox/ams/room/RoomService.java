@@ -29,6 +29,27 @@ public class RoomService {
     }
 
     @Transactional
+    public Room updateRoom(UUID id, String roomNumber, String floor, BigDecimal baseRent, RoomStatus status) {
+        Room room = roomRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Room not found: " + id));
+
+        room.setRoomNumber(roomNumber);
+        room.setFloor(floor);
+        room.setBaseRent(baseRent);
+        if (status != null && room.getStatus() != status) {
+            transition(room, status);
+        }
+        return roomRepository.save(room);
+    }
+
+    @Transactional
+    public void deleteRoom(UUID id) {
+        Room room = roomRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Room not found: " + id));
+        roomRepository.delete(room);
+    }
+
+    @Transactional
     public Room transition(UUID roomId, RoomStatus targetStatus) {
         Room room = roomRepository.findById(roomId)
                 .orElseThrow(() -> new IllegalArgumentException("Room not found: " + roomId));
@@ -42,7 +63,6 @@ public class RoomService {
             return room;
         }
 
-        // Validate allowed transitions
         if (current == RoomStatus.OCCUPIED && targetStatus == RoomStatus.VACANT) {
             // End contract transition allowed
         } else if (current == RoomStatus.VACANT && targetStatus == RoomStatus.OCCUPIED) {
