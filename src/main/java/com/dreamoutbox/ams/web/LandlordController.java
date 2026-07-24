@@ -5,6 +5,7 @@ import com.dreamoutbox.ams.announcement.AnnouncementType;
 import com.dreamoutbox.ams.contract.ContractService;
 import com.dreamoutbox.ams.finance.InvoiceService;
 import com.dreamoutbox.ams.maintenance.MaintenanceService;
+import com.dreamoutbox.ams.maintenance.TicketStatus;
 import com.dreamoutbox.ams.room.RoomService;
 import com.dreamoutbox.ams.tenant.TenantService;
 import com.dreamoutbox.ams.user.Role;
@@ -19,6 +20,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -96,10 +99,24 @@ public class LandlordController {
     @PostMapping("/tickets/assign")
     public String assignTechnician(
             @RequestParam UUID ticketId,
-            @RequestParam UUID technicianId,
-            @AuthenticationPrincipal UserDetails userDetails) {
-        User currentUser = userService.getByUsername(userDetails.getUsername());
-        maintenanceService.assignTechnician(ticketId, technicianId, currentUser);
+            @RequestParam(required = false) UUID technicianId,
+            @RequestParam(required = false) TicketStatus status,
+            @RequestParam(required = false) String note,
+            @RequestParam(required = false) MultipartFile proofImage,
+            @AuthenticationPrincipal UserDetails userDetails,
+            RedirectAttributes redirectAttributes) {
+        try {
+            User currentUser = userService.getByUsername(userDetails.getUsername());
+            if (technicianId != null) {
+                maintenanceService.assignTechnician(ticketId, technicianId, currentUser);
+            }
+            if (status != null) {
+                maintenanceService.updateTicketStatus(ticketId, status, note != null ? note : "", proofImage, currentUser);
+            }
+            redirectAttributes.addFlashAttribute("successMessage", "Ticket updated successfully.");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        }
         return "redirect:/landlord/dashboard";
     }
 }

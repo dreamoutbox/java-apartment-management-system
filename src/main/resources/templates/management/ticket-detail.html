@@ -92,20 +92,38 @@
                 <p style="font-size:15px;line-height:1.6;color:#e2e8f0;white-space:pre-wrap;"
                     th:text="${ticket.description}">Description content here...</p>
 
-                <!-- Assign Technician Form -->
+                <!-- Ticket Action Form -->
                 <div style="margin-top:24px;padding-top:16px;border-top:1px solid var(--border-color, #334155);"
-                    sec:authorize="hasAnyRole('LANDLORD', 'MANAGER')">
-                    <div class="card-title" style="font-size:14px;">Assign / Change Technician</div>
-                    <form th:action="@{/tickets/assign}" method="post"
-                        style="display:flex;gap:12px;align-items:center;">
+                    sec:authorize="hasAnyRole('LANDLORD', 'MANAGER', 'TECHNICIAN')">
+                    <div class="card-title" style="font-size:14px;margin-bottom:12px;">Update Ticket & Assign Technician</div>
+                    <form th:action="@{/tickets/assign}" method="post" enctype="multipart/form-data">
                         <input type="hidden" name="ticketId" th:value="${ticket.id}">
-                        <select name="technicianId" class="form-control" style="flex:1;" required>
-                            <option value="">-- Select Technician --</option>
-                            <option th:each="tech : ${technicians}" th:value="${tech.id}"
-                                th:selected="${ticket.assignedTechnician != null and ticket.assignedTechnician.id == tech.id}"
-                                th:text="${tech.fullName}"></option>
-                        </select>
-                        <button type="submit" class="btn" style="white-space:nowrap;">Assign</button>
+                        <div class="form-group" style="margin-bottom:12px;" sec:authorize="hasAnyRole('LANDLORD', 'MANAGER')">
+                            <label>Assign Technician</label>
+                            <select name="technicianId" class="form-control">
+                                <option value="">-- Select Technician --</option>
+                                <option th:each="tech : ${technicians}" th:value="${tech.id}"
+                                    th:selected="${ticket.assignedTechnician != null and ticket.assignedTechnician.id == tech.id}"
+                                    th:text="${tech.fullName}"></option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="margin-bottom:12px;">
+                            <label>Update Status</label>
+                            <select name="status" class="form-control">
+                                <option value="PENDING" th:selected="${ticket.status.name() == 'PENDING'}">PENDING</option>
+                                <option value="IN_PROGRESS" th:selected="${ticket.status.name() == 'IN_PROGRESS'}">IN_PROGRESS</option>
+                                <option value="COMPLETED" th:selected="${ticket.status.name() == 'COMPLETED'}">COMPLETED</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="margin-bottom:12px;">
+                            <label>Proof of Fix Photo (Optional / Required for Completion)</label>
+                            <input type="file" name="proofImage" class="form-control" accept="image/*">
+                        </div>
+                        <div class="form-group" style="margin-bottom:16px;">
+                            <label>Status Note</label>
+                            <input type="text" name="note" class="form-control" placeholder="Update notes...">
+                        </div>
+                        <button type="submit" class="btn">Save Ticket Updates</button>
                     </form>
                 </div>
             </div>

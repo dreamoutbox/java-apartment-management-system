@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.UUID;
 
@@ -36,11 +37,17 @@ public class TechnicianController {
     public String updateTicket(
             @RequestParam UUID ticketId,
             @RequestParam TicketStatus status,
-            @RequestParam String note,
+            @RequestParam(required = false) String note,
             @RequestParam(required = false) MultipartFile proofImage,
-            @AuthenticationPrincipal UserDetails userDetails) {
-        User currentUser = userService.getByUsername(userDetails.getUsername());
-        maintenanceService.updateTicketStatus(ticketId, status, note, proofImage, currentUser);
+            @AuthenticationPrincipal UserDetails userDetails,
+            RedirectAttributes redirectAttributes) {
+        try {
+            User currentUser = userService.getByUsername(userDetails.getUsername());
+            maintenanceService.updateTicketStatus(ticketId, status, note != null ? note : "", proofImage, currentUser);
+            redirectAttributes.addFlashAttribute("successMessage", "Ticket status updated successfully.");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        }
         return "redirect:/technician/dashboard";
     }
 }

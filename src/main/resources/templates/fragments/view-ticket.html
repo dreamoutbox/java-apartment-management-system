@@ -32,19 +32,19 @@
                             th:text="${ticket != null ? ticket.status : ''}">PENDING</span></td>
                     <td th:if="${assignActionUrl != null and ticket != null}">
                         <button type="button" class="btn" style="padding:4px 10px;font-size:12px;"
-                            th:data-modal-target="'modal-ticket-' + ${ticket.id}">Assign</button>
+                            th:data-modal-target="'modal-ticket-' + ${ticket.id}">Update</button>
                     </td>
                 </tr>
             </tbody>
         </table>
 
-        <!-- Assign Modals for each Ticket -->
+        <!-- Update Modals for each Ticket -->
         <div th:if="${assignActionUrl != null}">
             <div th:each="ticket : ${tickets}" th:if="${ticket != null}">
                 <div class="ams-modal-overlay" th:id="'modal-ticket-' + ${ticket.id}" style="display:none;">
                     <div class="ams-modal-box">
                         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
-                            <div class="card-title" style="margin:0;">Assign Technician — Room <span
+                            <div class="card-title" style="margin:0;">Update Ticket — Room <span
                                     th:text="${ticket.room != null ? ticket.room.roomNumber : ''}"></span></div>
                             <button type="button" class="btn"
                                 style="background:#ef4444;padding:4px 12px;font-size:12px;"
@@ -53,17 +53,34 @@
                         </div>
                         <p style="color:#94a3b8;font-size:13px;margin-bottom:16px;" th:text="${ticket.description}">
                             Description</p>
-                        <form th:action="@{${assignActionUrl}}" method="post">
+                        <form th:action="@{${assignActionUrl}}" method="post" enctype="multipart/form-data">
                             <input type="hidden" name="ticketId" th:value="${ticket.id}">
                             <div class="form-group">
-                                <label>Assign To</label>
-                                <select name="technicianId" class="form-control" required>
+                                <label>Assign Technician</label>
+                                <select name="technicianId" class="form-control">
                                     <option value="">-- Select Technician --</option>
                                     <option th:each="tech : ${technicians}" th:value="${tech.id}"
+                                        th:selected="${ticket.assignedTechnician != null and ticket.assignedTechnician.id == tech.id}"
                                         th:text="${tech.fullName}"></option>
                                 </select>
                             </div>
-                            <button type="submit" class="btn">Confirm Assignment</button>
+                            <div class="form-group">
+                                <label>Status</label>
+                                <select name="status" class="form-control">
+                                    <option value="PENDING" th:selected="${ticket.status != null and ticket.status.name() == 'PENDING'}">PENDING</option>
+                                    <option value="IN_PROGRESS" th:selected="${ticket.status != null and ticket.status.name() == 'IN_PROGRESS'}">IN_PROGRESS</option>
+                                    <option value="COMPLETED" th:selected="${ticket.status != null and ticket.status.name() == 'COMPLETED'}">COMPLETED</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Proof of Fix Photo (Optional / Required for Completion)</label>
+                                <input type="file" name="proofImage" class="form-control" accept="image/*">
+                            </div>
+                            <div class="form-group">
+                                <label>Status Note</label>
+                                <input type="text" name="note" class="form-control" placeholder="Update notes...">
+                            </div>
+                            <button type="submit" class="btn">Save Changes</button>
                         </form>
                     </div>
                 </div>

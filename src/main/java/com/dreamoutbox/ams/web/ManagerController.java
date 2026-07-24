@@ -23,6 +23,10 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
 
+import com.dreamoutbox.ams.maintenance.TicketStatus;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 @Controller
 @RequestMapping("/manager")
 @RequiredArgsConstructor
@@ -92,10 +96,24 @@ public class ManagerController {
     @PostMapping("/tickets/assign")
     public String assignTechnician(
             @RequestParam UUID ticketId,
-            @RequestParam UUID technicianId,
-            @AuthenticationPrincipal UserDetails userDetails) {
-        User currentUser = userService.getByUsername(userDetails.getUsername());
-        maintenanceService.assignTechnician(ticketId, technicianId, currentUser);
+            @RequestParam(required = false) UUID technicianId,
+            @RequestParam(required = false) TicketStatus status,
+            @RequestParam(required = false) String note,
+            @RequestParam(required = false) MultipartFile proofImage,
+            @AuthenticationPrincipal UserDetails userDetails,
+            RedirectAttributes redirectAttributes) {
+        try {
+            User currentUser = userService.getByUsername(userDetails.getUsername());
+            if (technicianId != null) {
+                maintenanceService.assignTechnician(ticketId, technicianId, currentUser);
+            }
+            if (status != null) {
+                maintenanceService.updateTicketStatus(ticketId, status, note != null ? note : "", proofImage, currentUser);
+            }
+            redirectAttributes.addFlashAttribute("successMessage", "Ticket updated successfully.");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        }
         return "redirect:/manager/dashboard";
     }
 }

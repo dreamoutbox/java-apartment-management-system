@@ -67,10 +67,24 @@ public class TicketController {
     @PostMapping("/assign")
     public String assignTechnician(
             @RequestParam UUID ticketId,
-            @RequestParam UUID technicianId,
-            @AuthenticationPrincipal UserDetails userDetails) {
-        User currentUser = userService.getByUsername(userDetails.getUsername());
-        maintenanceService.assignTechnician(ticketId, technicianId, currentUser);
+            @RequestParam(required = false) UUID technicianId,
+            @RequestParam(required = false) com.dreamoutbox.ams.maintenance.TicketStatus status,
+            @RequestParam(required = false) String note,
+            @RequestParam(required = false) MultipartFile proofImage,
+            @AuthenticationPrincipal UserDetails userDetails,
+            org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
+        try {
+            User currentUser = userService.getByUsername(userDetails.getUsername());
+            if (technicianId != null) {
+                maintenanceService.assignTechnician(ticketId, technicianId, currentUser);
+            }
+            if (status != null) {
+                maintenanceService.updateTicketStatus(ticketId, status, note != null ? note : "", proofImage, currentUser);
+            }
+            redirectAttributes.addFlashAttribute("successMessage", "Ticket updated successfully.");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        }
         return "redirect:/tickets/" + ticketId;
     }
 }
