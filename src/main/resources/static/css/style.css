@@ -234,7 +234,7 @@ tr:hover td {
 
 .status-badge {
     padding: 4px 10px;
-    border-radius: 20px;
+    /* border-radius: 20px; */
     font-size: 12px;
     font-weight: 600;
     display: inline-block;
