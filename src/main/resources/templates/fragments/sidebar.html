@@ -69,6 +69,14 @@
                 </svg>
                 Receipts &amp; Payments
             </a>
+            <a th:href="@{/meter-readings}" class="nav-link" th:classappend="${activeTab == 'meter-readings' ? 'active' : ''}">
+                <svg style="width:18px;height:18px;" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2">
+                    <path d="M12 2v20M2 12h20M12 2a10 10 0 0110 10M12 2A10 10 0 002 12" />
+                    <circle cx="12" cy="12" r="3" />
+                </svg>
+                Meter Readings
+            </a>
             <a th:href="@{/Announcements}" class="nav-link"
                 th:classappend="${activeTab == 'announcements' ? 'active' : ''}">
                 <svg style="width:18px;height:18px;" viewBox="0 0 24 24" fill="none" stroke="currentColor"

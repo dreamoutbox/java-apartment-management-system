@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${reading != null ? 'Edit Meter Reading' : 'Record Meter Reading'}">Meter Reading Form</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body>
+
+    <div th:replace="~{fragments/sidebar :: sidebar('ADMIN', 'meter-readings')}"></div>
+
+    <div class="main-content">
+        <div class="header" style="display:flex;justify-content:space-between;align-items:center;">
+            <div>
+                <h1 th:text="${reading != null ? 'Edit Meter Reading' : 'Record Meter Reading'}">Meter Reading Form</h1>
+                <p th:text="${reading != null ? 'Update electricity and water meter readings for room' : 'Input monthly utility meter readings for room unit'}">Record meter reading</p>
+            </div>
+            <a th:href="@{/meter-readings}" class="btn" style="background:#475569;">← Back to Meter Readings</a>
+        </div>
+
+        <div th:replace="~{fragments/forms :: meterReadingForm(${reading}, ${rooms})}"></div>
+    </div>
+
+    <script th:src="@{/js/tables.js}"></script>
+</body>
+
+</html>

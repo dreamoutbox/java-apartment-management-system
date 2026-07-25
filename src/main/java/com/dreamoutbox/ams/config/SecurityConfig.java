@@ -40,6 +40,8 @@ public class SecurityConfig {
                         .hasAnyRole("LANDLORD", "MANAGER", "ACCOUNTANT", "TENANT")
                         .requestMatchers("/payments", "/payments/**")
                         .hasAnyRole("LANDLORD", "MANAGER", "ACCOUNTANT", "TENANT")
+                        .requestMatchers("/meter-readings", "/meter-readings/**")
+                        .hasAnyRole("LANDLORD", "MANAGER", "ACCOUNTANT", "TECHNICIAN")
                         .requestMatchers("/Announcements", "/Announcements/**")
                         .hasAnyRole("LANDLORD", "MANAGER", "ACCOUNTANT", "TECHNICIAN", "TENANT")
                         .requestMatchers("/tickets", "/tickets/**")

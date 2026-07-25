@@ -24,6 +24,9 @@
     <div th:fragment="invoiceForm(invoice, contracts, meterReading, utilityRate)"
         th:replace="~{fragments/form-invoice :: invoiceForm(${invoice}, ${contracts}, ${meterReading}, ${utilityRate})}"></div>
 
+    <div th:fragment="meterReadingForm(reading, rooms)"
+        th:replace="~{fragments/form-meter-reading :: meterReadingForm(${reading}, ${rooms})}"></div>
+
 </body>
 
 </html>

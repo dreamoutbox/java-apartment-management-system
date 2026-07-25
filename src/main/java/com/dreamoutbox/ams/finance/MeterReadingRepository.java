@@ -9,4 +9,5 @@ import java.util.UUID;
 public interface MeterReadingRepository extends JpaRepository<MeterReading, UUID> {
     Optional<MeterReading> findByRoomAndPeriod(Room room, String period);
     List<MeterReading> findByRoom(Room room);
+    List<MeterReading> findAllByOrderByPeriodDescRoomRoomNumberAsc();
 }

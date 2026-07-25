@@ -160,7 +160,18 @@ public class InvoiceService {
         Room room = contract.getRoom();
 
         // 1. Record/Update meter reading for room and period
-        MeterReading currentReading = recordMeterReading(room, period, electricityReading, waterReading);
+        MeterReading currentReading;
+        if (electricityReading != null && waterReading != null) {
+            currentReading = recordMeterReading(room, period, electricityReading, waterReading);
+        } else {
+            currentReading = meterReadingRepository.findByRoomAndPeriod(room, period)
+                    .orElse(MeterReading.builder()
+                            .room(room)
+                            .period(period)
+                            .electricityReading(BigDecimal.ZERO)
+                            .waterReading(BigDecimal.ZERO)
+                            .build());
+        }
 
         // 2. Record/Update utility rates if rates are provided
         if (electricityRate != null && waterRate != null) {
@@ -259,6 +270,22 @@ public class InvoiceService {
         }
 
         return invoiceRepository.save(invoice);
+    }
+
+    @Transactional(readOnly = true)
+    public List<MeterReading> getAllMeterReadings() {
+        return meterReadingRepository.findAllByOrderByPeriodDescRoomRoomNumberAsc();
+    }
+
+    @Transactional(readOnly = true)
+    public MeterReading getMeterReadingById(UUID id) {
+        return meterReadingRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Meter reading not found: " + id));
+    }
+
+    @Transactional
+    public void deleteMeterReading(UUID id) {
+        meterReadingRepository.deleteById(id);
     }
 
     @Transactional(readOnly = true)

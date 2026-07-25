@@ -38,26 +38,6 @@
             </div>
         </div>
 
-        <!-- Meter Reading Section (Required by User) -->
-        <div style="background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.3);padding:16px;border-radius:8px;margin-bottom:20px;">
-            <div style="font-weight:600;font-size:15px;color:#93c5fd;margin-bottom:12px;">📊 Utility Meter Reading Inputs</div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Electricity Meter Reading (kWh)</label>
-                    <input type="number" step="0.01" name="electricityReading"
-                        th:value="${meterReading != null ? meterReading.electricityReading : ''}"
-                        class="form-control" placeholder="e.g. 1250.50" required>
-                </div>
-                <div class="form-group">
-                    <label>Water Meter Reading (m³)</label>
-                    <input type="number" step="0.01" name="waterReading"
-                        th:value="${meterReading != null ? meterReading.waterReading : ''}"
-                        class="form-control" placeholder="e.g. 340.00" required>
-                </div>
-            </div>
-        </div>
-
         <!-- Utility Rates Override Section -->
         <div class="form-row">
             <div class="form-group">
