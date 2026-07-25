@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+
+    <div th:fragment="announcementTable(announcements)">
+        <div th:if="${announcements == null or #lists.isEmpty(announcements)}">
+            <p style="color:#94a3b8;">No announcements published yet.</p>
+        </div>
+
+        <div th:each="a : ${announcements}" th:if="${a != null}"
+            style="margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border-color);"
+            th:classappend="${selectable != null and selectable ? 'selectable-row' + (selectedId != null and selectedId == a.id ? ' selected-row' : '') : ''}">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;">
+                <div style="display:flex;gap:12px;align-items:flex-start;">
+                    <div th:if="${selectable != null and selectable}" style="padding-top:4px;">
+                        <input type="radio" th:name="${inputName != null ? inputName : 'announcementId'}"
+                            th:value="${a.id}" th:checked="${selectedId != null and selectedId == a.id}" required
+                            style="cursor:pointer;">
+                    </div>
+                    <div>
+                        <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+                            <span th:if="${a.pinned}" style="font-size:11px;color:#fcd34d;">📌 Pinned</span>
+                            <span class="status-badge status-OCCUPIED" th:text="${a.type}"
+                                style="font-size:11px;">NEWS</span>
+                        </div>
+                        <div style="font-weight:600;font-size:15px;margin-bottom:4px;" th:text="${a.title}">Title</div>
+                        <div style="color:#94a3b8;font-size:13px;" th:text="${a.content}">Content</div>
+                    </div>
+                </div>
+                <div th:if="${selectable == null or !selectable}" style="display:flex;gap:6px;flex-shrink:0;">
+                    <a th:href="@{'/Announcements/' + ${a.id} + '/edit'}" class="btn"
+                        style="padding:4px 10px;font-size:12px;">Update</a>
+                    <form th:action="@{'/Announcements/' + ${a.id} + '/delete'}" method="post"
+                        onsubmit="return confirm('Delete this announcement?');">
+                        <button type="submit" class="btn"
+                            style="padding:4px 10px;font-size:12px;background:#ef4444;">Delete</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

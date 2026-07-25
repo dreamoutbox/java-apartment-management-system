@@ -446,3 +446,23 @@ tr:hover td {
     opacity: 0.35;
     cursor: not-allowed;
 }
+
+/* ── Selectable Table Rows ────────────────────────────────────────── */
+tr.selected-row td {
+    background: rgba(99, 102, 241, 0.25) !important;
+    border-color: rgba(99, 102, 241, 0.4);
+}
+
+tr.selectable-row {
+    cursor: pointer;
+}
+
+tr.selectable-row:hover td {
+    background: rgba(99, 102, 241, 0.15) !important;
+}
+
+
+.ams-page-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}

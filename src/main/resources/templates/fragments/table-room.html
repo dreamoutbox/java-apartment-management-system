@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<table th:fragment="roomTable(rooms)" class="data-table">
+    <thead>
+        <tr>
+            <th th:if="${selectable != null and selectable}" style="width:50px;text-align:center;">Select</th>
+            <th>Room #</th>
+            <th>Floor</th>
+            <th>Base Rent</th>
+            <th>Status</th>
+            <th th:if="${selectable == null or !selectable}">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr th:each="room : ${rooms}"
+            th:classappend="${selectable != null and selectable ? 'selectable-row' + (selectedId != null and selectedId == room.id ? ' selected-row' : '') : ''}">
+            <td th:if="${selectable != null and selectable}" style="text-align:center;">
+                <input type="radio" th:name="${inputName != null ? inputName : 'roomId'}" th:value="${room.id}"
+                    th:checked="${selectedId != null and selectedId == room.id}" required style="cursor:pointer;">
+            </td>
+            <td th:text="${room != null ? room.roomNumber : ''}">101</td>
+            <td th:text="${room != null ? room.floor : ''}">1</td>
+            <td th:text="${'$' + (room != null ? room.baseRent : 0)}">$1200</td>
+            <td>
+                <span th:class="${'status-badge status-' + (room != null ? room.status : 'VACANT')}"
+                    th:text="${room != null ? room.status : ''}">VACANT</span>
+            </td>
+            <td th:if="${selectable == null or !selectable}">
+                <div th:if="${room != null}" style="display:flex;gap:6px;">
+                    <a th:href="@{'/rooms/' + ${room.id} + '/edit'}" class="btn"
+                        style="padding:4px 10px;font-size:12px;">Update</a>
+                    <form th:action="@{'/rooms/' + ${room.id} + '/delete'}" method="post"
+                        onsubmit="return confirm('Delete this room?');">
+                        <button type="submit" class="btn"
+                            style="padding:4px 10px;font-size:12px;background:#ef4444;">Delete</button>
+                    </form>
+                </div>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

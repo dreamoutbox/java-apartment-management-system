@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<table th:fragment="contractTable(contracts)" class="data-table">
+    <thead>
+        <tr>
+            <th th:if="${selectable != null and selectable}" style="width:50px;text-align:center;">Select</th>
+            <th>Room</th>
+            <th>Tenant</th>
+            <th>Monthly Rent</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Status</th>
+            <th th:if="${selectable == null or !selectable}">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr th:each="c : ${contracts}"
+            th:classappend="${selectable != null and selectable ? 'selectable-row' + (selectedId != null and selectedId == c.id ? ' selected-row' : '') : ''}">
+            <td th:if="${selectable != null and selectable}" style="text-align:center;">
+                <input type="radio" th:name="${inputName != null ? inputName : 'contractId'}" th:value="${c.id}"
+                    th:checked="${selectedId != null and selectedId == c.id}" required style="cursor:pointer;">
+            </td>
+            <td th:text="${c != null and c.room != null ? c.room.roomNumber : 'N/A'}">101</td>
+            <td th:text="${c != null and c.tenant != null ? c.tenant.fullName : 'N/A'}">Tenant</td>
+            <td th:text="${'$' + (c != null ? c.monthlyRent : 0)}">$1200</td>
+            <td th:text="${c != null ? c.startDate : ''}">2024-01-01</td>
+            <td th:text="${c != null ? c.endDate : ''}">2024-12-31</td>
+            <td><span th:class="${'status-badge status-' + (c != null ? c.status : 'ACTIVE')}"
+                    th:text="${c != null ? c.status : ''}">ACTIVE</span></td>
+            <td th:if="${selectable == null or !selectable}">
+                <div th:if="${c != null}" style="display:flex;gap:6px;">
+                    <a th:href="@{'/contracts/' + ${c.id} + '/edit'}" class="btn"
+                        style="padding:4px 10px;font-size:12px;">Update</a>
+                    <form th:action="@{'/contracts/' + ${c.id} + '/delete'}" method="post"
+                        onsubmit="return confirm('Delete this lease contract?');">
+                        <button type="submit" class="btn"
+                            style="padding:4px 10px;font-size:12px;background:#ef4444;">Delete</button>
+                    </form>
+                </div>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

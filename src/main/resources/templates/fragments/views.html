@@ -4,12 +4,26 @@
 <body>
 
     <div th:fragment="tenantView(tenants)" th:replace="~{fragments/view-tenant :: tenantView(${tenants})}"></div>
+    <div th:fragment="selectableTenantView(tenants, inputName, selectedId)"
+        th:replace="~{fragments/table-tenant :: tenantTable(tenants=${tenants}, selectable=true, inputName=${inputName}, selectedId=${selectedId})}">
+    </div>
+
     <div th:fragment="userView(users)" th:replace="~{fragments/view-user :: userView(${users})}"></div>
+    <div th:fragment="selectableUserView(users, inputName, selectedId)"
+        th:replace="~{fragments/table-user :: userTable(users=${users}, selectable=true, inputName=${inputName}, selectedId=${selectedId})}">
+    </div>
+
     <div th:fragment="roomView(rooms)" th:replace="~{fragments/view-room :: roomView(${rooms})}"></div>
+    <div th:fragment="selectableRoomView(rooms, inputName, selectedId)"
+        th:replace="~{fragments/table-room :: roomTable(rooms=${rooms}, selectable=true, inputName=${inputName}, selectedId=${selectedId})}">
+    </div>
+
     <div th:fragment="contractView(contracts, expiringContracts)"
         th:replace="~{fragments/view-contract :: contractView(${contracts}, ${expiringContracts})}"></div>
+
     <div th:fragment="announcementView(announcements)"
         th:replace="~{fragments/view-announcement :: announcementView(${announcements})}"></div>
+
     <div th:fragment="ticketView(tickets, technicians, assignActionUrl)"
         th:replace="~{fragments/view-ticket :: ticketView(${tickets}, ${technicians}, ${assignActionUrl})}"></div>
 

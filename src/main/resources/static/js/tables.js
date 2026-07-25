@@ -5,6 +5,26 @@
 (function () {
     'use strict';
 
+    // Event delegation for selectable table rows (radio selection)
+    document.addEventListener('click', function (e) {
+        var tr = e.target.closest('tr');
+        if (!tr) return;
+
+        var radio = tr.querySelector('input[type="radio"]');
+        if (!radio) return;
+
+        var table = tr.closest('table');
+        if (table) {
+            table.querySelectorAll('tr').forEach(function (r) {
+                r.classList.remove('selected-row');
+            });
+        }
+
+        radio.checked = true;
+        tr.classList.add('selected-row');
+        radio.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+
     function initTables() {
         document.querySelectorAll('table').forEach(function (table) {
             var tbody = table.querySelector('tbody');

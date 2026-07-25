@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+
+    <table th:fragment="ticketTable(tickets)" class="data-table">
+        <thead>
+            <tr>
+                <th th:if="${selectable != null and selectable}" style="width:50px;text-align:center;">Select</th>
+                <th>Room</th>
+                <th>Reported By</th>
+                <th>Description</th>
+                <th>Assigned Technician</th>
+                <th>Status</th>
+                <th th:if="${assignActionUrl != null and (selectable == null or !selectable)}">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="ticket : ${tickets}"
+                th:classappend="${selectable != null and selectable ? 'selectable-row' + (selectedId != null and selectedId == ticket.id ? ' selected-row' : '') : ''}"
+                th:data-href="${selectable == null or !selectable ? '/tickets/' + ticket.id : null}"
+                onclick="if (!this.querySelector('input[type=radio]') && !event.target.closest('button, a, form, select, input')) { var href = this.getAttribute('data-href'); if(href) window.location.href = href; }"
+                style="cursor:pointer;">
+                <td th:if="${selectable != null and selectable}" style="text-align:center;">
+                    <input type="radio" th:name="${inputName != null ? inputName : 'ticketId'}" th:value="${ticket.id}"
+                        th:checked="${selectedId != null and selectedId == ticket.id}" required style="cursor:pointer;">
+                </td>
+                <td th:text="${ticket != null and ticket.room != null ? ticket.room.roomNumber : 'N/A'}">101</td>
+                <td th:text="${ticket != null and ticket.reportedBy != null ? ticket.reportedBy.fullName : 'N/A'}">
+                    Tenant</td>
+                <td th:text="${ticket != null ? ticket.description : ''}">Issue</td>
+                <td
+                    th:text="${ticket != null and ticket.assignedTechnician != null ? ticket.assignedTechnician.fullName : 'Unassigned'}">
+                    Unassigned</td>
+                <td><span th:class="${'status-badge status-' + (ticket != null ? ticket.status : 'PENDING')}"
+                        th:text="${ticket != null ? ticket.status : ''}">PENDING</span></td>
+                <td th:if="${assignActionUrl != null and ticket != null and (selectable == null or !selectable)}">
+                    <a th:href="@{'/tickets/' + ${ticket.id} + '/edit'}" class="btn"
+                        style="padding:4px 10px;font-size:12px;">Update</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+</body>
+
+</html>

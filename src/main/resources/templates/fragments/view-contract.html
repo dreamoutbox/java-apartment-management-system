@@ -4,46 +4,16 @@
 <body>
 
     <div th:fragment="contractView(contracts, expiringContracts)" class="card">
-        <div class="card-title">Lease Contracts</div>
+        <div class="card-title"
+            th:text="${selectable != null and selectable ? 'Select Lease Contract' : 'Lease Contracts'}">Lease Contracts
+        </div>
         <div th:if="${expiringContracts != null and not #lists.isEmpty(expiringContracts)}"
             style="margin-bottom:16px;background:rgba(245,158,11,0.15);color:#fcd34d;border:1px solid rgba(245,158,11,0.3);padding:10px;border-radius:8px;">
             ⚠ <strong th:text="${expiringContracts.size()}">0</strong> lease(s) expiring within 30 days.
         </div>
-        <table class="data-table">
-            <thead>
-                <tr>
-                    <th>Room</th>
-                    <th>Tenant</th>
-                    <th>Monthly Rent</th>
-                    <th>Start Date</th>
-                    <th>End Date</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="c : ${contracts}">
-                    <td th:text="${c != null and c.room != null ? c.room.roomNumber : 'N/A'}">101</td>
-                    <td th:text="${c != null and c.tenant != null ? c.tenant.fullName : 'N/A'}">Tenant</td>
-                    <td th:text="${'$' + (c != null ? c.monthlyRent : 0)}">$1200</td>
-                    <td th:text="${c != null ? c.startDate : ''}">2024-01-01</td>
-                    <td th:text="${c != null ? c.endDate : ''}">2024-12-31</td>
-                    <td><span th:class="${'status-badge status-' + (c != null ? c.status : 'ACTIVE')}"
-                            th:text="${c != null ? c.status : ''}">ACTIVE</span></td>
-                    <td>
-                        <div th:if="${c != null}" style="display:flex;gap:6px;">
-                            <a th:href="@{'/contracts/' + ${c.id} + '/edit'}" class="btn"
-                                style="padding:4px 10px;font-size:12px;">Update</a>
-                            <form th:action="@{'/contracts/' + ${c.id} + '/delete'}" method="post"
-                                onsubmit="return confirm('Delete this lease contract?');">
-                                <button type="submit" class="btn"
-                                    style="padding:4px 10px;font-size:12px;background:#ef4444;">Delete</button>
-                            </form>
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+        <div
+            th:replace="~{fragments/table-contract :: contractTable(contracts=${contracts}, expiringContracts=${expiringContracts}, selectable=${selectable}, inputName=${inputName}, selectedId=${selectedId})}">
+        </div>
     </div>
 
 </body>

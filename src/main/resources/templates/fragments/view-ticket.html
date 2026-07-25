@@ -4,38 +4,12 @@
 <body>
 
     <div th:fragment="ticketView(tickets, technicians, assignActionUrl)" class="card">
-        <div class="card-title">Maintenance Tickets</div>
-        <table class="data-table">
-            <thead>
-                <tr>
-                    <th>Room</th>
-                    <th>Reported By</th>
-                    <th>Description</th>
-                    <th>Assigned Technician</th>
-                    <th>Status</th>
-                    <th th:if="${assignActionUrl != null}">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="ticket : ${tickets}" th:data-href="@{'/tickets/' + ${ticket.id}}"
-                    onclick="if (!event.target.closest('button, a, form, select, input')) { window.location.href = this.getAttribute('data-href'); }"
-                    style="cursor:pointer;">
-                    <td th:text="${ticket != null and ticket.room != null ? ticket.room.roomNumber : 'N/A'}">101</td>
-                    <td th:text="${ticket != null and ticket.reportedBy != null ? ticket.reportedBy.fullName : 'N/A'}">
-                        Tenant</td>
-                    <td th:text="${ticket != null ? ticket.description : ''}">Issue</td>
-                    <td
-                        th:text="${ticket != null and ticket.assignedTechnician != null ? ticket.assignedTechnician.fullName : 'Unassigned'}">
-                        Unassigned</td>
-                    <td><span th:class="${'status-badge status-' + (ticket != null ? ticket.status : 'PENDING')}"
-                            th:text="${ticket != null ? ticket.status : ''}">PENDING</span></td>
-                    <td th:if="${assignActionUrl != null and ticket != null}">
-                        <a th:href="@{'/tickets/' + ${ticket.id} + '/edit'}" class="btn"
-                            style="padding:4px 10px;font-size:12px;">Update</a>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+        <div class="card-title"
+            th:text="${selectable != null and selectable ? 'Select Ticket' : 'Maintenance Tickets'}">Maintenance Tickets
+        </div>
+        <div
+            th:replace="~{fragments/table-ticket :: ticketTable(tickets=${tickets}, technicians=${technicians}, assignActionUrl=${assignActionUrl}, selectable=${selectable}, inputName=${inputName}, selectedId=${selectedId})}">
+        </div>
     </div>
 
 </body>

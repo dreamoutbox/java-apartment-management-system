@@ -4,43 +4,8 @@
 <body>
 
     <div th:fragment="userView(users)" class="card">
-        <div class="card-title">Registered Users</div>
-        <table class="data-table">
-            <thead>
-                <tr>
-                    <th>Username</th>
-                    <th>Full Name</th>
-                    <th>Role</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="u : ${users}">
-                    <td th:text="${u != null ? u.username : ''}">username</td>
-                    <td th:text="${u != null ? u.fullName : ''}">Full Name</td>
-                    <td th:text="${u != null and u.role != null ? u.role : ''}">ROLE</td>
-                    <td>
-                        <span
-                            th:class="${u != null and u.enabled ? 'status-badge status-OCCUPIED' : 'status-badge status-VACANT'}"
-                            th:text="${u != null and u.enabled ? 'ACTIVE' : 'DISABLED'}">ACTIVE</span>
-                    </td>
-                    <td>
-                        <div th:if="${u != null}" style="display:flex;gap:6px;">
-                            <a th:href="@{'/users/' + ${u.id} + '/edit'}" class="btn"
-                                style="padding:4px 10px;font-size:12px;">
-                                Update
-                            </a>
-                            <form th:action="@{'/users/' + ${u.id} + '/delete'}" method="post"
-                                onsubmit="return confirm('Delete this user account?');">
-                                <button type="submit" class="btn"
-                                    style="padding:4px 10px;font-size:12px;background:#ef4444;">Delete</button>
-                            </form>
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+        <div class="card-title" th:text="${selectable != null and selectable ? 'Select User' : 'Registered Users'}">Registered Users</div>
+        <div th:replace="~{fragments/table-user :: userTable(users=${users}, selectable=${selectable}, inputName=${inputName}, selectedId=${selectedId})}"></div>
     </div>
 
 </body>
