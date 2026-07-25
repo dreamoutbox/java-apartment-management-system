@@ -14,11 +14,13 @@
     <div th:replace="~{fragments/sidebar :: sidebar('ADMIN', 'tickets')}"></div>
 
     <div class="main-content">
-        <div class="header">
-            <h1>Maintenance Tickets Triage</h1>
-            <p>Review resident issues and assign work orders to qualified technicians</p>
+        <div class="header" style="display:flex;justify-content:space-between;align-items:center;">
+            <div>
+                <h1>Maintenance Tickets Triage</h1>
+                <p>Review resident issues and assign work orders to qualified technicians</p>
+            </div>
+            <a th:href="@{/tickets/new}" class="btn">+ Create Ticket</a>
         </div>
-        <div th:replace="~{fragments/form-create-ticket :: createTicketForm(${rooms}, ${tenants}, '/tickets/create')}"></div>
 
         <div th:replace="~{fragments/view-ticket :: ticketView(${tickets}, ${technicians}, '/tickets/assign')}"></div>
     </div>

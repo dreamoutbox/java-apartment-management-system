@@ -32,6 +32,19 @@ public class AnnouncementController {
         return "management/announcements";
     }
 
+    @GetMapping("/new")
+    public String newForm(Model model) {
+        model.addAttribute("activeTab", "announcements");
+        return "management/form-announcement";
+    }
+
+    @GetMapping("/{id}/edit")
+    public String editForm(@PathVariable UUID id, Model model) {
+        model.addAttribute("announcement", announcementService.getById(id));
+        model.addAttribute("activeTab", "announcements");
+        return "management/form-announcement";
+    }
+
     @PostMapping
     public String createAnnouncement(
             @RequestParam String title,

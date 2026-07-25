@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div th:fragment="tenantForm(tenant)" class="card" style="max-width:600px;">
+    <div class="card-title" th:text="${tenant != null ? 'Edit Tenant Profile' : 'Create Tenant & Account'}">Tenant Form</div>
+    <form th:action="${tenant != null ? '/tenants/' + tenant.id + '/update' : '/tenants'}" method="post" enctype="multipart/form-data">
+        <div th:if="${tenant == null}" class="form-group">
+            <label>Username</label>
+            <input type="text" name="username" class="form-control" placeholder="tenant1" required>
+        </div>
+        <div th:if="${tenant == null}" class="form-group">
+            <label>Password</label>
+            <input type="password" name="password" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label>Full Name</label>
+            <input type="text" name="fullName" th:value="${tenant != null ? tenant.fullName : ''}" class="form-control" placeholder="Alice Smith" required>
+        </div>
+        <div class="form-group">
+            <label>Phone</label>
+            <input type="text" name="phone" th:value="${tenant != null ? tenant.phone : ''}" class="form-control" placeholder="555-0199">
+        </div>
+        <div class="form-group">
+            <label>Email</label>
+            <input type="email" name="email" th:value="${tenant != null ? tenant.email : ''}" class="form-control" placeholder="alice@example.com">
+        </div>
+        <div class="form-group">
+            <label>ID Card Number</label>
+            <input type="text" name="idCardNumber" th:value="${tenant != null ? tenant.idCardNumber : ''}" class="form-control" placeholder="ID9876543">
+        </div>
+        <div class="form-group">
+            <label th:text="${tenant != null ? 'Replace Proof ID Card Photo' : 'Proof Tenant ID Card Photo'}">ID Card Photo</label>
+            <input type="file" name="idCardImage" class="form-control" accept="image/*">
+        </div>
+        <div style="display:flex;gap:10px;margin-top:20px;">
+            <button type="submit" class="btn" th:text="${tenant != null ? 'Save Changes' : 'Create Tenant'}">Submit</button>
+            <a th:href="@{/tenants}" class="btn" style="background:#475569;">Cancel</a>
+        </div>
+    </form>
+</div>
+
+</body>
+</html>

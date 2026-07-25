@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div th:fragment="ticketForm(ticket, rooms, tenants, technicians)" class="card" style="max-width:600px;">
+    <div class="card-title" th:text="${ticket != null ? 'Update Maintenance Ticket #' + ticket.id : 'Create Maintenance Ticket'}">Ticket Form</div>
+
+    <!-- CREATE TICKET FORM -->
+    <form th:if="${ticket == null}" th:action="@{/tickets/create}" method="post" enctype="multipart/form-data">
+        <div class="form-group">
+            <label>Room</label>
+            <select name="roomId" class="form-control" required>
+                <option value="">-- Select Room --</option>
+                <option th:each="r : ${rooms}" th:value="${r.id}" th:text="${'Room ' + r.roomNumber + ' (Floor ' + r.floor + ')'}"></option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Reported By (Tenant)</label>
+            <select name="tenantId" class="form-control" required>
+                <option value="">-- Select Tenant --</option>
+                <option th:each="t : ${tenants}" th:value="${t.id}" th:text="${t.fullName + (t.phone != null ? ' - ' + t.phone : '')}"></option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Issue Description</label>
+            <textarea name="description" class="form-control" rows="3" placeholder="Describe the maintenance issue..." required></textarea>
+        </div>
+        <div class="form-group">
+            <label>Photo (Optional)</label>
+            <input type="file" name="image" class="form-control" accept="image/*">
+        </div>
+        <div style="display:flex;gap:10px;margin-top:20px;">
+            <button type="submit" class="btn">Create Ticket</button>
+            <a th:href="@{/tickets}" class="btn" style="background:#475569;">Cancel</a>
+        </div>
+    </form>
+
+    <!-- UPDATE / ASSIGN TICKET FORM -->
+    <form th:if="${ticket != null}" th:action="@{/tickets/assign}" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="ticketId" th:value="${ticket.id}">
+        <div class="form-group">
+            <label>Room &amp; Tenant Details</label>
+            <input type="text" class="form-control" th:value="${'Room ' + (ticket.room != null ? ticket.room.roomNumber : 'N/A') + ' — Reported by ' + (ticket.reportedBy != null ? ticket.reportedBy.fullName : 'N/A')}" disabled>
+        </div>
+        <div class="form-group">
+            <label>Issue Description</label>
+            <p style="color:#cbd5e1;background:rgba(255,255,255,0.05);padding:10px;border-radius:6px;font-size:14px;" th:text="${ticket.description}">Description</p>
+        </div>
+        <div class="form-group">
+            <label>Assign Technician</label>
+            <select name="technicianId" class="form-control">
+                <option value="">-- Select Technician --</option>
+                <option th:each="tech : ${technicians}" th:value="${tech.id}"
+                    th:selected="${ticket.assignedTechnician != null and ticket.assignedTechnician.id == tech.id}"
+                    th:text="${tech.fullName}"></option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Status</label>
+            <select name="status" class="form-control">
+                <option value="PENDING" th:selected="${ticket.status != null and ticket.status.name() == 'PENDING'}">PENDING</option>
+                <option value="IN_PROGRESS" th:selected="${ticket.status != null and ticket.status.name() == 'IN_PROGRESS'}">IN_PROGRESS</option>
+                <option value="COMPLETED" th:selected="${ticket.status != null and ticket.status.name() == 'COMPLETED'}">COMPLETED</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Proof of Fix Photo (Required for Completion)</label>
+            <input type="file" name="proofImage" class="form-control" accept="image/*">
+        </div>
+        <div class="form-group">
+            <label>Status Note</label>
+            <input type="text" name="note" class="form-control" placeholder="Update notes...">
+        </div>
+        <div style="display:flex;gap:10px;margin-top:20px;">
+            <button type="submit" class="btn">Save Changes</button>
+            <a th:href="@{/tickets}" class="btn" style="background:#475569;">Cancel</a>
+        </div>
+    </form>
+</div>
+
+</body>
+</html>

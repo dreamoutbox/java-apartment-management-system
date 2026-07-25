@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div th:fragment="roomForm(room)" class="card" style="max-width:600px;">
+    <div class="card-title" th:text="${room != null ? 'Edit Room ' + room.roomNumber : 'Add New Room'}">Room Form</div>
+    <form th:action="${room != null ? '/rooms/' + room.id + '/update' : '/rooms'}" method="post">
+        <div class="form-group">
+            <label>Room Number</label>
+            <input type="text" name="roomNumber" th:value="${room != null ? room.roomNumber : ''}" class="form-control" placeholder="101" required>
+        </div>
+        <div class="form-group">
+            <label>Floor</label>
+            <input type="text" name="floor" th:value="${room != null ? room.floor : ''}" class="form-control" placeholder="1" required>
+        </div>
+        <div class="form-group">
+            <label>Base Rent ($)</label>
+            <input type="number" step="0.01" name="baseRent" th:value="${room != null ? room.baseRent : ''}" class="form-control" placeholder="1200.00" required>
+        </div>
+        <div th:if="${room != null}" class="form-group">
+            <label>Status</label>
+            <select name="status" class="form-control">
+                <option value="VACANT" th:selected="${room.status != null and room.status.name() == 'VACANT'}">VACANT</option>
+                <option value="OCCUPIED" th:selected="${room.status != null and room.status.name() == 'OCCUPIED'}">OCCUPIED</option>
+                <option value="MAINTENANCE" th:selected="${room.status != null and room.status.name() == 'MAINTENANCE'}">MAINTENANCE</option>
+            </select>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:20px;">
+            <button type="submit" class="btn" th:text="${room != null ? 'Save Changes' : 'Create Room'}">Submit</button>
+            <a th:href="@{/rooms}" class="btn" style="background:#475569;">Cancel</a>
+        </div>
+    </form>
+</div>
+
+</body>
+</html>

@@ -12,24 +12,6 @@
 (function () {
     'use strict';
 
-    // --- Modal delegation ---
-    document.addEventListener('click', function (e) {
-        var trigger = e.target.closest('[data-modal-target]');
-        if (!trigger) return;
-
-        var modal = document.getElementById(trigger.dataset.modalTarget);
-        if (!modal) return;
-
-        modal.style.display = trigger.dataset.modalAction === 'close' ? 'none' : 'flex';
-    });
-
-    // Optional: click on overlay background (not the modal box) closes it
-    document.addEventListener('click', function (e) {
-        if (e.target.classList && e.target.classList.contains('ams-modal-overlay')) {
-            e.target.style.display = 'none';
-        }
-    });
-
     // --- Table search + sort ---
     function initTables() {
         document.querySelectorAll('table').forEach(function (table) {

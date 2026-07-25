@@ -30,6 +30,19 @@ public class UserController {
         return "management/users";
     }
 
+    @GetMapping("/new")
+    public String newForm(Model model) {
+        model.addAttribute("activeTab", "users");
+        return "management/form-user";
+    }
+
+    @GetMapping("/{id}/edit")
+    public String editForm(@PathVariable UUID id, Model model) {
+        model.addAttribute("user", userService.getById(id));
+        model.addAttribute("activeTab", "users");
+        return "management/form-user";
+    }
+
     @PostMapping
     public String createUser(
             @RequestParam String username,

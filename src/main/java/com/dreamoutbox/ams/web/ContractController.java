@@ -37,6 +37,23 @@ public class ContractController {
         return "management/contracts";
     }
 
+    @GetMapping("/new")
+    public String newForm(Model model) {
+        model.addAttribute("rooms", roomService.getAllRooms());
+        model.addAttribute("tenants", tenantService.getAllTenants());
+        model.addAttribute("activeTab", "contracts");
+        return "management/form-contract";
+    }
+
+    @GetMapping("/{id}/edit")
+    public String editForm(@PathVariable UUID id, Model model) {
+        model.addAttribute("contract", contractService.getById(id));
+        model.addAttribute("rooms", roomService.getAllRooms());
+        model.addAttribute("tenants", tenantService.getAllTenants());
+        model.addAttribute("activeTab", "contracts");
+        return "management/form-contract";
+    }
+
     @PostMapping
     public String createContract(
             @RequestParam UUID roomId,

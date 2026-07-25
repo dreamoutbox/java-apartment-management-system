@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${room != null ? 'Edit Room' : 'Add New Room'}">Room Form</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body>
+
+    <div th:replace="~{fragments/sidebar :: sidebar('ADMIN', 'rooms')}"></div>
+
+    <div class="main-content">
+        <div class="header" style="display:flex;justify-content:space-between;align-items:center;">
+            <div>
+                <h1 th:text="${room != null ? 'Edit Room ' + room.roomNumber : 'Add New Room'}">Room Form</h1>
+                <p th:text="${room != null ? 'Update room details, floor level, rent rates, or availability status' : 'Enter unit details to add to the room portfolio'}">Manage room details</p>
+            </div>
+            <a th:href="@{/rooms}" class="btn" style="background:#475569;">← Back to Rooms</a>
+        </div>
+
+        <div th:replace="~{fragments/forms :: roomForm(${room})}"></div>
+    </div>
+
+</body>
+
+</html>

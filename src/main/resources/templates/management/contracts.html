@@ -14,11 +14,13 @@
     <div th:replace="~{fragments/sidebar :: sidebar('ADMIN', 'contracts')}"></div>
 
     <div class="main-content">
-        <div class="header">
-            <h1>Lease Contracts Management</h1>
-            <p>Issue lease agreements, configure monthly rent, and manage active contracts</p>
+        <div class="header" style="display:flex;justify-content:space-between;align-items:center;">
+            <div>
+                <h1>Lease Contracts Management</h1>
+                <p>Issue lease agreements, configure monthly rent, and manage active contracts</p>
+            </div>
+            <a th:href="@{/contracts/new}" class="btn">+ Issue Contract</a>
         </div>
-        <div th:replace="~{fragments/form-create-contract :: createContractForm(${rooms}, ${tenants}, '/contracts')}"></div>
         <div th:replace="~{fragments/view-contract :: contractView(${contracts}, ${expiringContracts})}"></div>
     </div>
 

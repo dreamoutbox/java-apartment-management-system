@@ -14,11 +14,13 @@
     <div th:replace="~{fragments/sidebar :: sidebar('ADMIN', 'users')}"></div>
 
     <div class="main-content">
-        <div class="header">
-            <h1>User Accounts Management</h1>
-            <p>Create, update role details, and manage system user access</p>
+        <div class="header" style="display:flex;justify-content:space-between;align-items:center;">
+            <div>
+                <h1>User Accounts Management</h1>
+                <p>Create, update role details, and manage system user access</p>
+            </div>
+            <a th:href="@{/users/new}" class="btn">+ Create User</a>
         </div>
-        <div th:replace="~{fragments/form-create-user :: createUserForm('/users')}"></div>
         <div th:replace="~{fragments/view-user :: userView(${users})}"></div>
     </div>
 

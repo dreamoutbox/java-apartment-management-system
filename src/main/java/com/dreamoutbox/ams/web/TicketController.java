@@ -43,6 +43,22 @@ public class TicketController {
         return "management/tickets";
     }
 
+    @GetMapping("/new")
+    public String newForm(Model model) {
+        model.addAttribute("rooms", roomService.getAllRooms());
+        model.addAttribute("tenants", tenantService.getAllTenants());
+        model.addAttribute("activeTab", "tickets");
+        return "management/form-ticket";
+    }
+
+    @GetMapping("/{id}/edit")
+    public String editForm(@PathVariable UUID id, Model model) {
+        model.addAttribute("ticket", maintenanceService.getById(id));
+        model.addAttribute("technicians", userService.getUsersByRole(Role.TECHNICIAN));
+        model.addAttribute("activeTab", "tickets");
+        return "management/form-ticket";
+    }
+
     @PostMapping({"", "/create"})
     public String createTicket(
             @RequestParam UUID roomId,
@@ -88,3 +104,5 @@ public class TicketController {
         return "redirect:/tickets/" + ticketId;
     }
 }
+
+                        

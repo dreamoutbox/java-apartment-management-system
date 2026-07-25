@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${ticket != null ? 'Update Maintenance Ticket' : 'Create Maintenance Ticket'}">Maintenance Ticket Form</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body>
+
+    <div th:replace="~{fragments/sidebar :: sidebar('ADMIN', 'tickets')}"></div>
+
+    <div class="main-content">
+        <div class="header" style="display:flex;justify-content:space-between;align-items:center;">
+            <div>
+                <h1 th:text="${ticket != null ? 'Update Maintenance Ticket #' + ticket.id : 'Create Maintenance Ticket'}">Maintenance Ticket Form</h1>
+                <p th:text="${ticket != null ? 'Assign technician, update progress status, or attach proof of fix' : 'Report a new maintenance issue for a room'}">Manage maintenance ticket</p>
+            </div>
+            <a th:href="@{/tickets}" class="btn" style="background:#475569;">← Back to Tickets</a>
+        </div>
+
+        <div th:replace="~{fragments/forms :: ticketForm(${ticket}, ${rooms}, ${tenants}, ${technicians})}"></div>
+    </div>
+
+</body>
+
+</html>

@@ -51,30 +51,41 @@
 
             <!-- User Component Section -->
             <div id="users-section" class="tab-section">
-                <div th:replace="~{fragments/form-create-user :: createUserForm(#authorization != null and #authorization.expression('hasRole(''LANDLORD'')') ? '/landlord/users' : '/manager/users')}"></div>
+                <div style="display:flex;justify-content:flex-end;margin-bottom:12px;">
+                    <a th:href="@{/users/new}" class="btn">+ Create User</a>
+                </div>
                 <div th:replace="~{fragments/view-user :: userView(${users})}"></div>
             </div>
 
             <!-- Room Component Section -->
             <div id="rooms-section" class="tab-section" style="display:none;">
-                <div th:replace="~{fragments/form-create-room :: createRoomForm(#authorization != null and #authorization.expression('hasRole(''LANDLORD'')') ? '/landlord/rooms' : '/manager/rooms')}"></div>
+                <div style="display:flex;justify-content:flex-end;margin-bottom:12px;">
+                    <a th:href="@{/rooms/new}" class="btn">+ Create Room</a>
+                </div>
                 <div th:replace="~{fragments/view-room :: roomView(${rooms})}"></div>
             </div>
 
             <!-- Lease Contract Component Section -->
             <div id="contracts-section" class="tab-section" style="display:none;">
-                <div th:replace="~{fragments/form-create-contract :: createContractForm(${rooms}, ${tenants}, #authorization != null and #authorization.expression('hasRole(''LANDLORD'')') ? '/landlord/contracts' : '/manager/contracts')}"></div>
+                <div style="display:flex;justify-content:flex-end;margin-bottom:12px;">
+                    <a th:href="@{/contracts/new}" class="btn">+ Issue Contract</a>
+                </div>
                 <div th:replace="~{fragments/view-contract :: contractView(${activeContracts}, ${expiringContracts})}"></div>
             </div>
 
             <!-- Announcement Component Section -->
             <div id="announcements-section" class="tab-section" style="display:none;">
-                <div th:replace="~{fragments/form-publish-announcement :: publishAnnouncementForm(#authorization != null and #authorization.expression('hasRole(''LANDLORD'')') ? '/landlord/announcements' : '/manager/announcements')}"></div>
+                <div style="display:flex;justify-content:flex-end;margin-bottom:12px;">
+                    <a th:href="@{/Announcements/new}" class="btn">+ Publish Announcement</a>
+                </div>
                 <div th:replace="~{fragments/view-announcement :: announcementView(${announcements})}"></div>
             </div>
 
             <!-- Maintenance Tickets Component Section -->
             <div id="tickets-section" class="tab-section" style="display:none;">
+                <div style="display:flex;justify-content:flex-end;margin-bottom:12px;">
+                    <a th:href="@{/tickets/new}" class="btn">+ Create Ticket</a>
+                </div>
                 <div th:replace="~{fragments/view-ticket :: ticketView(${tickets}, ${technicians}, #authorization != null and #authorization.expression('hasRole(''LANDLORD'')') ? '/landlord/tickets/assign' : '/manager/tickets/assign')}"></div>
             </div>
         </div>

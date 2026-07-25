@@ -27,6 +27,19 @@ public class TenantManagementController {
         return "management/tenants";
     }
 
+    @GetMapping("/new")
+    public String newForm(Model model) {
+        model.addAttribute("activeTab", "tenants");
+        return "management/form-tenant";
+    }
+
+    @GetMapping("/{id}/edit")
+    public String editForm(@PathVariable UUID id, Model model) {
+        model.addAttribute("tenant", tenantService.getById(id));
+        model.addAttribute("activeTab", "tenants");
+        return "management/form-tenant";
+    }
+
     @PostMapping
     public String createTenant(
             @RequestParam String username,

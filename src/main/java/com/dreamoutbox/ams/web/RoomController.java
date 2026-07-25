@@ -29,6 +29,19 @@ public class RoomController {
         return "management/rooms";
     }
 
+    @GetMapping("/new")
+    public String newForm(Model model) {
+        model.addAttribute("activeTab", "rooms");
+        return "management/form-room";
+    }
+
+    @GetMapping("/{id}/edit")
+    public String editForm(@PathVariable UUID id, Model model) {
+        model.addAttribute("room", roomService.getById(id));
+        model.addAttribute("activeTab", "rooms");
+        return "management/form-room";
+    }
+
     @PostMapping
     public String createRoom(
             @RequestParam String roomNumber,

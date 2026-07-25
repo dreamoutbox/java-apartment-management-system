@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${tenant != null ? 'Edit Tenant Profile' : 'Create Tenant Account'}">Tenant Form</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body>
+
+    <div th:replace="~{fragments/sidebar :: sidebar('ADMIN', 'tenants')}"></div>
+
+    <div class="main-content">
+        <div class="header" style="display:flex;justify-content:space-between;align-items:center;">
+            <div>
+                <h1 th:text="${tenant != null ? 'Edit Tenant Profile' : 'Create Tenant Account'}">Tenant Form</h1>
+                <p th:text="${tenant != null ? 'Update tenant personal information and ID documents' : 'Register a new tenant account and profile'}">Manage tenant details</p>
+            </div>
+            <a th:href="@{/tenants}" class="btn" style="background:#475569;">← Back to Tenants</a>
+        </div>
+
+        <div th:replace="~{fragments/forms :: tenantForm(${tenant})}"></div>
+    </div>
+
+</body>
+
+</html>

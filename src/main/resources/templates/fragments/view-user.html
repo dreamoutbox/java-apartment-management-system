@@ -27,10 +27,9 @@
                     </td>
                     <td>
                         <div th:if="${u != null}" style="display:flex;gap:6px;">
-                            <button type="button" class="btn" style="padding:4px 10px;font-size:12px;"
-                                th:data-modal-target="'modal-user-' + ${u.id}">
+                            <a th:href="@{'/users/' + ${u.id} + '/edit'}" class="btn" style="padding:4px 10px;font-size:12px;">
                                 Update
-                            </button>
+                            </a>
                             <form th:action="@{'/users/' + ${u.id} + '/delete'}" method="post"
                                 onsubmit="return confirm('Delete this user account?');">
                                 <button type="submit" class="btn"
@@ -41,48 +40,6 @@
                 </tr>
             </tbody>
         </table>
-
-        <!-- Update Modals for each User -->
-        <div th:each="u : ${users}" th:if="${u != null}">
-            <div class="ams-modal-overlay" th:id="'modal-user-' + ${u.id}" style="display:none;">
-                <div class="ams-modal-box">
-                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
-                        <div class="card-title" style="margin:0;">Update User</div>
-                        <button type="button" class="btn" style="background:#ef4444;padding:4px 12px;font-size:12px;"
-                            th:data-modal-target="'modal-user-' + ${u.id}" data-modal-action="close">✕ Close</button>
-                    </div>
-                    <form th:action="@{'/users/' + ${u.id} + '/update'}" method="post">
-                        <div class="form-group">
-                            <label>Full Name</label>
-                            <input type="text" name="fullName" th:value="${u.fullName}" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Role</label>
-                            <select name="role" class="form-control">
-                                <option value="LANDLORD"
-                                    th:selected="${u.role != null and u.role.name() == 'LANDLORD'}">LANDLORD</option>
-                                <option value="MANAGER" th:selected="${u.role != null and u.role.name() == 'MANAGER'}">
-                                    MANAGER</option>
-                                <option value="ACCOUNTANT"
-                                    th:selected="${u.role != null and u.role.name() == 'ACCOUNTANT'}">ACCOUNTANT
-                                </option>
-                                <option value="TECHNICIAN"
-                                    th:selected="${u.role != null and u.role.name() == 'TECHNICIAN'}">TECHNICIAN
-                                </option>
-                                <option value="TENANT" th:selected="${u.role != null and u.role.name() == 'TENANT'}">
-                                    TENANT</option>
-                            </select>
-                        </div>
-                        <div class="form-group" style="flex-direction:row;align-items:center;gap:10px;">
-                            <input type="checkbox" name="enabled" th:id="${'enabled-' + u.id}" value="true"
-                                th:checked="${u.enabled}">
-                            <label th:for="${'enabled-' + u.id}" style="margin:0;">Account Enabled</label>
-                        </div>
-                        <button type="submit" class="btn">Save Changes</button>
-                    </form>
-                </div>
-            </div>
-        </div>
     </div>
 
 </body>

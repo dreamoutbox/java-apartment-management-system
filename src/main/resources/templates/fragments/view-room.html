@@ -24,9 +24,8 @@
                 </td>
                 <td>
                     <div th:if="${room != null}" style="display:flex;gap:6px;">
-                        <button type="button" class="btn"
-                                style="padding:4px 10px;font-size:12px;"
-                                th:data-modal-target="'modal-room-' + ${room.id}">Update</button>
+                        <a th:href="@{'/rooms/' + ${room.id} + '/edit'}" class="btn"
+                           style="padding:4px 10px;font-size:12px;">Update</a>
                         <form th:action="@{'/rooms/' + ${room.id} + '/delete'}" method="post"
                               onsubmit="return confirm('Delete this room?');">
                             <button type="submit" class="btn" style="padding:4px 10px;font-size:12px;background:#ef4444;">Delete</button>
@@ -36,43 +35,6 @@
             </tr>
         </tbody>
     </table>
-
-    <!-- Update Modals for each Room -->
-    <div th:each="room : ${rooms}" th:if="${room != null}">
-        <div class="ams-modal-overlay" th:id="'modal-room-' + ${room.id}" style="display:none;">
-            <div class="ams-modal-box">
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
-                    <div class="card-title" style="margin:0;">Update Room <span th:text="${room.roomNumber}"></span></div>
-                    <button type="button" class="btn" style="background:#ef4444;padding:4px 12px;font-size:12px;"
-                            th:data-modal-target="'modal-room-' + ${room.id}"
-                            data-modal-action="close">✕ Close</button>
-                </div>
-                <form th:action="@{'/rooms/' + ${room.id} + '/update'}" method="post">
-                    <div class="form-group">
-                        <label>Room Number</label>
-                        <input type="text" name="roomNumber" th:value="${room.roomNumber}" class="form-control" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Floor</label>
-                        <input type="text" name="floor" th:value="${room.floor}" class="form-control" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Base Rent ($)</label>
-                        <input type="number" step="0.01" name="baseRent" th:value="${room.baseRent}" class="form-control" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Status</label>
-                        <select name="status" class="form-control">
-                            <option value="VACANT" th:selected="${room.status != null and room.status.name() == 'VACANT'}">VACANT</option>
-                            <option value="OCCUPIED" th:selected="${room.status != null and room.status.name() == 'OCCUPIED'}">OCCUPIED</option>
-                            <option value="MAINTENANCE" th:selected="${room.status != null and room.status.name() == 'MAINTENANCE'}">MAINTENANCE</option>
-                        </select>
-                    </div>
-                    <button type="submit" class="btn">Save Changes</button>
-                </form>
-            </div>
-        </div>
-    </div>
 </div>
 
 </body>
