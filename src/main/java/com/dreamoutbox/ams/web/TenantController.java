@@ -51,7 +51,7 @@ public class TenantController {
         model.addAttribute("announcements", announcementService.getAllAnnouncements());
         model.addAttribute("expiringContracts", contractService.getExpiringContracts());
 
-        return "tenant/dashboard";
+        return "dashboard";
     }
 
     @PostMapping("/tickets")

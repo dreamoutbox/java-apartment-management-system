@@ -51,7 +51,7 @@ public class LandlordController {
         model.addAttribute("tickets", maintenanceService.getAllTickets());
         model.addAttribute("announcements", announcementService.getAllAnnouncements());
         model.addAttribute("technicians", userService.getUsersByRole(Role.TECHNICIAN));
-        return "landlord/dashboard";
+        return "dashboard";
     }
 
     @PostMapping("/users")

@@ -30,7 +30,7 @@ public class TechnicianController {
     public String dashboard(Model model, @AuthenticationPrincipal UserDetails userDetails) {
         User currentUser = userService.getByUsername(userDetails.getUsername());
         model.addAttribute("tickets", maintenanceService.getTechnicianTickets(currentUser));
-        return "technician/dashboard";
+        return "dashboard";
     }
 
     @PostMapping("/tickets/update")

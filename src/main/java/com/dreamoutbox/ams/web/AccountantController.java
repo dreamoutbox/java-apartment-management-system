@@ -37,7 +37,7 @@ public class AccountantController {
         model.addAttribute("activeContracts", contractService.getAllActiveContracts());
         model.addAttribute("overdueInvoices", invoiceService.getOverdueInvoices());
         model.addAttribute("totalOutstanding", invoiceService.getTotalOutstandingBalance());
-        return "accountant/dashboard";
+        return "dashboard";
     }
 
     @PostMapping("/utility-rates")

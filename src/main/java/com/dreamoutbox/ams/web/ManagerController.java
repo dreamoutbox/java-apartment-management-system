@@ -48,7 +48,7 @@ public class ManagerController {
         model.addAttribute("activeContracts", contractService.getAllActiveContracts());
         model.addAttribute("tickets", maintenanceService.getAllTickets());
         model.addAttribute("technicians", userService.getUsersByRole(Role.TECHNICIAN));
-        return "manager/dashboard";
+        return "dashboard";
     }
 
     @PostMapping("/announcements")
