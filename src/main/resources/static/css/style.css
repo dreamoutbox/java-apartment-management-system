@@ -108,7 +108,8 @@ body {
     text-align: left;
 }
 
-.nav-link:hover, .nav-link.active {
+.nav-link:hover,
+.nav-link.active {
     background: rgba(99, 102, 241, 0.15);
     color: var(--text-main);
 }
@@ -239,17 +240,23 @@ tr:hover td {
     display: inline-block;
 }
 
-.status-VACANT, .status-UNPAID, .status-PENDING {
+.status-VACANT,
+.status-UNPAID,
+.status-PENDING {
     background: rgba(239, 68, 68, 0.15);
     color: #fca5a5;
 }
 
-.status-OCCUPIED, .status-PAID, .status-COMPLETED {
+.status-OCCUPIED,
+.status-PAID,
+.status-COMPLETED {
     background: rgba(16, 185, 129, 0.15);
     color: #6ee7b7;
 }
 
-.status-PARTIALLY_PAID, .status-IN_PROGRESS, .status-MAINTENANCE {
+.status-PARTIALLY_PAID,
+.status-IN_PROGRESS,
+.status-MAINTENANCE {
     background: rgba(245, 158, 11, 0.15);
     color: #fcd34d;
 }
@@ -365,3 +372,77 @@ tr:hover td {
     box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);
 }
 
+/* ── Table Toolbar & Pagination ────────────────────────────────── */
+.ams-table-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.ams-limit-box {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+.ams-limit-select {
+    padding: 6px 10px;
+    font-size: 13px;
+    width: auto;
+    background: var(--bg-dark);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    color: var(--text-main);
+    cursor: pointer;
+}
+
+.ams-pagination-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 16px;
+    font-size: 13px;
+    color: var(--text-muted);
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.ams-pagination-controls {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+}
+
+.ams-page-btn {
+    padding: 5px 11px;
+    font-size: 12px;
+    font-weight: 500;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-main);
+    border: 1px solid var(--border-color);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.ams-page-btn:hover:not(:disabled) {
+    background: rgba(99, 102, 241, 0.2);
+    border-color: var(--primary);
+    color: white;
+}
+
+.ams-page-btn.active {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+}
+
+.ams-page-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
