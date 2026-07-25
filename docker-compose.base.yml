@@ -84,7 +84,7 @@ services:
         soft: 65536
         hard: 65536
       nproc:
-        soft: 100
-        hard: 100
+        soft: 1024
+        hard: 1024
     networks:
       - ams

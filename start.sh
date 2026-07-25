@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Free port 8080 if held by orphan background process
-fuser -k 8080/tcp >/dev/null 2>&1 || true
+# fuser -k 8080/tcp >/dev/null 2>&1 || true
 
 ./mvnw spring-boot:run
 

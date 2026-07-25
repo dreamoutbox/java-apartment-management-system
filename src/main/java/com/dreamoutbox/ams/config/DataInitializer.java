@@ -31,8 +31,8 @@ public class DataInitializer implements CommandLineRunner {
         createOrUpdateUser("manager", "password", "System Manager", Role.MANAGER);
         createOrUpdateUser("accountant", "password", "System Accountant", Role.ACCOUNTANT);
         createOrUpdateUser("technician", "password", "System Technician", Role.TECHNICIAN);
-        createOrUpdateUser("tenant", "password", "System Tenant", Role.TENANT);
 
+        // createOrUpdateUser("tenant", "password", "System Tenant", Role.TENANT);
         for (int i = 1; i <= 20; i++) {
             createOrUpdateUser("tenant" + i, "password", "System Tenant " + i, Role.TENANT);
         }
