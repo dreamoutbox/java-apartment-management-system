@@ -27,7 +27,8 @@
                     </td>
                     <td>
                         <div th:if="${u != null}" style="display:flex;gap:6px;">
-                            <a th:href="@{'/users/' + ${u.id} + '/edit'}" class="btn" style="padding:4px 10px;font-size:12px;">
+                            <a th:href="@{'/users/' + ${u.id} + '/edit'}" class="btn"
+                                style="padding:4px 10px;font-size:12px;">
                                 Update
                             </a>
                             <form th:action="@{'/users/' + ${u.id} + '/delete'}" method="post"

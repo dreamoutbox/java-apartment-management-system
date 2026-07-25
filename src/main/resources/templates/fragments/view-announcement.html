@@ -23,7 +23,8 @@
                     <div style="color:#94a3b8;font-size:13px;" th:text="${a.content}">Content</div>
                 </div>
                 <div style="display:flex;gap:6px;flex-shrink:0;">
-                    <a th:href="@{'/Announcements/' + ${a.id} + '/edit'}" class="btn" style="padding:4px 10px;font-size:12px;">Update</a>
+                    <a th:href="@{'/Announcements/' + ${a.id} + '/edit'}" class="btn"
+                        style="padding:4px 10px;font-size:12px;">Update</a>
                     <form th:action="@{'/Announcements/' + ${a.id} + '/delete'}" method="post"
                         onsubmit="return confirm('Delete this announcement?');">
                         <button type="submit" class="btn"

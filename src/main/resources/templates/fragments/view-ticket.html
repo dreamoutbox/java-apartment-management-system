@@ -17,8 +17,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr th:each="ticket : ${tickets}"
-                    th:data-href="@{'/tickets/' + ${ticket.id}}"
+                <tr th:each="ticket : ${tickets}" th:data-href="@{'/tickets/' + ${ticket.id}}"
                     onclick="if (!event.target.closest('button, a, form, select, input')) { window.location.href = this.getAttribute('data-href'); }"
                     style="cursor:pointer;">
                     <td th:text="${ticket != null and ticket.room != null ? ticket.room.roomNumber : 'N/A'}">101</td>
@@ -31,7 +30,8 @@
                     <td><span th:class="${'status-badge status-' + (ticket != null ? ticket.status : 'PENDING')}"
                             th:text="${ticket != null ? ticket.status : ''}">PENDING</span></td>
                     <td th:if="${assignActionUrl != null and ticket != null}">
-                        <a th:href="@{'/tickets/' + ${ticket.id} + '/edit'}" class="btn" style="padding:4px 10px;font-size:12px;">Update</a>
+                        <a th:href="@{'/tickets/' + ${ticket.id} + '/edit'}" class="btn"
+                            style="padding:4px 10px;font-size:12px;">Update</a>
                     </td>
                 </tr>
             </tbody>
