@@ -21,7 +21,10 @@
             </div>
             <a th:href="@{/tenants/new}" class="btn">+ Create Tenant</a>
         </div>
-        <div th:replace="~{fragments/view-tenant :: tenantView(${tenants})}"></div>
+        <div class="card">
+            <div class="card-title">Tenant Profiles</div>
+            <div th:replace="~{fragments/table-tenant :: tenantTable(tenants=${tenants})}"></div>
+        </div>
     </div>
 
     <script th:src="@{/js/tables.js}"></script>

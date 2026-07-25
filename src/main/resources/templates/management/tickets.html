@@ -22,7 +22,10 @@
             <a th:href="@{/tickets/new}" class="btn">+ Create Ticket</a>
         </div>
 
-        <div th:replace="~{fragments/view-ticket :: ticketView(${tickets}, ${technicians}, '/tickets/assign')}"></div>
+        <div class="card">
+            <div class="card-title">Maintenance Tickets</div>
+            <div th:replace="~{fragments/table-ticket :: ticketTable(tickets=${tickets}, technicians=${technicians}, assignActionUrl='/tickets/assign')}"></div>
+        </div>
     </div>
 
     <script th:src="@{/js/tables.js}"></script>

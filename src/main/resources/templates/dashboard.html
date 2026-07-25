@@ -54,7 +54,10 @@
                 <div style="display:flex;justify-content:flex-end;margin-bottom:12px;">
                     <a th:href="@{/users/new}" class="btn">+ Create User</a>
                 </div>
-                <div th:replace="~{fragments/view-user :: userView(${users})}"></div>
+                <div class="card">
+                    <div class="card-title">Registered Users</div>
+                    <div th:replace="~{fragments/table-user :: userTable(users=${users})}"></div>
+                </div>
             </div>
 
             <!-- Room Component Section -->
@@ -62,7 +65,10 @@
                 <div style="display:flex;justify-content:flex-end;margin-bottom:12px;">
                     <a th:href="@{/rooms/new}" class="btn">+ Create Room</a>
                 </div>
-                <div th:replace="~{fragments/view-room :: roomView(${rooms})}"></div>
+                <div class="card">
+                    <div class="card-title">Room Portfolio</div>
+                    <div th:replace="~{fragments/table-room :: roomTable(rooms=${rooms})}"></div>
+                </div>
             </div>
 
             <!-- Lease Contract Component Section -->
@@ -70,7 +76,14 @@
                 <div style="display:flex;justify-content:flex-end;margin-bottom:12px;">
                     <a th:href="@{/contracts/new}" class="btn">+ Issue Contract</a>
                 </div>
-                <div th:replace="~{fragments/view-contract :: contractView(${activeContracts}, ${expiringContracts})}"></div>
+                <div class="card">
+                    <div class="card-title">Lease Contracts</div>
+                    <div th:if="${expiringContracts != null and not #lists.isEmpty(expiringContracts)}"
+                        style="margin-bottom:16px;background:rgba(245,158,11,0.15);color:#fcd34d;border:1px solid rgba(245,158,11,0.3);padding:10px;border-radius:8px;">
+                        ⚠ <strong th:text="${expiringContracts.size()}">0</strong> lease(s) expiring within 30 days.
+                    </div>
+                    <div th:replace="~{fragments/table-contract :: contractTable(contracts=${activeContracts}, expiringContracts=${expiringContracts})}"></div>
+                </div>
             </div>
 
             <!-- Announcement Component Section -->
@@ -78,7 +91,10 @@
                 <div style="display:flex;justify-content:flex-end;margin-bottom:12px;">
                     <a th:href="@{/Announcements/new}" class="btn">+ Publish Announcement</a>
                 </div>
-                <div th:replace="~{fragments/view-announcement :: announcementView(${announcements})}"></div>
+                <div class="card">
+                    <div class="card-title">Building Announcements</div>
+                    <div th:replace="~{fragments/table-announcement :: announcementTable(announcements=${announcements})}"></div>
+                </div>
             </div>
 
             <!-- Maintenance Tickets Component Section -->
@@ -86,7 +102,10 @@
                 <div style="display:flex;justify-content:flex-end;margin-bottom:12px;">
                     <a th:href="@{/tickets/new}" class="btn">+ Create Ticket</a>
                 </div>
-                <div th:replace="~{fragments/view-ticket :: ticketView(${tickets}, ${technicians}, #authorization != null and #authorization.expression('hasRole(''LANDLORD'')') ? '/landlord/tickets/assign' : '/manager/tickets/assign')}"></div>
+                <div class="card">
+                    <div class="card-title">Maintenance Tickets</div>
+                    <div th:replace="~{fragments/table-ticket :: ticketTable(tickets=${tickets}, technicians=${technicians}, assignActionUrl=${#authorization != null and #authorization.expression('hasRole(''LANDLORD'')') ? '/landlord/tickets/assign' : '/manager/tickets/assign'})}"></div>
+                </div>
             </div>
         </div>
     </div>

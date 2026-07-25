@@ -21,7 +21,10 @@
             </div>
             <a th:href="@{/Announcements/new}" class="btn">+ Publish Announcement</a>
         </div>
-        <div th:replace="~{fragments/view-announcement :: announcementView(${announcements})}"></div>
+        <div class="card">
+            <div class="card-title">Building Announcements</div>
+            <div th:replace="~{fragments/table-announcement :: announcementTable(announcements=${announcements})}"></div>
+        </div>
     </div>
 
     <script th:src="@{/js/tables.js}"></script>
