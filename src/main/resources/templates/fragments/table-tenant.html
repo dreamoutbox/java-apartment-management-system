@@ -1,57 +1,55 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-
 <body>
 
-    <table th:fragment="tenantTable(tenants)" class="data-table">
-        <thead>
-            <tr>
-                <th th:if="${selectable != null and selectable}" style="width:50px;text-align:center;">Select</th>
-                <th>Full Name</th>
-                <th>Username</th>
-                <th>Phone</th>
-                <th>Email</th>
-                <th>ID Card #</th>
-                <th>Proof ID</th>
-                <th>Credit</th>
-                <th th:if="${selectable == null or !selectable}">Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr th:each="t : ${tenants}"
-                th:classappend="${selectable != null and selectable ? 'selectable-row' + (selectedId != null and selectedId == t.id ? ' selected-row' : '') : ''}">
-                <td th:if="${selectable != null and selectable}" style="text-align:center;">
-                    <input type="radio" th:name="${inputName != null ? inputName : 'tenantId'}" th:value="${t.id}"
-                        th:checked="${selectedId != null and selectedId == t.id}" required style="cursor:pointer;">
-                </td>
-                <td th:text="${t != null ? t.fullName : ''}">Name</td>
-                <td th:text="${t != null and t.user != null ? t.user.username : 'N/A'}">username</td>
-                <td th:text="${t != null ? t.phone : ''}">Phone</td>
-                <td th:text="${t != null ? t.email : ''}">Email</td>
-                <td th:text="${t != null ? t.idCardNumber : ''}">ID</td>
-                <td>
-                    <a th:if="${t != null and t.idCardImagePath != null}"
-                        th:href="@{'/uploads/' + ${t.idCardImagePath}}" target="_blank"
-                        style="color:var(--primary);font-size:12px;text-decoration:underline;">View</a>
-                    <span th:unless="${t != null and t.idCardImagePath != null}"
-                        style="color:#64748b;font-size:12px;">—</span>
-                </td>
-                <td th:text="${'$' + (t != null and t.creditBalance != null ? t.creditBalance : 0)}">$0.00</td>
-                <td th:if="${selectable == null or !selectable}">
-                    <div th:if="${t != null}" style="display:flex;gap:6px;">
-                        <a th:href="@{'/tenants/' + ${t.id} + '/edit'}" class="btn"
-                            style="padding:4px 10px;font-size:12px;">Update</a>
-                        <form th:action="@{'/tenants/' + ${t.id} + '/delete'}" method="post"
-                            onsubmit="return confirm('Delete tenant and their user account?');">
-                            <button type="submit" class="btn"
-                                style="padding:4px 10px;font-size:12px;background:#ef4444;">Delete</button>
-                        </form>
-                    </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+<table th:fragment="tenantTable(tenants)" class="data-table">
+    <thead>
+        <tr>
+            <th th:if="${selectable != null and selectable}" style="width:50px;text-align:center;">Select</th>
+            <th th:if="${columns == null or #lists.contains(columns, 'fullName')}">Full Name</th>
+            <th th:if="${columns == null or #lists.contains(columns, 'username')}">Username</th>
+            <th th:if="${columns == null or #lists.contains(columns, 'phone')}">Phone</th>
+            <th th:if="${columns == null or #lists.contains(columns, 'email')}">Email</th>
+            <th th:if="${columns == null or #lists.contains(columns, 'idCardNumber')}">ID Card #</th>
+            <th th:if="${columns == null or #lists.contains(columns, 'idCardImage')}">Proof ID</th>
+            <th th:if="${columns == null or #lists.contains(columns, 'creditBalance')}">Credit</th>
+            <th th:if="${selectable == null or !selectable}">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr th:each="t : ${tenants}"
+            th:classappend="${selectable != null and selectable ? 'selectable-row' + (selectedId != null and selectedId == t.id ? ' selected-row' : '') : ''}">
+            <td th:if="${selectable != null and selectable}" style="text-align:center;">
+                <input type="radio" th:name="${inputName != null ? inputName : 'tenantId'}" th:value="${t.id}"
+                    th:checked="${selectedId != null and selectedId == t.id}" required style="cursor:pointer;">
+            </td>
+            <td th:if="${columns == null or #lists.contains(columns, 'fullName')}" th:text="${t != null ? t.fullName : ''}">Name</td>
+            <td th:if="${columns == null or #lists.contains(columns, 'username')}" th:text="${t != null and t.user != null ? t.user.username : 'N/A'}">username</td>
+            <td th:if="${columns == null or #lists.contains(columns, 'phone')}" th:text="${t != null ? t.phone : ''}">Phone</td>
+            <td th:if="${columns == null or #lists.contains(columns, 'email')}" th:text="${t != null ? t.email : ''}">Email</td>
+            <td th:if="${columns == null or #lists.contains(columns, 'idCardNumber')}" th:text="${t != null ? t.idCardNumber : ''}">ID</td>
+            <td th:if="${columns == null or #lists.contains(columns, 'idCardImage')}">
+                <a th:if="${t != null and t.idCardImagePath != null}"
+                    th:href="@{'/uploads/' + ${t.idCardImagePath}}" target="_blank"
+                    style="color:var(--primary);font-size:12px;text-decoration:underline;">View</a>
+                <span th:unless="${t != null and t.idCardImagePath != null}"
+                    style="color:#64748b;font-size:12px;">—</span>
+            </td>
+            <td th:if="${columns == null or #lists.contains(columns, 'creditBalance')}" th:text="${'$' + (t != null and t.creditBalance != null ? t.creditBalance : 0)}">$0.00</td>
+            <td th:if="${selectable == null or !selectable}">
+                <div th:if="${t != null}" style="display:flex;gap:6px;">
+                    <a th:href="@{'/tenants/' + ${t.id} + '/edit'}" class="btn"
+                        style="padding:4px 10px;font-size:12px;">Update</a>
+                    <form th:action="@{'/tenants/' + ${t.id} + '/delete'}" method="post"
+                        onsubmit="return confirm('Delete tenant and their user account?');">
+                        <button type="submit" class="btn"
+                            style="padding:4px 10px;font-size:12px;background:#ef4444;">Delete</button>
+                    </form>
+                </div>
+            </td>
+        </tr>
+    </tbody>
+</table>
 
 </body>
-
 </html>

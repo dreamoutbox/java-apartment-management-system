@@ -10,14 +10,16 @@
 </head>
 
 <body>
-
     <div th:replace="~{fragments/sidebar :: sidebar('ADMIN', 'contracts')}"></div>
 
     <div class="main-content">
         <div class="header" style="display:flex;justify-content:space-between;align-items:center;">
             <div>
-                <h1 th:text="${contract != null ? 'Edit Lease Contract' : 'Create Lease Contract'}">Lease Contract Form</h1>
-                <p th:text="${contract != null ? 'Update rent rate, lease term dates, or status' : 'Assign room to tenant and establish lease terms'}">Manage contract agreements</p>
+                <h1 th:text="${contract != null ? 'Edit Lease Contract' : 'Create Lease Contract'}">Lease Contract Form
+                </h1>
+                <p
+                    th:text="${contract != null ? 'Update rent rate, lease term dates, or status' : 'Assign room to tenant and establish lease terms'}">
+                    Manage contract agreements</p>
             </div>
             <a th:href="@{/contracts}" class="btn" style="background:#475569;">← Back to Contracts</a>
         </div>
@@ -25,6 +27,7 @@
         <div th:replace="~{fragments/forms :: contractForm(${contract}, ${rooms}, ${tenants})}"></div>
     </div>
 
+    <script th:src="@{/js/tables.js}"></script>
 </body>
 
 </html>

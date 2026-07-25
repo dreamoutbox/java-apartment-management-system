@@ -240,18 +240,22 @@ tr:hover td {
     display: inline-block;
 }
 
-.status-VACANT,
 .status-UNPAID,
 .status-PENDING {
     background: rgba(239, 68, 68, 0.15);
     color: #fca5a5;
 }
 
-.status-OCCUPIED,
+.status-OCCUPIED {
+    background: rgba(255, 255, 255, 0.15);
+    color: #ffe600;
+}
+
+.status-VACANT,
 .status-PAID,
 .status-COMPLETED {
     background: rgba(16, 185, 129, 0.15);
-    color: #6ee7b7;
+    color: #33ee5f;
 }
 
 .status-PARTIALLY_PAID,
@@ -448,19 +452,32 @@ tr:hover td {
 }
 
 /* ── Selectable Table Rows ────────────────────────────────────────── */
-tr.selected-row td {
+table tbody tr:has(input[type="radio"]),
+tr.selectable-row {
+    cursor: pointer !important;
+}
+
+table tbody tr:has(input[type="radio"]) td,
+tr.selectable-row td {
+    cursor: pointer !important;
+    user-select: none;
+}
+
+/* Hover highlight */
+table tbody tr:has(input[type="radio"]):hover td {
+    background: rgba(99, 102, 241, 0.10) !important;
+}
+
+/* Selected row highlight */
+tr.selected-row td,
+table tbody tr:has(input[type="radio"]:checked) td {
     background: rgba(99, 102, 241, 0.25) !important;
     border-color: rgba(99, 102, 241, 0.4);
 }
 
-tr.selectable-row {
-    cursor: pointer;
+tr:not(.selectable-row):hover td {
+    background: rgba(255, 255, 255, 0.02);
 }
-
-tr.selectable-row:hover td {
-    background: rgba(99, 102, 241, 0.15) !important;
-}
-
 
 .ams-page-btn:disabled {
     opacity: 0.35;

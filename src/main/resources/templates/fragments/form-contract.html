@@ -9,13 +9,13 @@
         <!-- Select Room via Table -->
         <div th:if="${contract == null}" class="form-group" style="margin-bottom:24px;">
             <label style="font-weight:600;font-size:14px;color:var(--primary);margin-bottom:8px;">1. Select Room</label>
-            <div th:replace="~{fragments/table-room :: roomTable(rooms=${rooms}, selectable=true, inputName='roomId')}"></div>
+            <div th:replace="~{fragments/table-room :: roomTable(rooms=${rooms}, selectable=true, inputName='roomId', columns=${ {'roomNumber', 'floor', 'baseRent', 'status'} })}"></div>
         </div>
 
         <!-- Select Tenant via Table -->
         <div th:if="${contract == null}" class="form-group" style="margin-bottom:24px;">
             <label style="font-weight:600;font-size:14px;color:var(--primary);margin-bottom:8px;">2. Select Tenant</label>
-            <div th:replace="~{fragments/table-tenant :: tenantTable(tenants=${tenants}, selectable=true, inputName='tenantId')}"></div>
+            <div th:replace="~{fragments/table-tenant :: tenantTable(tenants=${tenants}, selectable=true, inputName='tenantId', columns=${ {'fullName', 'username', 'phone', 'email'} })}"></div>
         </div>
 
         <div th:if="${contract != null}" class="form-group">

@@ -5,24 +5,32 @@
 (function () {
     'use strict';
 
-    // Event delegation for selectable table rows (radio selection)
     document.addEventListener('click', function (e) {
-        var tr = e.target.closest('tr');
+        // Exclude clicks on actual interactive elements, not ancestor <form> wrappers
+        if (e.target.closest('button, a, select, textarea')) return;
+        if (e.target.tagName === 'INPUT' && e.target.type !== 'radio') return;
+
+        var tr = e.target.closest('tbody tr');
         if (!tr) return;
 
         var radio = tr.querySelector('input[type="radio"]');
-        if (!radio) return;
-
-        var table = tr.closest('table');
-        if (table) {
-            table.querySelectorAll('tr').forEach(function (r) {
-                r.classList.remove('selected-row');
-            });
-        }
+        if (!radio || radio.disabled || radio === e.target) return;
 
         radio.checked = true;
-        tr.classList.add('selected-row');
         radio.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+
+    // Highlight sync: fires on programmatic check above AND native radio clicks
+    document.addEventListener('change', function (e) {
+        if (e.target.tagName !== 'INPUT' || e.target.type !== 'radio') return;
+
+        var table = e.target.closest('table');
+        if (!table) return;
+
+        table.querySelectorAll('tbody tr').forEach(function (r) {
+            var rRadio = r.querySelector('input[type="radio"]');
+            r.classList.toggle('selected-row', !!(rRadio && rRadio.checked));
+        });
     });
 
     function initTables() {
@@ -214,6 +222,13 @@
                 }
 
                 paginationBar.appendChild(controls);
+
+                // Resync selection highlight after DOM reordering
+                var checkedRadio = table.querySelector('input[type="radio"]:checked');
+                table.querySelectorAll('tbody tr').forEach(function (r) {
+                    var rRadio = r.querySelector('input[type="radio"]');
+                    r.classList.toggle('selected-row', !!(rRadio && rRadio.checked));
+                });
             }
 
             // Initial render

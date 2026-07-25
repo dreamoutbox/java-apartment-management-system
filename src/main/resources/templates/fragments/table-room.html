@@ -6,10 +6,10 @@
     <thead>
         <tr>
             <th th:if="${selectable != null and selectable}" style="width:50px;text-align:center;">Select</th>
-            <th>Room #</th>
-            <th>Floor</th>
-            <th>Base Rent</th>
-            <th>Status</th>
+            <th th:if="${columns == null or #lists.contains(columns, 'roomNumber')}">Room #</th>
+            <th th:if="${columns == null or #lists.contains(columns, 'floor')}">Floor</th>
+            <th th:if="${columns == null or #lists.contains(columns, 'baseRent')}">Base Rent</th>
+            <th th:if="${columns == null or #lists.contains(columns, 'status')}">Status</th>
             <th th:if="${selectable == null or !selectable}">Actions</th>
         </tr>
     </thead>
@@ -20,10 +20,10 @@
                 <input type="radio" th:name="${inputName != null ? inputName : 'roomId'}" th:value="${room.id}"
                     th:checked="${selectedId != null and selectedId == room.id}" required style="cursor:pointer;">
             </td>
-            <td th:text="${room != null ? room.roomNumber : ''}">101</td>
-            <td th:text="${room != null ? room.floor : ''}">1</td>
-            <td th:text="${'$' + (room != null ? room.baseRent : 0)}">$1200</td>
-            <td>
+            <td th:if="${columns == null or #lists.contains(columns, 'roomNumber')}" th:text="${room != null ? room.roomNumber : ''}">101</td>
+            <td th:if="${columns == null or #lists.contains(columns, 'floor')}" th:text="${room != null ? room.floor : ''}">1</td>
+            <td th:if="${columns == null or #lists.contains(columns, 'baseRent')}" th:text="${'$' + (room != null ? room.baseRent : 0)}">$1200</td>
+            <td th:if="${columns == null or #lists.contains(columns, 'status')}">
                 <span th:class="${'status-badge status-' + (room != null ? room.status : 'VACANT')}"
                     th:text="${room != null ? room.status : ''}">VACANT</span>
             </td>
