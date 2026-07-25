@@ -120,7 +120,24 @@ public class RoomService {
 
     @Transactional(readOnly = true)
     public List<Room> getAllRooms() {
-        return roomRepository.findAll();
+        List<Room> rooms = roomRepository.findAllSortedByOccupiedAndRoomNumber();
+        rooms.sort((r1, r2) -> {
+            boolean r1Occupied = r1.getStatus() == RoomStatus.OCCUPIED;
+            boolean r2Occupied = r2.getStatus() == RoomStatus.OCCUPIED;
+            if (r1Occupied != r2Occupied) {
+                return r1Occupied ? -1 : 1;
+            }
+            try {
+                int n1 = Integer.parseInt(r1.getRoomNumber());
+                int n2 = Integer.parseInt(r2.getRoomNumber());
+                return Integer.compare(n1, n2);
+            } catch (NumberFormatException e) {
+                return (r1.getRoomNumber() != null && r2.getRoomNumber() != null)
+                        ? r1.getRoomNumber().compareTo(r2.getRoomNumber())
+                        : 0;
+            }
+        });
+        return rooms;
     }
 
     @Transactional(readOnly = true)

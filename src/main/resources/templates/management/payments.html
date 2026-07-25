@@ -35,21 +35,15 @@
         <div class="card" style="margin-bottom:24px;">
             <div class="card-title">Record Tenant Payment (FIFO Allocation)</div>
             <form th:action="@{/payments/create}" method="post">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Select Tenant</label>
-                        <select name="tenantId" class="form-control" required>
-                            <option value="">-- Choose Tenant --</option>
-                            <option th:each="t : ${tenants}" th:value="${t.id}"
-                                th:text="${t.fullName + ' (Phone: ' + (t.phone != null ? t.phone : 'N/A') + ' | Account Credit: $' + t.creditBalance + ')'}">
-                            </option>
-                        </select>
+                <div class="form-group" style="margin-bottom:16px;">
+                    <label style="font-weight:600;margin-bottom:8px;display:block;">Select Tenant</label>
+                    <div
+                        th:replace="~{fragments/table-tenant :: tenantTable(tenants=${tenants}, selectable=true, inputName='tenantId', selectedId=null)}">
                     </div>
-                    <div class="form-group">
-                        <label>Payment Amount ($)</label>
-                        <input type="number" step="0.01" name="amount" class="form-control" placeholder="1500.00"
-                            required>
-                    </div>
+                </div>
+                <div class="form-group" style="max-width:300px;margin-bottom:16px;">
+                    <label style="font-weight:600;">Payment Amount ($)</label>
+                    <input type="number" step="0.01" name="amount" class="form-control" placeholder="1500.00" required>
                 </div>
                 <button type="submit" class="btn" style="margin-top:12px;">Record Payment &amp; Issue Receipt</button>
             </form>
