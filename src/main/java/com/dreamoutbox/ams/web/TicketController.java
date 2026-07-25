@@ -47,6 +47,7 @@ public class TicketController {
     public String newForm(Model model) {
         model.addAttribute("rooms", roomService.getAllRooms());
         model.addAttribute("tenants", tenantService.getAllTenants());
+        model.addAttribute("technicians", userService.getUsersByRole(Role.TECHNICIAN));
         model.addAttribute("activeTab", "tickets");
         return "management/form-ticket";
     }
@@ -54,12 +55,14 @@ public class TicketController {
     @GetMapping("/{id}/edit")
     public String editForm(@PathVariable UUID id, Model model) {
         model.addAttribute("ticket", maintenanceService.getById(id));
+        model.addAttribute("rooms", roomService.getAllRooms());
+        model.addAttribute("tenants", tenantService.getAllTenants());
         model.addAttribute("technicians", userService.getUsersByRole(Role.TECHNICIAN));
         model.addAttribute("activeTab", "tickets");
         return "management/form-ticket";
     }
 
-    @PostMapping({"", "/create"})
+    @PostMapping({ "", "/create" })
     public String createTicket(
             @RequestParam UUID roomId,
             @RequestParam UUID tenantId,
@@ -95,7 +98,8 @@ public class TicketController {
                 maintenanceService.assignTechnician(ticketId, technicianId, currentUser);
             }
             if (status != null) {
-                maintenanceService.updateTicketStatus(ticketId, status, note != null ? note : "", proofImage, currentUser);
+                maintenanceService.updateTicketStatus(ticketId, status, note != null ? note : "", proofImage,
+                        currentUser);
             }
             redirectAttributes.addFlashAttribute("successMessage", "Ticket updated successfully.");
         } catch (Exception e) {
@@ -104,5 +108,3 @@ public class TicketController {
         return "redirect:/tickets/" + ticketId;
     }
 }
-
-                        

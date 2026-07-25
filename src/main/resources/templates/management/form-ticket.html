@@ -22,7 +22,7 @@
             <a th:href="@{/tickets}" class="btn" style="background:#475569;">← Back to Tickets</a>
         </div>
 
-        <div th:replace="~{fragments/forms :: ticketForm(${ticket}, ${technicians}, ${rooms})}"></div>
+        <div th:replace="~{fragments/forms :: ticketForm(${ticket}, ${rooms}, ${tenants}, ${technicians})}"></div>
     </div>
 
     <script th:src="@{/js/tables.js}"></script>
