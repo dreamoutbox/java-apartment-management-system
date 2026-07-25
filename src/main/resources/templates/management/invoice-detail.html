@@ -9,10 +9,14 @@
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <style>
         @media print {
-            .sidebar, .back-btn, .print-btn { display: none !important; }
-            .main-content { margin-left: 0 !important; padding: 0 !important; width: 100% !important; }
-            .card { border: 1px solid #ddd !important; box-shadow: none !important; color: #000 !important; background: #fff !important; }
+            .sidebar, .back-btn, .print-btn, .header { display: none !important; }
+            .main-content { margin-left: 0 !important; padding: 0 !important; width: 100% !important; background: #fff !important; }
+            * { color: #000 !important; text-shadow: none !important; box-shadow: none !important; border-radius: 0 !important; }
             body { background: #fff !important; color: #000 !important; }
+            .card { border: 1px solid #000 !important; background: #fff !important; padding: 20px !important; margin: 0 !important; max-width: 100% !important; border-radius: 0 !important; }
+            table, th, td { border-color: #000 !important; color: #000 !important; border-radius: 0 !important; }
+            .status-badge { border: 1px solid #000 !important; color: #000 !important; background: #fff !important; border-radius: 0 !important; }
+            .unit-detail { color: #000 !important; }
         }
     </style>
 </head>
@@ -38,12 +42,12 @@
             <div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid var(--border-color);padding-bottom:20px;margin-bottom:24px;">
                 <div>
                     <h2 style="font-size:24px;font-weight:700;margin-bottom:4px;">Apartment Hub</h2>
-                    <p style="color:#94a3b8;font-size:13px;">Residential Property Management</p>
+                    <p style="color:#94a3b8;font-size:13px;" class="unit-detail">Residential Property Management</p>
                 </div>
                 <div style="text-align:right;">
                     <div style="font-size:18px;font-weight:700;color:var(--primary);">INVOICE STATEMENT</div>
-                    <div style="font-size:13px;color:#cbd5e1;margin-top:4px;">Invoice ID: <span th:text="${invoice.id}">UUID</span></div>
-                    <div style="font-size:13px;color:#cbd5e1;">Billing Period: <span th:text="${invoice.period}" style="font-weight:600;">2026-07</span></div>
+                    <div style="font-size:13px;color:#cbd5e1;" class="unit-detail">Invoice ID: <span th:text="${invoice.id}">UUID</span></div>
+                    <div style="font-size:13px;color:#cbd5e1;" class="unit-detail">Billing Period: <span th:text="${invoice.period}" style="font-weight:600;">2026-07</span></div>
                     <div style="margin-top:6px;">
                         <span th:class="${'status-badge status-' + invoice.status}" th:text="${invoice.status}">UNPAID</span>
                     </div>
@@ -53,20 +57,20 @@
             <!-- Billed To & Summary Details -->
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:28px;">
                 <div>
-                    <h4 style="font-size:12px;text-transform:uppercase;color:#94a3b8;letter-spacing:0.5px;margin-bottom:8px;">Billed To:</h4>
+                    <h4 style="font-size:12px;text-transform:uppercase;color:#94a3b8;letter-spacing:0.5px;margin-bottom:8px;" class="unit-detail">Billed To:</h4>
                     <div style="font-weight:600;font-size:16px;" th:text="${invoice.contract != null and invoice.contract.tenant != null ? invoice.contract.tenant.fullName : 'N/A'}">Tenant Name</div>
-                    <div style="font-size:14px;color:#cbd5e1;" th:text="${'Phone: ' + (invoice.contract != null and invoice.contract.tenant != null and invoice.contract.tenant.phone != null ? invoice.contract.tenant.phone : 'N/A')}">Phone</div>
-                    <div style="font-size:14px;color:#cbd5e1;" th:text="${'Email: ' + (invoice.contract != null and invoice.contract.tenant != null and invoice.contract.tenant.user != null ? invoice.contract.tenant.user.username : 'N/A')}">Email</div>
+                    <div style="font-size:14px;color:#cbd5e1;" class="unit-detail" th:text="${'Phone: ' + (invoice.contract != null and invoice.contract.tenant != null and invoice.contract.tenant.phone != null ? invoice.contract.tenant.phone : 'N/A')}">Phone</div>
+                    <div style="font-size:14px;color:#cbd5e1;" class="unit-detail" th:text="${'Email: ' + (invoice.contract != null and invoice.contract.tenant != null and invoice.contract.tenant.user != null ? invoice.contract.tenant.user.username : 'N/A')}">Email</div>
                 </div>
                 <div>
-                    <h4 style="font-size:12px;text-transform:uppercase;color:#94a3b8;letter-spacing:0.5px;margin-bottom:8px;">Lease Unit Details:</h4>
-                    <div style="font-size:14px;color:#cbd5e1;" th:text="${'Room #: ' + (invoice.contract != null and invoice.contract.room != null ? invoice.contract.room.roomNumber : 'N/A')}">Room 101</div>
-                    <div style="font-size:14px;color:#cbd5e1;" th:text="${'Floor: ' + (invoice.contract != null and invoice.contract.room != null ? invoice.contract.room.floor : 'N/A')}">Floor 1</div>
-                    <div style="font-size:14px;color:#cbd5e1;" th:text="${'Payment Due Date: ' + invoice.dueDate}">Due Date</div>
+                    <h4 style="font-size:12px;text-transform:uppercase;color:#94a3b8;letter-spacing:0.5px;margin-bottom:8px;" class="unit-detail">Lease Unit Details:</h4>
+                    <div style="font-size:14px;color:#cbd5e1;" class="unit-detail" th:text="${'Room #: ' + (invoice.contract != null and invoice.contract.room != null ? invoice.contract.room.roomNumber : 'N/A')}">Room 101</div>
+                    <div style="font-size:14px;color:#cbd5e1;" class="unit-detail" th:text="${'Floor: ' + (invoice.contract != null and invoice.contract.room != null ? invoice.contract.room.floor : 'N/A')}">Floor 1</div>
+                    <div style="font-size:14px;color:#cbd5e1;" class="unit-detail" th:text="${'Payment Due Date: ' + invoice.dueDate}">Due Date</div>
                 </div>
             </div>
 
-            <!-- Itemized Line Items Table -->
+            <!-- Itemized Line Items Table with Unit Breakdown -->
             <table class="data-table" style="margin-bottom:24px;">
                 <thead>
                     <tr>
@@ -80,11 +84,23 @@
                         <td style="text-align:right;" th:text="${'$' + invoice.rentAmount}">$1000.00</td>
                     </tr>
                     <tr>
-                        <td>Electricity Usage Charge</td>
+                        <td>
+                            <div>Electricity Usage Charge</div>
+                            <div style="font-size:12px;color:#94a3b8;margin-top:2px;" class="unit-detail"
+                                th:text="${(electricityUsage != null ? electricityUsage : 0) + ' kWh @ $' + (electricityRate != null ? electricityRate : 0) + '/kWh'}">
+                                200 kWh @ $0.25/kWh
+                            </div>
+                        </td>
                         <td style="text-align:right;" th:text="${'$' + invoice.electricityAmount}">$50.00</td>
                     </tr>
                     <tr>
-                        <td>Water Usage Charge</td>
+                        <td>
+                            <div>Water Usage Charge</div>
+                            <div style="font-size:12px;color:#94a3b8;margin-top:2px;" class="unit-detail"
+                                th:text="${(waterUsage != null ? waterUsage : 0) + ' m³ @ $' + (waterRate != null ? waterRate : 0) + '/m³'}">
+                                20 m³ @ $1.50/m³
+                            </div>
+                        </td>
                         <td style="text-align:right;" th:text="${'$' + invoice.waterAmount}">$20.00</td>
                     </tr>
                 </tbody>
@@ -109,7 +125,7 @@
             </div>
 
             <!-- Footer Notes -->
-            <div style="border-top:1px solid var(--border-color);padding-top:16px;font-size:12px;color:#94a3b8;text-align:center;">
+            <div style="border-top:1px solid var(--border-color);padding-top:16px;font-size:12px;color:#94a3b8;text-align:center;" class="unit-detail">
                 Thank you for residing at Apartment Hub. Please ensure prompt payment prior to the due date to avoid late fees.
             </div>
         </div>

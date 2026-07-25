@@ -9,10 +9,13 @@
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <style>
         @media print {
-            .sidebar, .back-btn, .print-btn { display: none !important; }
-            .main-content { margin-left: 0 !important; padding: 0 !important; width: 100% !important; }
-            .card { border: 1px solid #ddd !important; box-shadow: none !important; color: #000 !important; background: #fff !important; }
+            .sidebar, .back-btn, .print-btn, .header { display: none !important; }
+            .main-content { margin-left: 0 !important; padding: 0 !important; width: 100% !important; background: #fff !important; }
+            * { color: #000 !important; text-shadow: none !important; box-shadow: none !important; border-radius: 0 !important; }
             body { background: #fff !important; color: #000 !important; }
+            .card { border: 1px solid #000 !important; background: #fff !important; padding: 20px !important; margin: 0 !important; max-width: 100% !important; border-radius: 0 !important; }
+            table, th, td { border-color: #000 !important; color: #000 !important; border-radius: 0 !important; }
+            .status-badge { border: 1px solid #000 !important; color: #000 !important; background: #fff !important; border-radius: 0 !important; }
         }
     </style>
 </head>

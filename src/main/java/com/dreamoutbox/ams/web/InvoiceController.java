@@ -57,6 +57,35 @@ public class InvoiceController {
     public String invoiceDetail(@PathVariable UUID id, Model model) {
         Invoice invoice = invoiceService.getById(id);
         model.addAttribute("invoice", invoice);
+
+        if (invoice.getContract() != null && invoice.getContract().getRoom() != null) {
+            com.dreamoutbox.ams.room.Room room = invoice.getContract().getRoom();
+            String period = invoice.getPeriod();
+            com.dreamoutbox.ams.finance.MeterReading currentReading = invoiceService.getMeterReading(room, period);
+            com.dreamoutbox.ams.finance.UtilityRate utilityRate = invoiceService.getUtilityRate(period);
+
+            BigDecimal elecRate = (utilityRate != null && utilityRate.getElectricityUnitPrice() != null)
+                    ? utilityRate.getElectricityUnitPrice()
+                    : new BigDecimal("0.25");
+            BigDecimal waterRate = (utilityRate != null && utilityRate.getWaterUnitPrice() != null)
+                    ? utilityRate.getWaterUnitPrice()
+                    : new BigDecimal("1.50");
+
+            BigDecimal elecUsage = (elecRate.compareTo(BigDecimal.ZERO) > 0)
+                    ? invoice.getElectricityAmount().divide(elecRate, 2, java.math.RoundingMode.HALF_UP)
+                    : BigDecimal.ZERO;
+            BigDecimal waterUsage = (waterRate.compareTo(BigDecimal.ZERO) > 0)
+                    ? invoice.getWaterAmount().divide(waterRate, 2, java.math.RoundingMode.HALF_UP)
+                    : BigDecimal.ZERO;
+
+            model.addAttribute("meterReading", currentReading);
+            model.addAttribute("utilityRate", utilityRate);
+            model.addAttribute("electricityRate", elecRate);
+            model.addAttribute("waterRate", waterRate);
+            model.addAttribute("electricityUsage", elecUsage);
+            model.addAttribute("waterUsage", waterUsage);
+        }
+
         model.addAttribute("activeTab", "invoices");
         return "management/invoice-detail";
     }
