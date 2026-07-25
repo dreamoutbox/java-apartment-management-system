@@ -1,0 +1,65 @@
+package com.dreamoutbox.ams.web;
+
+import com.dreamoutbox.ams.finance.Payment;
+import com.dreamoutbox.ams.finance.PaymentService;
+import com.dreamoutbox.ams.tenant.Tenant;
+import com.dreamoutbox.ams.tenant.TenantService;
+import com.dreamoutbox.ams.user.User;
+import com.dreamoutbox.ams.user.UserService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.math.BigDecimal;
+import java.util.UUID;
+
+@Controller
+@RequestMapping("/payments")
+@RequiredArgsConstructor
+public class PaymentController {
+
+    private final PaymentService paymentService;
+    private final TenantService tenantService;
+    private final UserService userService;
+
+    @GetMapping
+    public String index(Model model) {
+        model.addAttribute("payments", paymentService.getAllPayments());
+        model.addAttribute("tenants", tenantService.getAllTenants());
+        model.addAttribute("activeTab", "payments");
+        return "management/payments";
+    }
+
+    @GetMapping("/{id}")
+    public String paymentDetail(@PathVariable UUID id, Model model) {
+        Payment payment = paymentService.getById(id);
+        model.addAttribute("payment", payment);
+        model.addAttribute("activeTab", "payments");
+        return "management/payment-detail";
+    }
+
+    @PostMapping("/create")
+    public String recordPayment(
+            @RequestParam UUID tenantId,
+            @RequestParam BigDecimal amount,
+            @AuthenticationPrincipal UserDetails userDetails,
+            RedirectAttributes redirectAttributes) {
+        try {
+            User currentUser = userService.getByUsername(userDetails.getUsername());
+            Tenant tenant = tenantService.getById(tenantId);
+            Payment payment = paymentService.recordPayment(tenant, amount, currentUser);
+            redirectAttributes.addFlashAttribute("successMessage", "Payment recorded successfully. Receipt #" + payment.getId());
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        }
+        return "redirect:/payments";
+    }
+}

@@ -33,7 +33,8 @@ public class PaymentService {
                 .receivedBy(receivedBy)
                 .build();
 
-        BigDecimal remaining = amount.add(tenant.getCreditBalance() != null ? tenant.getCreditBalance() : BigDecimal.ZERO);
+        BigDecimal remaining = amount
+                .add(tenant.getCreditBalance() != null ? tenant.getCreditBalance() : BigDecimal.ZERO);
         tenant.setCreditBalance(BigDecimal.ZERO);
 
         List<Invoice> unpaidInvoices = invoiceRepository.findUnpaidInvoicesForTenantForUpdate(
@@ -77,6 +78,11 @@ public class PaymentService {
     @Transactional(readOnly = true)
     public List<Payment> getPaymentsByTenant(Tenant tenant) {
         return paymentRepository.findByTenantOrderByPaidAtDesc(tenant);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Payment> getAllPayments() {
+        return paymentRepository.findAllByOrderByPaidAtDesc();
     }
 
     @Transactional(readOnly = true)

@@ -135,6 +135,143 @@ public class InvoiceService {
     }
 
     @Transactional(readOnly = true)
+    public List<Invoice> getAllInvoices() {
+        return invoiceRepository.findAllByOrderByPeriodDesc();
+    }
+
+    @Transactional
+    public Invoice createOrUpdateInvoice(
+            UUID invoiceId,
+            UUID contractId,
+            String period,
+            BigDecimal electricityReading,
+            BigDecimal waterReading,
+            BigDecimal electricityRate,
+            BigDecimal waterRate,
+            LocalDate dueDate) {
+
+        Contract contract = (invoiceId != null)
+                ? invoiceRepository.findById(invoiceId)
+                        .orElseThrow(() -> new IllegalArgumentException("Invoice not found: " + invoiceId))
+                        .getContract()
+                : contractRepository.findById(contractId)
+                        .orElseThrow(() -> new IllegalArgumentException("Contract not found: " + contractId));
+
+        Room room = contract.getRoom();
+
+        // 1. Record/Update meter reading for room and period
+        MeterReading currentReading = recordMeterReading(room, period, electricityReading, waterReading);
+
+        // 2. Record/Update utility rates if rates are provided
+        if (electricityRate != null && waterRate != null) {
+            setUtilityRate(period, electricityRate, waterRate);
+        }
+
+        UtilityRate rate = utilityRateRepository.findByPeriod(period)
+                .orElseGet(() -> UtilityRate.builder()
+                        .period(period)
+                        .electricityUnitPrice(electricityRate != null ? electricityRate : new BigDecimal("0.25"))
+                        .waterUnitPrice(waterRate != null ? waterRate : new BigDecimal("1.50"))
+                        .build());
+        if (rate.getId() == null) {
+            utilityRateRepository.save(rate);
+        }
+
+        // 3. Calculate usages
+        YearMonth ym = YearMonth.parse(period, DateTimeFormatter.ofPattern("yyyy-MM"));
+        String priorPeriod = ym.minusMonths(1).format(DateTimeFormatter.ofPattern("yyyy-MM"));
+        Optional<MeterReading> priorReadingOpt = meterReadingRepository.findByRoomAndPeriod(room, priorPeriod);
+
+        BigDecimal electricityUsage = currentReading.getElectricityReading();
+        BigDecimal waterUsage = currentReading.getWaterReading();
+
+        if (priorReadingOpt.isPresent()) {
+            MeterReading prior = priorReadingOpt.get();
+            electricityUsage = currentReading.getElectricityReading().subtract(prior.getElectricityReading()).max(BigDecimal.ZERO);
+            waterUsage = currentReading.getWaterReading().subtract(prior.getWaterReading()).max(BigDecimal.ZERO);
+        }
+
+        BigDecimal electricityAmount = electricityUsage.multiply(rate.getElectricityUnitPrice());
+        BigDecimal waterAmount = waterUsage.multiply(rate.getWaterUnitPrice());
+        BigDecimal rentAmount = contract.getMonthlyRent();
+        BigDecimal totalAmount = rentAmount.add(electricityAmount).add(waterAmount);
+
+        LocalDate calcDueDate = (dueDate != null) ? dueDate : ym.atDay(10);
+
+        Invoice invoice;
+        if (invoiceId != null) {
+            invoice = invoiceRepository.findById(invoiceId)
+                    .orElseThrow(() -> new IllegalArgumentException("Invoice not found: " + invoiceId));
+
+            BigDecimal amountPaid = invoice.getTotalAmount().subtract(invoice.getBalanceRemaining());
+            invoice.setPeriod(period);
+            invoice.setRentAmount(rentAmount);
+            invoice.setElectricityAmount(electricityAmount);
+            invoice.setWaterAmount(waterAmount);
+            invoice.setTotalAmount(totalAmount);
+            invoice.setBalanceRemaining(totalAmount.subtract(amountPaid).max(BigDecimal.ZERO));
+            invoice.setDueDate(calcDueDate);
+            if (invoice.getBalanceRemaining().compareTo(BigDecimal.ZERO) == 0) {
+                invoice.setStatus(InvoiceStatus.PAID);
+            } else if (amountPaid.compareTo(BigDecimal.ZERO) > 0) {
+                invoice.setStatus(InvoiceStatus.PARTIALLY_PAID);
+            } else {
+                invoice.setStatus(InvoiceStatus.UNPAID);
+            }
+        } else {
+            Optional<Invoice> existing = invoiceRepository.findByContractAndPeriod(contract, period);
+            if (existing.isPresent()) {
+                invoice = existing.get();
+                invoice.setRentAmount(rentAmount);
+                invoice.setElectricityAmount(electricityAmount);
+                invoice.setWaterAmount(waterAmount);
+                invoice.setTotalAmount(totalAmount);
+                invoice.setBalanceRemaining(totalAmount);
+                invoice.setDueDate(calcDueDate);
+            } else {
+                invoice = Invoice.builder()
+                        .contract(contract)
+                        .period(period)
+                        .rentAmount(rentAmount)
+                        .electricityAmount(electricityAmount)
+                        .waterAmount(waterAmount)
+                        .totalAmount(totalAmount)
+                        .balanceRemaining(totalAmount)
+                        .status(InvoiceStatus.UNPAID)
+                        .dueDate(calcDueDate)
+                        .build();
+            }
+
+            // Apply tenant credit if available
+            Tenant tenant = contract.getTenant();
+            if (tenant.getCreditBalance() != null && tenant.getCreditBalance().compareTo(BigDecimal.ZERO) > 0) {
+                BigDecimal credit = tenant.getCreditBalance();
+                BigDecimal applied = credit.min(totalAmount);
+                invoice.setBalanceRemaining(totalAmount.subtract(applied));
+                tenant.setCreditBalance(credit.subtract(applied));
+                if (invoice.getBalanceRemaining().compareTo(BigDecimal.ZERO) == 0) {
+                    invoice.setStatus(InvoiceStatus.PAID);
+                } else {
+                    invoice.setStatus(InvoiceStatus.PARTIALLY_PAID);
+                }
+                tenantRepository.save(tenant);
+            }
+        }
+
+        return invoiceRepository.save(invoice);
+    }
+
+    @Transactional(readOnly = true)
+    public MeterReading getMeterReading(Room room, String period) {
+        return meterReadingRepository.findByRoomAndPeriod(room, period).orElse(null);
+    }
+
+    @Transactional(readOnly = true)
+    public UtilityRate getUtilityRate(String period) {
+        return utilityRateRepository.findByPeriod(period).orElse(null);
+    }
+
+    @Transactional(readOnly = true)
     public Invoice getById(UUID id) {
         return invoiceRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invoice not found: " + id));

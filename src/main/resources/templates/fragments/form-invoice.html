@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div th:fragment="invoiceForm(invoice, contracts, meterReading, utilityRate)" class="card" style="max-width:800px;">
+    <div class="card-title" th:text="${invoice != null ? 'Update Invoice #' + invoice.id : 'Create Billing Invoice'}">Invoice Form</div>
+
+    <form th:action="@{/invoices/save}" method="post">
+        <input type="hidden" name="invoiceId" th:if="${invoice != null}" th:value="${invoice.id}">
+
+        <!-- Select Contract / Room -->
+        <div th:if="${invoice == null}" class="form-group">
+            <label style="font-weight:600;">Select Lease Contract / Room</label>
+            <select name="contractId" class="form-control" required>
+                <option value="">-- Choose Active Lease Contract --</option>
+                <option th:each="c : ${contracts}" th:value="${c.id}"
+                    th:text="${'Room ' + (c.room != null ? c.room.roomNumber : 'N/A') + ' — Tenant: ' + (c.tenant != null ? c.tenant.fullName : 'N/A') + ' (Rent: $' + c.monthlyRent + ')'}"></option>
+            </select>
+        </div>
+
+        <div th:if="${invoice != null}" class="form-group">
+            <label style="font-weight:600;">Assigned Lease Contract</label>
+            <input type="hidden" name="contractId" th:value="${invoice.contract != null ? invoice.contract.id : ''}">
+            <input type="text" class="form-control"
+                th:value="${'Room ' + (invoice.contract != null and invoice.contract.room != null ? invoice.contract.room.roomNumber : 'N/A') + ' — Tenant: ' + (invoice.contract != null and invoice.contract.tenant != null ? invoice.contract.tenant.fullName : 'N/A')}"
+                disabled>
+        </div>
+
+        <!-- Period and Due Date -->
+        <div class="form-row">
+            <div class="form-group">
+                <label style="font-weight:600;">Billing Period (YYYY-MM)</label>
+                <input type="text" name="period" th:value="${invoice != null ? invoice.period : '2026-07'}" class="form-control" placeholder="2026-07" required>
+            </div>
+            <div class="form-group">
+                <label style="font-weight:600;">Due Date</label>
+                <input type="date" name="dueDate" th:value="${invoice != null ? invoice.dueDate : ''}" class="form-control">
+            </div>
+        </div>
+
+        <!-- Meter Reading Section (Required by User) -->
+        <div style="background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.3);padding:16px;border-radius:8px;margin-bottom:20px;">
+            <div style="font-weight:600;font-size:15px;color:#93c5fd;margin-bottom:12px;">📊 Utility Meter Reading Inputs</div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Electricity Meter Reading (kWh)</label>
+                    <input type="number" step="0.01" name="electricityReading"
+                        th:value="${meterReading != null ? meterReading.electricityReading : ''}"
+                        class="form-control" placeholder="e.g. 1250.50" required>
+                </div>
+                <div class="form-group">
+                    <label>Water Meter Reading (m³)</label>
+                    <input type="number" step="0.01" name="waterReading"
+                        th:value="${meterReading != null ? meterReading.waterReading : ''}"
+                        class="form-control" placeholder="e.g. 340.00" required>
+                </div>
+            </div>
+        </div>
+
+        <!-- Utility Rates Override Section -->
+        <div class="form-row">
+            <div class="form-group">
+                <label>Electricity Rate ($/kWh)</label>
+                <input type="number" step="0.01" name="electricityRate"
+                    th:value="${utilityRate != null ? utilityRate.electricityUnitPrice : '0.25'}"
+                    class="form-control" placeholder="0.25">
+            </div>
+            <div class="form-group">
+                <label>Water Rate ($/m³)</label>
+                <input type="number" step="0.01" name="waterRate"
+                    th:value="${utilityRate != null ? utilityRate.waterUnitPrice : '1.50'}"
+                    class="form-control" placeholder="1.50">
+            </div>
+        </div>
+
+        <div style="display:flex;gap:10px;margin-top:20px;">
+            <button type="submit" class="btn" th:text="${invoice != null ? 'Save Changes' : 'Create &amp; Issue Invoice'}">Submit</button>
+            <a th:href="@{/invoices}" class="btn" style="background:#475569;">Cancel</a>
+        </div>
+    </form>
+</div>
+
+</body>
+</html>

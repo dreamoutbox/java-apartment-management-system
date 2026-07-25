@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Invoices Management - Apartment Hub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body>
+
+    <div th:replace="~{fragments/sidebar :: sidebar('ADMIN', 'invoices')}"></div>
+
+    <div class="main-content">
+        <div class="header" style="display:flex;justify-content:space-between;align-items:center;">
+            <div>
+                <h1>Invoices &amp; Billing Management</h1>
+                <p>Generate monthly invoices, configure utility rates, and monitor outstanding rent balances</p>
+            </div>
+            <div style="display:flex;align-items:center;gap:16px;">
+                <a th:href="@{/invoices/new}" class="btn">+ Create Invoice</a>
+                <div class="stat-card" style="padding:8px 16px;min-width:180px;">
+                    <div class="stat-label">Total Outstanding Balance</div>
+                    <div class="stat-value" style="font-size:20px;color:#ef4444;"
+                        th:text="${'$' + #numbers.formatDecimal(totalOutstanding != null ? totalOutstanding : 0, 1, 2)}">
+                        $0.00</div>
+                </div>
+            </div>
+        </div>
+
+        <div th:if="${errorMessage}"
+            style="margin-bottom:16px;background:rgba(239,68,68,0.15);color:#fca5a5;border:1px solid rgba(239,68,68,0.3);padding:12px 16px;border-radius:8px;font-size:14px;">
+            ⚠ <span th:text="${errorMessage}">Error</span>
+        </div>
+        <div th:if="${successMessage}"
+            style="margin-bottom:16px;background:rgba(34,197,94,0.15);color:#86efac;border:1px solid rgba(34,197,94,0.3);padding:12px 16px;border-radius:8px;font-size:14px;">
+            ✓ <span th:text="${successMessage}">Success</span>
+        </div>
+
+        <!-- Utility Rates & Invoice Generation Actions -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px;">
+            <!-- Set Utility Rates -->
+            <div class="card">
+                <div class="card-title">Configure Monthly Utility Rates</div>
+                <form th:action="@{/invoices/utility-rates}" method="post">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Period (YYYY-MM)</label>
+                            <input type="text" name="period" class="form-control" placeholder="2026-07" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Electricity Rate ($/kWh)</label>
+                            <input type="number" step="0.01" name="electricityRate" class="form-control"
+                                placeholder="0.25" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Water Rate ($/m³)</label>
+                            <input type="number" step="0.01" name="waterRate" class="form-control" placeholder="1.50"
+                                required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn" style="margin-top:12px;">Save Rates</button>
+                </form>
+            </div>
+
+            <!-- Batch Generate Monthly Invoices -->
+            <div class="card">
+                <div class="card-title">Batch Generate Invoices</div>
+                <p style="font-size:13px;color:#94a3b8;margin-bottom:16px;">Generate invoices for all active lease
+                    contracts based on recorded utility meter readings for the selected billing period.</p>
+                <form th:action="@{/invoices/generate}" method="post">
+                    <div class="form-group" style="margin-bottom:16px;">
+                        <label>Target Period (YYYY-MM)</label>
+                        <input type="text" name="period" class="form-control" placeholder="2026-07" required>
+                    </div>
+                    <button type="submit" class="btn">Batch Generate Invoices</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Invoices List -->
+        <div class="card">
+            <div class="card-title">All Billing Invoices</div>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Period</th>
+                        <th>Tenant</th>
+                        <th>Room #</th>
+                        <th>Rent</th>
+                        <th>Electricity</th>
+                        <th>Water</th>
+                        <th>Total Amount</th>
+                        <th>Balance Due</th>
+                        <th>Status</th>
+                        <th>Due Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="inv : ${invoices}">
+                        <td th:text="${inv.period}">2026-07</td>
+                        <td
+                            th:text="${inv.contract != null and inv.contract.tenant != null ? inv.contract.tenant.fullName : 'N/A'}">
+                            Tenant Name</td>
+                        <td
+                            th:text="${inv.contract != null and inv.contract.room != null ? inv.contract.room.roomNumber : 'N/A'}">
+                            101</td>
+                        <td th:text="${'$' + inv.rentAmount}">$1000.00</td>
+                        <td th:text="${'$' + inv.electricityAmount}">$50.00</td>
+                        <td th:text="${'$' + inv.waterAmount}">$20.00</td>
+                        <td th:text="${'$' + inv.totalAmount}" style="font-weight:600;">$1070.00</td>
+                        <td th:text="${'$' + inv.balanceRemaining}"
+                            th:style="${inv.balanceRemaining > 0 ? 'color:#f87171;font-weight:600;' : 'color:#4ade80;'}">
+                            $0.00</td>
+                        <td>
+                            <span th:class="${'status-badge status-' + inv.status}" th:text="${inv.status}">PAID</span>
+                        </td>
+                        <td th:text="${inv.dueDate}">2026-07-10</td>
+                        <td style="display:flex;gap:6px;">
+                            <a th:href="@{'/invoices/' + ${inv.id}}" class="btn"
+                                style="padding:4px 10px;font-size:12px;">View</a>
+                            <a th:href="@{'/invoices/' + ${inv.id} + '/edit'}" class="btn"
+                                style="padding:4px 10px;font-size:12px;background:#3b82f6;">Edit</a>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(invoices)}">
+                        <td colspan="11" style="text-align:center;color:#94a3b8;padding:24px;">No invoices found.
+                            Generate invoices for a billing period using the form above.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script th:src="@{/js/tables.js}"></script>
+</body>
+
+</html>

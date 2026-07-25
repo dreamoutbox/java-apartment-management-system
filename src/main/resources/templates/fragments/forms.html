@@ -21,6 +21,9 @@
     <div th:fragment="ticketForm(ticket, rooms, tenants, technicians)"
         th:replace="~{fragments/form-ticket :: ticketForm(${ticket}, ${rooms}, ${tenants}, ${technicians})}"></div>
 
+    <div th:fragment="invoiceForm(invoice, contracts, meterReading, utilityRate)"
+        th:replace="~{fragments/form-invoice :: invoiceForm(${invoice}, ${contracts}, ${meterReading}, ${utilityRate})}"></div>
+
 </body>
 
 </html>

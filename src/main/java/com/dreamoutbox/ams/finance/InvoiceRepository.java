@@ -15,24 +15,26 @@ import java.util.UUID;
 
 public interface InvoiceRepository extends JpaRepository<Invoice, UUID> {
 
-    Optional<Invoice> findByContractAndPeriod(Contract contract, String period);
+        Optional<Invoice> findByContractAndPeriod(Contract contract, String period);
 
-    List<Invoice> findByContract(Contract contract);
+        List<Invoice> findByContract(Contract contract);
 
-    List<Invoice> findByContractTenantOrderByPeriodAsc(Tenant tenant);
+        List<Invoice> findByContractTenantOrderByPeriodAsc(Tenant tenant);
 
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @Query("SELECT i FROM Invoice i WHERE i.contract.tenant = :tenant AND i.status IN :statuses ORDER BY i.period ASC")
-    List<Invoice> findUnpaidInvoicesForTenantForUpdate(
-            @Param("tenant") Tenant tenant,
-            @Param("statuses") List<InvoiceStatus> statuses);
+        @Lock(LockModeType.PESSIMISTIC_WRITE)
+        @Query("SELECT i FROM Invoice i WHERE i.contract.tenant = :tenant AND i.status IN :statuses ORDER BY i.period ASC")
+        List<Invoice> findUnpaidInvoicesForTenantForUpdate(
+                        @Param("tenant") Tenant tenant,
+                        @Param("statuses") List<InvoiceStatus> statuses);
 
-    List<Invoice> findByContractTenantAndStatusInOrderByPeriodAsc(
-            Tenant tenant, List<InvoiceStatus> statuses);
+        List<Invoice> findByContractTenantAndStatusInOrderByPeriodAsc(
+                        Tenant tenant, List<InvoiceStatus> statuses);
 
-    @Query("SELECT i FROM Invoice i WHERE i.status != 'PAID' AND i.dueDate < :today")
-    List<Invoice> findOverdueInvoices(@Param("today") LocalDate today);
+        @Query("SELECT i FROM Invoice i WHERE i.status != 'PAID' AND i.dueDate < :today")
+        List<Invoice> findOverdueInvoices(@Param("today") LocalDate today);
 
-    @Query("SELECT COALESCE(SUM(i.balanceRemaining), 0) FROM Invoice i WHERE i.status != 'PAID'")
-    Double calculateTotalOutstandingBalance();
+        List<Invoice> findAllByOrderByPeriodDesc();
+
+        @Query("SELECT COALESCE(SUM(i.balanceRemaining), 0) FROM Invoice i WHERE i.status != 'PAID'")
+        Double calculateTotalOutstandingBalance();
 }

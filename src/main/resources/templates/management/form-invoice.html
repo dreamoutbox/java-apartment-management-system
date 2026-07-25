@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${invoice != null ? 'Edit Invoice Statement' : 'Create Billing Invoice'}">Invoice Form</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body>
+
+    <div th:replace="~{fragments/sidebar :: sidebar('ADMIN', 'invoices')}"></div>
+
+    <div class="main-content">
+        <div class="header" style="display:flex;justify-content:space-between;align-items:center;">
+            <div>
+                <h1 th:text="${invoice != null ? 'Edit Invoice #' + invoice.id : 'Create Billing Invoice'}">Invoice Form</h1>
+                <p th:text="${invoice != null ? 'Update meter readings, utility rates, and billing details' : 'Record meter readings and issue a new monthly billing invoice'}">Manage billing statement</p>
+            </div>
+            <a th:href="@{/invoices}" class="btn" style="background:#475569;">← Back to Invoices</a>
+        </div>
+
+        <div th:replace="~{fragments/forms :: invoiceForm(${invoice}, ${contracts}, ${meterReading}, ${utilityRate})}"></div>
+    </div>
+
+    <script th:src="@{/js/tables.js}"></script>
+</body>
+
+</html>
