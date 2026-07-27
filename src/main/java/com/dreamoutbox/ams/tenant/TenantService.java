@@ -24,9 +24,10 @@ public class TenantService {
     private final FileStorageService fileStorageService;
 
     @Transactional
-    public Tenant createTenantWithAccount(String username, String rawPassword, String fullName, String phone, String email, String idCardNumber, MultipartFile idCardImage) {
+    public Tenant createTenantWithAccount(String username, String rawPassword, String fullName, String phone,
+            String email, String idCardNumber, MultipartFile idCardImage) {
         User user = userService.createUser(username, rawPassword, fullName, Role.TENANT);
-        
+
         Tenant tenant = tenantRepository.findByUserId(user.getId())
                 .orElse(Tenant.builder().user(user).creditBalance(BigDecimal.ZERO).build());
 
@@ -44,7 +45,8 @@ public class TenantService {
     }
 
     @Transactional
-    public Tenant updateTenant(UUID id, String fullName, String phone, String email, String idCardNumber, MultipartFile idCardImage) {
+    public Tenant updateTenant(UUID id, String fullName, String phone, String email, String idCardNumber,
+            MultipartFile idCardImage) {
         Tenant tenant = tenantRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Tenant not found: " + id));
 
@@ -89,9 +91,22 @@ public class TenantService {
                 .orElseThrow(() -> new IllegalArgumentException("Tenant not found: " + id));
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public Tenant getByUserId(UUID userId) {
         return tenantRepository.findByUserId(userId)
-                .orElseThrow(() -> new IllegalArgumentException("Tenant profile not found for user: " + userId));
+                .orElseGet(() -> {
+                    User user = userRepository.findById(userId).orElse(null);
+                    if (user != null && user.getRole() == Role.TENANT) {
+                        Tenant t = Tenant.builder()
+                                .user(user)
+                                .fullName(user.getFullName())
+                                .phone("N/A")
+                                .idCardNumber("ID-" + user.getUsername())
+                                .creditBalance(BigDecimal.ZERO)
+                                .build();
+                        return tenantRepository.save(t);
+                    }
+                    throw new IllegalArgumentException("Tenant profile not found for user: " + userId);
+                });
     }
 }
