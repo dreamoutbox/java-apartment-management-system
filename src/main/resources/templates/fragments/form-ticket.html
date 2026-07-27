@@ -7,14 +7,24 @@
 
     <!-- CREATE TICKET FORM -->
     <form th:if="${ticket == null}" th:action="@{/tickets/create}" method="post" enctype="multipart/form-data">
-        <div class="form-group">
+        <div class="form-group" th:if="${rooms != null and #lists.size(rooms) == 1}">
+            <label>Room</label>
+            <input type="text" class="form-control" th:value="${'Room ' + rooms[0].roomNumber + ' (Floor ' + rooms[0].floor + ')'}" readonly>
+            <input type="hidden" name="roomId" th:value="${rooms[0].id}">
+        </div>
+        <div class="form-group" th:if="${rooms == null or #lists.size(rooms) != 1}">
             <label>Room</label>
             <select name="roomId" class="form-control" required>
                 <option value="">-- Select Room --</option>
                 <option th:each="r : ${rooms}" th:value="${r.id}" th:text="${'Room ' + r.roomNumber + ' (Floor ' + r.floor + ')'}"></option>
             </select>
         </div>
-        <div class="form-group">
+        <div class="form-group" th:if="${tenants != null and #lists.size(tenants) == 1}">
+            <label>Reported By (Tenant)</label>
+            <input type="text" class="form-control" th:value="${tenants[0].fullName}" readonly>
+            <input type="hidden" name="tenantId" th:value="${tenants[0].id}">
+        </div>
+        <div class="form-group" th:if="${tenants == null or #lists.size(tenants) != 1}">
             <label>Reported By (Tenant)</label>
             <select name="tenantId" class="form-control" required>
                 <option value="">-- Select Tenant --</option>

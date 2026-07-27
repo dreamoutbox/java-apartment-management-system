@@ -17,6 +17,17 @@
         </div>
 
         <div class="sidebar-nav">
+            <a th:href="@{/tenant/dashboard}" class="nav-link"
+                th:classappend="${activeTab == 'dashboard' ? 'active' : ''}" sec:authorize="hasRole('TENANT')">
+                <svg style="width:18px;height:18px;" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2">
+                    <rect x="3" y="3" width="7" height="7" />
+                    <rect x="14" y="3" width="7" height="7" />
+                    <rect x="14" y="14" width="7" height="7" />
+                    <rect x="3" y="14" width="7" height="7" />
+                </svg>
+                Dashboard
+            </a>
             <a th:href="@{/users}" class="nav-link" th:classappend="${activeTab == 'users' ? 'active' : ''}"
                 sec:authorize="hasAnyRole('LANDLORD', 'MANAGER')">
                 <svg style="width:18px;height:18px;" viewBox="0 0 24 24" fill="none" stroke="currentColor"
