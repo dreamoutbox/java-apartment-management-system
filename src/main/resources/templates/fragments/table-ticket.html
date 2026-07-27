@@ -11,7 +11,7 @@
             <th th:if="${columns == null or #lists.contains(columns, 'description')}">Description</th>
             <th th:if="${columns == null or #lists.contains(columns, 'assignedTechnician')}">Assigned Technician</th>
             <th th:if="${columns == null or #lists.contains(columns, 'status')}">Status</th>
-            <th th:if="${assignActionUrl != null and (selectable == null or !selectable)}">Actions</th>
+            <th th:if="${assignActionUrl != null and (selectable == null or !selectable) and #authorization.expression('hasAnyRole(''LANDLORD'', ''MANAGER'')')}">Actions</th>
         </tr>
     </thead>
     <tbody>
@@ -33,7 +33,7 @@
                 Unassigned</td>
             <td th:if="${columns == null or #lists.contains(columns, 'status')}"><span th:class="${'status-badge status-' + (ticket != null ? ticket.status : 'PENDING')}"
                     th:text="${ticket != null ? ticket.status : ''}">PENDING</span></td>
-            <td th:if="${assignActionUrl != null and ticket != null and (selectable == null or !selectable)}">
+            <td th:if="${assignActionUrl != null and ticket != null and (selectable == null or !selectable) and #authorization.expression('hasAnyRole(''LANDLORD'', ''MANAGER'')')}">
                 <a th:href="@{'/tickets/' + ${ticket.id} + '/edit'}" class="btn"
                     style="padding:4px 10px;font-size:12px;">Update</a>
             </td>

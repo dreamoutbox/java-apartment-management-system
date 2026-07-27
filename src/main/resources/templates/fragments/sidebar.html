@@ -17,7 +17,8 @@
         </div>
 
         <div class="sidebar-nav">
-            <a th:href="@{/users}" class="nav-link" th:classappend="${activeTab == 'users' ? 'active' : ''}">
+            <a th:href="@{/users}" class="nav-link" th:classappend="${activeTab == 'users' ? 'active' : ''}"
+                sec:authorize="hasAnyRole('LANDLORD', 'MANAGER')">
                 <svg style="width:18px;height:18px;" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                     stroke-width="2">
                     <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
@@ -25,7 +26,8 @@
                 </svg>
                 User
             </a>
-            <a th:href="@{/tenants}" class="nav-link" th:classappend="${activeTab == 'tenants' ? 'active' : ''}">
+            <a th:href="@{/tenants}" class="nav-link" th:classappend="${activeTab == 'tenants' ? 'active' : ''}"
+                sec:authorize="hasAnyRole('LANDLORD', 'MANAGER')">
                 <svg style="width:18px;height:18px;" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                     stroke-width="2">
                     <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
@@ -35,7 +37,8 @@
                 </svg>
                 Tenant
             </a>
-            <a th:href="@{/rooms}" class="nav-link" th:classappend="${activeTab == 'rooms' ? 'active' : ''}">
+            <a th:href="@{/rooms}" class="nav-link" th:classappend="${activeTab == 'rooms' ? 'active' : ''}"
+                sec:authorize="hasAnyRole('LANDLORD', 'MANAGER')">
                 <svg style="width:18px;height:18px;" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                     stroke-width="2">
                     <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />

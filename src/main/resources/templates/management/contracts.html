@@ -11,15 +11,18 @@
 
 <body>
 
-    <div th:replace="~{fragments/sidebar :: sidebar('ADMIN', 'contracts')}"></div>
+    <div th:replace="~{fragments/sidebar :: sidebar('TENANT PORTAL', 'contracts')}" sec:authorize="hasRole('TENANT')">
+    </div>
+    <div th:replace="~{fragments/sidebar :: sidebar('ADMIN', 'contracts')}" sec:authorize="!hasRole('TENANT')"></div>
 
     <div class="main-content">
         <div class="header" style="display:flex;justify-content:space-between;align-items:center;">
             <div>
-                <h1>Lease Contracts Management</h1>
-                <p>Issue lease agreements, configure monthly rent, and manage active contracts</p>
+                <h1>Lease Contracts</h1>
+                <p>View active lease contracts and monthly rent breakdown</p>
             </div>
-            <a th:href="@{/contracts/new}" class="btn">+ Issue Contract</a>
+            <a th:href="@{/contracts/new}" class="btn" sec:authorize="hasAnyRole('LANDLORD', 'MANAGER')">+ Issue
+                Contract</a>
         </div>
         <div class="card">
             <div class="card-title">Lease Contracts</div>

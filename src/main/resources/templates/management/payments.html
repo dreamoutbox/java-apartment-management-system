@@ -11,14 +11,14 @@
 
 <body>
 
-    <div th:replace="~{fragments/sidebar :: sidebar('ADMIN', 'payments')}"></div>
+    <div th:replace="~{fragments/sidebar :: sidebar('TENANT PORTAL', 'payments')}" sec:authorize="hasRole('TENANT')"></div>
+    <div th:replace="~{fragments/sidebar :: sidebar('ADMIN', 'payments')}" sec:authorize="!hasRole('TENANT')"></div>
 
     <div class="main-content">
         <div class="header" style="display:flex;justify-content:space-between;align-items:center;">
             <div>
-                <h1>Payments &amp; Receipts Ledger</h1>
-                <p>Record tenant rent &amp; utility payments, generate official receipts, and review FIFO allocations
-                </p>
+                <h1>Payments &amp; Receipts</h1>
+                <p>View payment transactions and official receipts</p>
             </div>
         </div>
 
@@ -32,7 +32,7 @@
         </div>
 
         <!-- Record Payment Card -->
-        <div class="card" style="margin-bottom:24px;">
+        <div class="card" style="margin-bottom:24px;" sec:authorize="!hasRole('TENANT')">
             <div class="card-title">Record Tenant Payment (FIFO Allocation)</div>
             <form th:action="@{/payments/create}" method="post">
                 <div class="form-group" style="margin-bottom:16px;">

@@ -17,6 +17,13 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
 
+import com.dreamoutbox.ams.tenant.Tenant;
+import com.dreamoutbox.ams.tenant.TenantService;
+import com.dreamoutbox.ams.user.User;
+import com.dreamoutbox.ams.user.UserService;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
+
 @Controller
 @RequestMapping("/invoices")
 @RequiredArgsConstructor
@@ -24,11 +31,19 @@ public class InvoiceController {
 
     private final InvoiceService invoiceService;
     private final ContractService contractService;
+    private final UserService userService;
+    private final TenantService tenantService;
 
     @GetMapping
-    public String index(Model model) {
-        model.addAttribute("invoices", invoiceService.getAllInvoices());
-        model.addAttribute("totalOutstanding", invoiceService.getTotalOutstandingBalance());
+    public String index(Model model, @AuthenticationPrincipal UserDetails userDetails) {
+        if (userDetails != null && userDetails.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_TENANT"))) {
+            User currentUser = userService.getByUsername(userDetails.getUsername());
+            Tenant tenant = tenantService.getByUserId(currentUser.getId());
+            model.addAttribute("invoices", invoiceService.getTenantInvoices(tenant));
+        } else {
+            model.addAttribute("invoices", invoiceService.getAllInvoices());
+            model.addAttribute("totalOutstanding", invoiceService.getTotalOutstandingBalance());
+        }
         model.addAttribute("activeTab", "invoices");
         return "management/invoices";
     }

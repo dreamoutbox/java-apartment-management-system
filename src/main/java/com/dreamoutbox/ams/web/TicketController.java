@@ -34,11 +34,17 @@ public class TicketController {
     private final TenantService tenantService;
 
     @GetMapping
-    public String index(Model model) {
-        model.addAttribute("tickets", maintenanceService.getAllTickets());
-        model.addAttribute("technicians", userService.getUsersByRole(Role.TECHNICIAN));
-        model.addAttribute("rooms", roomService.getAllRooms());
-        model.addAttribute("tenants", tenantService.getAllTenants());
+    public String index(Model model, @AuthenticationPrincipal UserDetails userDetails) {
+        if (userDetails != null && userDetails.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_TENANT"))) {
+            User currentUser = userService.getByUsername(userDetails.getUsername());
+            Tenant tenant = tenantService.getByUserId(currentUser.getId());
+            model.addAttribute("tickets", maintenanceService.getTenantTickets(tenant));
+        } else {
+            model.addAttribute("tickets", maintenanceService.getAllTickets());
+            model.addAttribute("technicians", userService.getUsersByRole(Role.TECHNICIAN));
+            model.addAttribute("rooms", roomService.getAllRooms());
+            model.addAttribute("tenants", tenantService.getAllTenants());
+        }
         model.addAttribute("activeTab", "tickets");
         return "management/tickets";
     }

@@ -15,7 +15,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
+
+import com.dreamoutbox.ams.contract.Contract;
+import com.dreamoutbox.ams.contract.ContractService;
+import com.dreamoutbox.ams.tenant.Tenant;
+import com.dreamoutbox.ams.tenant.TenantService;
+import com.dreamoutbox.ams.user.User;
+import com.dreamoutbox.ams.user.UserService;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 
 @Controller
 @RequestMapping("/meter-readings")
@@ -24,11 +35,28 @@ public class MeterReadingController {
 
     private final InvoiceService invoiceService;
     private final RoomService roomService;
+    private final UserService userService;
+    private final TenantService tenantService;
+    private final ContractService contractService;
 
     @GetMapping
-    public String index(Model model) {
-        model.addAttribute("readings", invoiceService.getAllMeterReadings());
-        model.addAttribute("rooms", roomService.getAllRooms());
+    public String index(Model model, @AuthenticationPrincipal UserDetails userDetails) {
+        if (userDetails != null && userDetails.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_TENANT"))) {
+            User currentUser = userService.getByUsername(userDetails.getUsername());
+            Tenant tenant = tenantService.getByUserId(currentUser.getId());
+            List<Contract> contracts = contractService.getTenantActiveContracts(tenant);
+            var roomIds = contracts.stream()
+                    .filter(c -> c.getRoom() != null)
+                    .map(c -> c.getRoom().getId())
+                    .collect(Collectors.toSet());
+            var tenantReadings = invoiceService.getAllMeterReadings().stream()
+                    .filter(r -> r.getRoom() != null && roomIds.contains(r.getRoom().getId()))
+                    .collect(Collectors.toList());
+            model.addAttribute("readings", tenantReadings);
+        } else {
+            model.addAttribute("readings", invoiceService.getAllMeterReadings());
+            model.addAttribute("rooms", roomService.getAllRooms());
+        }
         model.addAttribute("activeTab", "meter-readings");
         return "management/meter-readings";
     }

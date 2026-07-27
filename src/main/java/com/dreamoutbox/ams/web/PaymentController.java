@@ -31,9 +31,16 @@ public class PaymentController {
     private final UserService userService;
 
     @GetMapping
-    public String index(Model model) {
-        model.addAttribute("payments", paymentService.getAllPayments());
-        model.addAttribute("tenants", tenantService.getAllTenants());
+    public String index(Model model, @AuthenticationPrincipal UserDetails userDetails) {
+        if (userDetails != null
+                && userDetails.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_TENANT"))) {
+            User currentUser = userService.getByUsername(userDetails.getUsername());
+            Tenant tenant = tenantService.getByUserId(currentUser.getId());
+            model.addAttribute("payments", paymentService.getPaymentsByTenant(tenant));
+        } else {
+            model.addAttribute("payments", paymentService.getAllPayments());
+            model.addAttribute("tenants", tenantService.getAllTenants());
+        }
         model.addAttribute("activeTab", "payments");
         return "management/payments";
     }
@@ -56,7 +63,8 @@ public class PaymentController {
             User currentUser = userService.getByUsername(userDetails.getUsername());
             Tenant tenant = tenantService.getById(tenantId);
             Payment payment = paymentService.recordPayment(tenant, amount, currentUser);
-            redirectAttributes.addFlashAttribute("successMessage", "Payment recorded successfully. Receipt #" + payment.getId());
+            redirectAttributes.addFlashAttribute("successMessage",
+                    "Payment recorded successfully. Receipt #" + payment.getId());
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         }

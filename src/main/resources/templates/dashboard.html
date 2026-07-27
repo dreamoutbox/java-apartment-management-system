@@ -310,26 +310,7 @@
 
     <!-- TENANT DASHBOARD -->
     <div sec:authorize="hasRole('TENANT')">
-        <div class="sidebar">
-            <div class="sidebar-brand">
-                <div class="brand-icon">
-                    <svg viewBox="0 0 24 24">
-                        <path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11M8 14h2v3H8zM14 14h2v3h-2z" />
-                    </svg>
-                </div>
-                <div>
-                    <div class="brand-title">Apartment Hub</div>
-                    <div class="role-badge">Tenant Portal</div>
-                </div>
-            </div>
-
-            <div class="user-profile">
-                <div class="user-name" th:text="${tenant != null ? tenant.fullName : #authentication.name}">Tenant</div>
-                <form th:action="@{/logout}" method="post">
-                    <button type="submit" class="logout-btn" style="background:none;border:none;cursor:pointer;">Sign Out</button>
-                </form>
-            </div>
-        </div>
+        <div th:replace="~{fragments/sidebar :: sidebar('TENANT PORTAL', 'dashboard')}"></div>
 
         <div class="main-content">
             <div class="header">

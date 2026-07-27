@@ -11,7 +11,8 @@
 
 <body>
 
-    <div th:replace="~{fragments/sidebar :: sidebar('ADMIN', 'tickets')}"></div>
+    <div th:replace="~{fragments/sidebar :: sidebar('TENANT PORTAL', 'tickets')}" sec:authorize="hasRole('TENANT')"></div>
+    <div th:replace="~{fragments/sidebar :: sidebar('ADMIN', 'tickets')}" sec:authorize="!hasRole('TENANT')"></div>
 
     <div class="main-content">
         <div class="header" style="display:flex;justify-content:space-between;align-items:center;">

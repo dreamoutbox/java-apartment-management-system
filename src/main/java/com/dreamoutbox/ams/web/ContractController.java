@@ -13,6 +13,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.dreamoutbox.ams.tenant.Tenant;
+import com.dreamoutbox.ams.user.User;
+import com.dreamoutbox.ams.user.UserService;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
@@ -25,14 +31,23 @@ public class ContractController {
     private final ContractService contractService;
     private final RoomService roomService;
     private final TenantService tenantService;
+    private final UserService userService;
 
     @GetMapping
-    public String index(Model model) {
-        model.addAttribute("contracts", contractService.getAllContracts());
-        model.addAttribute("activeContracts", contractService.getAllActiveContracts());
-        model.addAttribute("expiringContracts", contractService.getExpiringContracts());
-        model.addAttribute("rooms", roomService.getAllRooms());
-        model.addAttribute("tenants", tenantService.getAllTenants());
+    public String index(Model model, @AuthenticationPrincipal UserDetails userDetails) {
+        if (userDetails != null && userDetails.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_TENANT"))) {
+            User currentUser = userService.getByUsername(userDetails.getUsername());
+            Tenant tenant = tenantService.getByUserId(currentUser.getId());
+            var tenantContracts = contractService.getTenantActiveContracts(tenant);
+            model.addAttribute("contracts", tenantContracts);
+            model.addAttribute("activeContracts", tenantContracts);
+        } else {
+            model.addAttribute("contracts", contractService.getAllContracts());
+            model.addAttribute("activeContracts", contractService.getAllActiveContracts());
+            model.addAttribute("expiringContracts", contractService.getExpiringContracts());
+            model.addAttribute("rooms", roomService.getAllRooms());
+            model.addAttribute("tenants", tenantService.getAllTenants());
+        }
         model.addAttribute("activeTab", "contracts");
         return "management/contracts";
     }

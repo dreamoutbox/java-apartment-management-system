@@ -11,15 +11,16 @@
 
 <body>
 
-    <div th:replace="~{fragments/sidebar :: sidebar('ADMIN', 'announcements')}"></div>
+    <div th:replace="~{fragments/sidebar :: sidebar('TENANT PORTAL', 'announcements')}" sec:authorize="hasRole('TENANT')"></div>
+    <div th:replace="~{fragments/sidebar :: sidebar('ADMIN', 'announcements')}" sec:authorize="!hasRole('TENANT')"></div>
 
     <div class="main-content">
         <div class="header" style="display:flex;justify-content:space-between;align-items:center;">
             <div>
                 <h1>Building Announcements</h1>
-                <p>Publish notices, building rules, and updates for all residents and staff</p>
+                <p>Notices, building rules, and updates for all residents and staff</p>
             </div>
-            <a th:href="@{/Announcements/new}" class="btn">+ Publish Announcement</a>
+            <a th:href="@{/Announcements/new}" class="btn" sec:authorize="!hasRole('TENANT')">+ Publish Announcement</a>
         </div>
         <div class="card">
             <div class="card-title">Building Announcements</div>

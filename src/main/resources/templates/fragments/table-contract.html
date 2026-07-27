@@ -12,7 +12,7 @@
             <th th:if="${columns == null or #lists.contains(columns, 'startDate')}">Start Date</th>
             <th th:if="${columns == null or #lists.contains(columns, 'endDate')}">End Date</th>
             <th th:if="${columns == null or #lists.contains(columns, 'status')}">Status</th>
-            <th th:if="${selectable == null or !selectable}">Actions</th>
+            <th th:if="${(selectable == null or !selectable) and #authorization.expression('hasAnyRole(''LANDLORD'', ''MANAGER'')')}">Actions</th>
         </tr>
     </thead>
     <tbody>
@@ -29,7 +29,7 @@
             <td th:if="${columns == null or #lists.contains(columns, 'endDate')}" th:text="${c != null ? c.endDate : ''}">2024-12-31</td>
             <td th:if="${columns == null or #lists.contains(columns, 'status')}"><span th:class="${'status-badge status-' + (c != null ? c.status : 'ACTIVE')}"
                     th:text="${c != null ? c.status : ''}">ACTIVE</span></td>
-            <td th:if="${selectable == null or !selectable}">
+            <td th:if="${(selectable == null or !selectable) and #authorization.expression('hasAnyRole(''LANDLORD'', ''MANAGER'')')}">
                 <div th:if="${c != null}" style="display:flex;gap:6px;">
                     <a th:href="@{'/contracts/' + ${c.id} + '/edit'}" class="btn"
                         style="padding:4px 10px;font-size:12px;">Update</a>
