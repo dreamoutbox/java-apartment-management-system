@@ -82,7 +82,7 @@ public class TenantService {
 
     @Transactional(readOnly = true)
     public List<Tenant> getAllTenants() {
-        return tenantRepository.findAll();
+        return tenantRepository.findAllByOrderByCreatedAtAsc();
     }
 
     @Transactional(readOnly = true)
@@ -106,6 +106,7 @@ public class TenantService {
                                 .build();
                         return tenantRepository.save(t);
                     }
+
                     throw new IllegalArgumentException("Tenant profile not found for user: " + userId);
                 });
     }

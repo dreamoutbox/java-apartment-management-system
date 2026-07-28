@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${tenant != null ? tenant.fullName + ' - Tenant Profile' : 'Tenant Profile'}">Tenant Profile -
+        Apartment Hub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body>
+
+    <div th:replace="~{fragments/sidebar :: sidebar('ADMIN', 'tenants')}"></div>
+
+    <div class="main-content">
+        <div class="header" style="display:flex;justify-content:space-between;align-items:center;">
+            <div>
+                <h1 th:text="${tenant != null ? tenant.fullName : 'Tenant Profile'}">Tenant Profile</h1>
+                <p>Complete tenant record, active lease agreements, utility readings, invoices, and payment history</p>
+            </div>
+            <div style="display:flex;gap:10px;">
+                <a th:if="${tenant != null}" th:href="@{'/tenants/' + ${tenant.id} + '/edit'}" class="btn"
+                    style="background:#3b82f6;">Edit Profile</a>
+                <a th:href="@{/tenants}" class="btn" style="background:#475569;">← Back to Tenants</a>
+            </div>
+        </div>
+
+        <!-- Tenant Information Summary Card -->
+        <div class="card" style="margin-bottom:24px;">
+            <div class="card-title">Tenant Profile Summary</div>
+            <div class="form-row" th:if="${tenant != null}">
+                <div>
+                    <span class="stat-label">Full Name</span>
+                    <div style="font-size:16px;font-weight:600;margin-top:4px;" th:text="${tenant.fullName}">John Doe
+                    </div>
+                </div>
+                <div>
+                    <span class="stat-label">System Username</span>
+                    <div style="font-size:16px;font-weight:600;margin-top:4px;"
+                        th:text="${tenant.user != null ? tenant.user.username : 'N/A'}">username</div>
+                </div>
+                <div>
+                    <span class="stat-label">Phone Number</span>
+                    <div style="font-size:16px;font-weight:600;margin-top:4px;" th:text="${tenant.phone}">0812345678
+                    </div>
+                </div>
+                <div>
+                    <span class="stat-label">Email Address</span>
+                    <div style="font-size:16px;font-weight:600;margin-top:4px;"
+                        th:text="${tenant.email != null and not #strings.isEmpty(tenant.email) ? tenant.email : 'N/A'}">
+                        email@example.com</div>
+                </div>
+                <div>
+                    <span class="stat-label">ID Card Number</span>
+                    <div style="font-size:16px;font-weight:600;margin-top:4px;" th:text="${tenant.idCardNumber}">
+                        ID-123456</div>
+                </div>
+                <div>
+                    <span class="stat-label">Credit Balance</span>
+                    <div style="font-size:16px;font-weight:600;margin-top:4px;color:#10b981;"
+                        th:text="${'$' + (tenant.creditBalance != null ? tenant.creditBalance : 0)}">$0.00</div>
+                </div>
+            </div>
+            <div th:if="${tenant != null and tenant.idCardImagePath != null}"
+                style="margin-top:16px;padding-top:12px;border-top:1px solid var(--border-color);">
+                <span class="stat-label">ID Document Proof</span>
+                <div style="margin-top:6px;">
+                    <a th:href="@{'/uploads/' + ${tenant.idCardImagePath}}" target="_blank" class="btn"
+                        style="padding:4px 12px;font-size:13px;background:#475569;">📄 View Uploaded ID Card</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 1: Lease Contracts -->
+        <div class="card" style="margin-bottom:24px;">
+            <div class="card-title">Lease Contracts</div>
+            <div th:replace="~{fragments/table-contract :: contractTable(contracts=${contracts})}"></div>
+        </div>
+
+        <!-- Section 2: Meter Readings -->
+        <div class="card" style="margin-bottom:24px;">
+            <div class="card-title">Utility Meter Readings</div>
+            <div th:replace="~{fragments/table-meter-reading :: meterReadingTable(readings=${readings})}"></div>
+        </div>
+
+        <!-- Section 3: Billing Invoices -->
+        <div class="card" style="margin-bottom:24px;">
+            <div class="card-title">Billing Invoices</div>
+            <div th:replace="~{fragments/table-invoice :: invoiceTable(invoices=${invoices})}"></div>
+        </div>
+
+        <!-- Section 4: All Payments & Issued Receipts -->
+        <div class="card" style="margin-bottom:24px;">
+            <div class="card-title">All Payments &amp; Issued Receipts</div>
+            <div th:replace="~{fragments/table-payment :: paymentTable(payments=${payments})}"></div>
+        </div>
+    </div>
+
+    <script th:src="@{/js/tables.js}"></script>
+</body>
+
+</html>

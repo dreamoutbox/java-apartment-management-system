@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<body>
+
+    <div th:fragment="invoiceTable(invoices)">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Period</th>
+                    <th>Tenant</th>
+                    <th>Room #</th>
+                    <th>Rent</th>
+                    <th>Electricity</th>
+                    <th>Water</th>
+                    <th>Total Amount</th>
+                    <th>Balance Due</th>
+                    <th>Status</th>
+                    <th>Due Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="inv : ${invoices}">
+                    <td th:text="${inv.period}">2026-07</td>
+                    <td
+                        th:text="${inv.contract != null and inv.contract.tenant != null ? inv.contract.tenant.fullName : 'N/A'}">
+                        Tenant Name</td>
+                    <td
+                        th:text="${inv.contract != null and inv.contract.room != null ? inv.contract.room.roomNumber : 'N/A'}">
+                        101</td>
+                    <td th:text="${'$' + inv.rentAmount}">$1000.00</td>
+                    <td th:text="${'$' + inv.electricityAmount}">$50.00</td>
+                    <td th:text="${'$' + inv.waterAmount}">$20.00</td>
+                    <td th:text="${'$' + inv.totalAmount}" style="font-weight:600;">$1070.00</td>
+                    <td th:text="${'$' + inv.balanceRemaining}"
+                        th:style="${inv.balanceRemaining > 0 ? 'color:#f87171;font-weight:600;' : 'color:#4ade80;'}">
+                        $0.00</td>
+                    <td>
+                        <span th:class="${'status-badge status-' + inv.status}" th:text="${inv.status}">PAID</span>
+                    </td>
+                    <td th:text="${inv.dueDate}">2026-07-10</td>
+                    <td style="display:flex;gap:6px;">
+                        <a th:href="@{'/invoices/' + ${inv.id}}" class="btn"
+                            style="padding:4px 10px;font-size:12px;">View Statement</a>
+                        <a th:href="@{'/invoices/' + ${inv.id} + '/edit'}" class="btn"
+                            style="padding:4px 10px;font-size:12px;background:#3b82f6;"
+                            sec:authorize="!hasRole('TENANT')">Edit</a>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(invoices)}">
+                    <td colspan="11" style="text-align:center;color:#94a3b8;padding:24px;">No invoices found.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div style="display:flex; justify-content:flex-end; margin-top:14px;">
+            <!-- <div style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.25);padding:10px 18px;border-radius:8px;display:flex;align-items:center;gap:12px;"> -->
+            <span style="color:#94a3b8;font-size:14px;font-weight:500;">Total Unpaid Invoices Balance:</span>
+            <strong style="color:#f87171;font-size:18px;"
+                th:text="${invoices != null and not #lists.isEmpty(invoices) ? '$' + #numbers.formatDecimal(#aggregates.sum(invoices.![balanceRemaining]), 1, 2) : '$0.00'}">
+                $0.00
+            </strong>
+            <!-- </div> -->
+        </div>
+    </div>
+
+</body>
+
+</html>

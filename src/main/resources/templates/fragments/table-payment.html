@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<table th:fragment="paymentTable(payments)" class="data-table">
+    <thead>
+        <tr>
+            <th>Receipt ID</th>
+            <th>Tenant</th>
+            <th>Amount Paid</th>
+            <th>Date &amp; Time</th>
+            <th>Received By</th>
+            <th>Allocated Invoices</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr th:each="p : ${payments}">
+            <td style="font-family:monospace;font-size:12px;" th:text="${p.id}">Payment ID</td>
+            <td th:text="${p.tenant != null ? p.tenant.fullName : 'N/A'}" style="font-weight:500;">Tenant Name</td>
+            <td th:text="${'$' + p.amount}" style="font-weight:600;color:#4ade80;">$1500.00</td>
+            <td th:text="${p.paidAt != null ? #temporals.format(p.paidAt, 'yyyy-MM-dd HH:mm') : 'N/A'}">2026-07-25 10:00</td>
+            <td th:text="${p.receivedBy != null ? p.receivedBy.fullName : 'System'}">Staff Name</td>
+            <td>
+                <span th:if="${p.allocations != null and not #lists.isEmpty(p.allocations)}" th:text="${p.allocations.size() + ' invoice(s)'}">1 invoice(s)</span>
+                <span th:if="${p.allocations == null or #lists.isEmpty(p.allocations)}" style="color:#94a3b8;">Account Credit</span>
+            </td>
+            <td>
+                <a th:href="@{'/payments/' + ${p.id}}" class="btn" style="padding:4px 10px;font-size:12px;">View Receipt</a>
+            </td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(payments)}">
+            <td colspan="7" style="text-align:center;color:#94a3b8;padding:24px;">No payments recorded yet.</td>
+        </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

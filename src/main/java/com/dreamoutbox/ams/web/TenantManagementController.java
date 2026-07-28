@@ -1,5 +1,9 @@
 package com.dreamoutbox.ams.web;
 
+import com.dreamoutbox.ams.contract.ContractService;
+import com.dreamoutbox.ams.finance.InvoiceService;
+import com.dreamoutbox.ams.finance.PaymentService;
+import com.dreamoutbox.ams.tenant.Tenant;
 import com.dreamoutbox.ams.tenant.TenantService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -12,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/tenants")
@@ -19,12 +24,40 @@ import java.util.UUID;
 public class TenantManagementController {
 
     private final TenantService tenantService;
+    private final ContractService contractService;
+    private final InvoiceService invoiceService;
+    private final PaymentService paymentService;
 
     @GetMapping
     public String index(Model model) {
         model.addAttribute("tenants", tenantService.getAllTenants());
         model.addAttribute("activeTab", "tenants");
         return "management/tenants";
+    }
+
+    @GetMapping("/{id}")
+    public String tenantDetail(@PathVariable UUID id, Model model) {
+        Tenant tenant = tenantService.getById(id);
+        var contracts = contractService.getTenantActiveContracts(tenant);
+        var invoices = invoiceService.getTenantInvoices(tenant);
+        var payments = paymentService.getPaymentsByTenant(tenant);
+
+        var roomIds = contracts.stream()
+                .filter(c -> c.getRoom() != null)
+                .map(c -> c.getRoom().getId())
+                .collect(Collectors.toSet());
+        var readings = invoiceService.getAllMeterReadings().stream()
+                .filter(r -> r.getRoom() != null && roomIds.contains(r.getRoom().getId()))
+                .collect(Collectors.toList());
+
+        model.addAttribute("tenant", tenant);
+        model.addAttribute("contracts", contracts);
+        model.addAttribute("readings", readings);
+        model.addAttribute("invoices", invoices);
+        model.addAttribute("payments", payments);
+        model.addAttribute("activeTab", "tenants");
+
+        return "management/tenant-detail";
     }
 
     @GetMapping("/new")
