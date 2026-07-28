@@ -2,8 +2,8 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <body>
-
-    <table th:fragment="tenantTable(tenants)" class="data-table">
+    <table th:fragment="tenantTable(tenants)" class="data-table"
+        th:attr="data-default-limit=${defaultLimit != null ? defaultLimit : null}">
         <thead>
             <tr>
                 <th th:if="${selectable != null and selectable}" style="width:50px;text-align:center;">Select</th>
@@ -62,7 +62,6 @@
             </tr>
         </tbody>
     </table>
-
 </body>
 
 </html>

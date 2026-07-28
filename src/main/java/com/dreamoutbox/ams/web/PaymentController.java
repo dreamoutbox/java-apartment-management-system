@@ -45,6 +45,13 @@ public class PaymentController {
         return "management/payments";
     }
 
+    @GetMapping("/new")
+    public String newPaymentForm(Model model) {
+        model.addAttribute("tenants", tenantService.getAllTenants());
+        model.addAttribute("activeTab", "payments");
+        return "management/form-payment";
+    }
+
     @GetMapping("/{id}")
     public String paymentDetail(@PathVariable UUID id, Model model) {
         Payment payment = paymentService.getById(id);

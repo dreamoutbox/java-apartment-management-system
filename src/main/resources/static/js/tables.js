@@ -43,8 +43,10 @@
             if (allRows.length === 0) return;
 
             var noToolbar = table.dataset.noToolbar === 'true' || table.classList.contains('no-toolbar');
+            var defaultLimitAttr = table.dataset.defaultLimit;
+            var initialLimit = defaultLimitAttr ? (defaultLimitAttr === 'All' ? Infinity : parseInt(defaultLimitAttr, 10)) : 10;
             var currentPage = 1;
-            var pageSize = noToolbar ? Infinity : 10;
+            var pageSize = noToolbar ? Infinity : initialLimit;
             var searchQuery = '';
             var sortState = { col: -1, asc: true };
             var paginationBar = null;
@@ -66,7 +68,7 @@
                         var opt = document.createElement('option');
                         opt.value = val;
                         opt.textContent = val;
-                        if (val === 10) opt.selected = true;
+                        if (val === initialLimit || String(val) === defaultLimitAttr) opt.selected = true;
                         limitSelect.appendChild(opt);
                     });
 

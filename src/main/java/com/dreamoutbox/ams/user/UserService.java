@@ -100,11 +100,11 @@ public class UserService implements UserDetailsService {
 
     @Transactional(readOnly = true)
     public List<User> getAllUsers() {
-        return userRepository.findAll();
+        return userRepository.findAllByOrderByCreatedAtAsc();
     }
 
     public List<User> getUsersByRole(Role role) {
-        return userRepository.findByRole(role);
+        return userRepository.findByRoleOrderByCreatedAtAsc(role);
     }
 
     public User getByUsername(String username) {
