@@ -83,7 +83,7 @@ public class SecurityConfig {
                     redirectUrl = "/technician/dashboard";
                     break;
                 } else if (role.equals("ROLE_TENANT")) {
-                    redirectUrl = "/tenant/dashboard";
+                    redirectUrl = "/contracts";
                     break;
                 }
             }

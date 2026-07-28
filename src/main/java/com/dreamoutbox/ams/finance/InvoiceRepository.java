@@ -21,6 +21,8 @@ public interface InvoiceRepository extends JpaRepository<Invoice, UUID> {
 
         List<Invoice> findByContractTenantOrderByPeriodAsc(Tenant tenant);
 
+        List<Invoice> findByContractTenantOrderByPeriodDesc(Tenant tenant);
+
         @Lock(LockModeType.PESSIMISTIC_WRITE)
         @Query("SELECT i FROM Invoice i WHERE i.contract.tenant = :tenant AND i.status IN :statuses ORDER BY i.period ASC")
         List<Invoice> findUnpaidInvoicesForTenantForUpdate(

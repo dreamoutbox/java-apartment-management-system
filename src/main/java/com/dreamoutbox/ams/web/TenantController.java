@@ -1,10 +1,7 @@
 package com.dreamoutbox.ams.web;
 
-import com.dreamoutbox.ams.announcement.AnnouncementService;
 import com.dreamoutbox.ams.contract.Contract;
 import com.dreamoutbox.ams.contract.ContractService;
-import com.dreamoutbox.ams.finance.InvoiceService;
-import com.dreamoutbox.ams.finance.PaymentService;
 import com.dreamoutbox.ams.maintenance.MaintenanceService;
 import com.dreamoutbox.ams.room.Room;
 import com.dreamoutbox.ams.tenant.Tenant;
@@ -15,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,26 +28,11 @@ public class TenantController {
     private final UserService userService;
     private final TenantService tenantService;
     private final ContractService contractService;
-    private final InvoiceService invoiceService;
-    private final PaymentService paymentService;
     private final MaintenanceService maintenanceService;
-    private final AnnouncementService announcementService;
 
-    @GetMapping("/dashboard")
-    public String dashboard(Model model, @AuthenticationPrincipal UserDetails userDetails) {
-        User currentUser = userService.getByUsername(userDetails.getUsername());
-        Tenant tenant = tenantService.getByUserId(currentUser.getId());
-        List<Contract> contracts = contractService.getTenantActiveContracts(tenant);
-
-        model.addAttribute("tenant", tenant);
-        model.addAttribute("contracts", contracts);
-        model.addAttribute("invoices", invoiceService.getTenantInvoices(tenant));
-        model.addAttribute("payments", paymentService.getPaymentsByTenant(tenant));
-        model.addAttribute("tickets", maintenanceService.getTenantTickets(tenant));
-        model.addAttribute("announcements", announcementService.getAllAnnouncements());
-        model.addAttribute("expiringContracts", contractService.getExpiringContracts());
-
-        return "dashboard";
+    @GetMapping({ "/dashboard", "" })
+    public String dashboard() {
+        return "redirect:/contracts";
     }
 
     @PostMapping("/tickets")

@@ -58,7 +58,8 @@ public class InvoiceService {
 
         Room room = contract.getRoom();
         MeterReading currentReading = meterReadingRepository.findByRoomAndPeriod(room, period)
-                .orElseThrow(() -> new IllegalStateException("Meter reading not found for room " + room.getRoomNumber() + " in period " + period));
+                .orElseThrow(() -> new IllegalStateException(
+                        "Meter reading not found for room " + room.getRoomNumber() + " in period " + period));
 
         // Find prior period reading
         YearMonth ym = YearMonth.parse(period, DateTimeFormatter.ofPattern("yyyy-MM"));
@@ -70,7 +71,8 @@ public class InvoiceService {
 
         if (priorReadingOpt.isPresent()) {
             MeterReading prior = priorReadingOpt.get();
-            electricityUsage = currentReading.getElectricityReading().subtract(prior.getElectricityReading()).max(BigDecimal.ZERO);
+            electricityUsage = currentReading.getElectricityReading().subtract(prior.getElectricityReading())
+                    .max(BigDecimal.ZERO);
             waterUsage = currentReading.getWaterReading().subtract(prior.getWaterReading()).max(BigDecimal.ZERO);
         }
 
@@ -121,7 +123,7 @@ public class InvoiceService {
 
     @Transactional(readOnly = true)
     public List<Invoice> getTenantInvoices(Tenant tenant) {
-        return invoiceRepository.findByContractTenantOrderByPeriodAsc(tenant);
+        return invoiceRepository.findByContractTenantOrderByPeriodDesc(tenant);
     }
 
     @Transactional(readOnly = true)
@@ -198,7 +200,8 @@ public class InvoiceService {
 
         if (priorReadingOpt.isPresent()) {
             MeterReading prior = priorReadingOpt.get();
-            electricityUsage = currentReading.getElectricityReading().subtract(prior.getElectricityReading()).max(BigDecimal.ZERO);
+            electricityUsage = currentReading.getElectricityReading().subtract(prior.getElectricityReading())
+                    .max(BigDecimal.ZERO);
             waterUsage = currentReading.getWaterReading().subtract(prior.getWaterReading()).max(BigDecimal.ZERO);
         }
 
