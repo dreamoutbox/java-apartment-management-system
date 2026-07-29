@@ -8,4 +8,5 @@ import java.util.UUID;
 public interface PaymentRepository extends JpaRepository<Payment, UUID> {
     List<Payment> findByTenantOrderByPaidAtDesc(Tenant tenant);
     List<Payment> findAllByOrderByPaidAtDesc();
+    List<Payment> findAllByOrderByCreatedAtAsc();
 }

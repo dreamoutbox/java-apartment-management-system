@@ -6,7 +6,7 @@
     <table th:fragment="paymentTable(payments)" class="data-table">
         <thead>
             <tr>
-                <th>Receipt ID</th>
+                <th>Receipt #</th>
                 <th>Tenant</th>
                 <th>Amount Paid</th>
                 <th>Date &amp; Time</th>
@@ -17,7 +17,7 @@
         </thead>
         <tbody>
             <tr th:each="p : ${payments}">
-                <td style="font-family:monospace;font-size:12px;" th:text="${p.id}">Payment ID</td>
+                <td style="font-weight:600;" th:text="${p.receiptNumber}">REC-202607-00001</td>
                 <td th:text="${p.tenant != null ? p.tenant.fullName : 'N/A'}" style="font-weight:500;">Tenant Name</td>
                 <td th:text="${'$' + p.amount}" style="font-weight:600;color:#4ade80;">$1500.00</td>
                 <td th:text="${p.paidAt != null ? #temporals.format(p.paidAt, 'yyyy-MM-dd HH:mm') : 'N/A'}">2026-07-25

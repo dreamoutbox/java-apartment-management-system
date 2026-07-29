@@ -48,4 +48,15 @@ public class Payment extends BaseEntity {
     @OneToMany(mappedBy = "payment", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<PaymentAllocation> allocations = new ArrayList<>();
+
+    @Column(name = "receipt_number")
+    private String receiptNumber;
+
+    public String getReceiptNumber() {
+        if (receiptNumber != null && !receiptNumber.isBlank()) {
+            return receiptNumber;
+        }
+        String ym = (paidAt != null) ? paidAt.format(java.time.format.DateTimeFormatter.ofPattern("yyyyMM")) : "202607";
+        return "REC-" + ym + "-00001";
+    }
 }

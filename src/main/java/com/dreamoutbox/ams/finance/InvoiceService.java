@@ -1,5 +1,6 @@
 package com.dreamoutbox.ams.finance;
 
+import com.dreamoutbox.ams.common.DocumentSequenceService;
 import com.dreamoutbox.ams.contract.Contract;
 import com.dreamoutbox.ams.contract.ContractRepository;
 import com.dreamoutbox.ams.contract.ContractStatus;
@@ -27,6 +28,7 @@ public class InvoiceService {
     private final MeterReadingRepository meterReadingRepository;
     private final ContractRepository contractRepository;
     private final TenantRepository tenantRepository;
+    private final DocumentSequenceService documentSequenceService;
 
     @Transactional
     public UtilityRate setUtilityRate(String period, BigDecimal electricityRate, BigDecimal waterRate) {
@@ -82,8 +84,11 @@ public class InvoiceService {
         BigDecimal totalAmount = rentAmount.add(electricityAmount).add(waterAmount);
 
         LocalDate dueDate = ym.atDay(10); // Default due date 10th of the month
+        String ymStr = period != null ? period.replace("-", "") : "202607";
+        String nextInvNum = documentSequenceService.getNextNumber("INV", ymStr);
 
         Invoice invoice = Invoice.builder()
+                .invoiceNumber(nextInvNum)
                 .contract(contract)
                 .period(period)
                 .rentAmount(rentAmount)
@@ -241,9 +246,11 @@ public class InvoiceService {
                 invoice.setWaterAmount(waterAmount);
                 invoice.setTotalAmount(totalAmount);
                 invoice.setBalanceRemaining(totalAmount);
-                invoice.setDueDate(calcDueDate);
             } else {
+                String ymStr = period != null ? period.replace("-", "") : "202607";
+                String nextInvNum = documentSequenceService.getNextNumber("INV", ymStr);
                 invoice = Invoice.builder()
+                        .invoiceNumber(nextInvNum)
                         .contract(contract)
                         .period(period)
                         .rentAmount(rentAmount)
@@ -305,5 +312,18 @@ public class InvoiceService {
     public Invoice getById(UUID id) {
         return invoiceRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invoice not found: " + id));
+    }
+
+    @org.springframework.context.event.EventListener(org.springframework.boot.context.event.ApplicationReadyEvent.class)
+    @Transactional
+    public void backfillMissingInvoiceNumbers() {
+        List<Invoice> invoices = invoiceRepository.findAllByOrderByCreatedAtAsc();
+        for (Invoice inv : invoices) {
+            if (inv.getInvoiceNumber() == null || inv.getInvoiceNumber().isBlank()) {
+                String ymStr = inv.getPeriod() != null ? inv.getPeriod().replace("-", "") : "202607";
+                inv.setInvoiceNumber(documentSequenceService.getNextNumber("INV", ymStr));
+                invoiceRepository.save(inv);
+            }
+        }
     }
 }

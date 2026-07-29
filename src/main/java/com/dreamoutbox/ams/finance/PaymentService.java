@@ -1,5 +1,6 @@
 package com.dreamoutbox.ams.finance;
 
+import com.dreamoutbox.ams.common.DocumentSequenceService;
 import com.dreamoutbox.ams.tenant.Tenant;
 import com.dreamoutbox.ams.tenant.TenantRepository;
 import com.dreamoutbox.ams.user.User;
@@ -19,6 +20,7 @@ public class PaymentService {
     private final PaymentRepository paymentRepository;
     private final InvoiceRepository invoiceRepository;
     private final TenantRepository tenantRepository;
+    private final DocumentSequenceService documentSequenceService;
 
     @Transactional
     public Payment recordPayment(Tenant tenant, BigDecimal amount, User receivedBy) {
@@ -26,7 +28,11 @@ public class PaymentService {
             throw new IllegalArgumentException("Payment amount must be greater than zero");
         }
 
+        String ymStr = java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyyMM"));
+        String nextRecNum = documentSequenceService.getNextNumber("REC", ymStr);
+
         Payment payment = Payment.builder()
+                .receiptNumber(nextRecNum)
                 .tenant(tenant)
                 .amount(amount)
                 .paidAt(LocalDateTime.now())
@@ -89,5 +95,20 @@ public class PaymentService {
     public Payment getById(UUID id) {
         return paymentRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Payment not found: " + id));
+    }
+
+    @org.springframework.context.event.EventListener(org.springframework.boot.context.event.ApplicationReadyEvent.class)
+    @Transactional
+    public void backfillMissingReceiptNumbers() {
+        List<Payment> payments = paymentRepository.findAllByOrderByCreatedAtAsc();
+        for (Payment p : payments) {
+            if (p.getReceiptNumber() == null || p.getReceiptNumber().isBlank()) {
+                String ymStr = (p.getPaidAt() != null)
+                        ? p.getPaidAt().format(java.time.format.DateTimeFormatter.ofPattern("yyyyMM"))
+                        : "202607";
+                p.setReceiptNumber(documentSequenceService.getNextNumber("REC", ymStr));
+                paymentRepository.save(p);
+            }
+        }
     }
 }

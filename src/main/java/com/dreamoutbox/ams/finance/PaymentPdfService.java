@@ -68,7 +68,7 @@ public class PaymentPdfService {
             rightCell.setPadding(0);
             rightCell.setHorizontalAlignment(Element.ALIGN_RIGHT);
             rightCell.addElement(para("PAYMENT RECEIPT", bold(14, BLACK), Element.ALIGN_RIGHT));
-            rightCell.addElement(para("Receipt #: " + payment.getId(), regular(8, MUTED), Element.ALIGN_RIGHT));
+            rightCell.addElement(para("Receipt #: " + payment.getReceiptNumber(), regular(8, MUTED), Element.ALIGN_RIGHT));
             rightCell.addElement(para("Payment Date: " + paidAt, bold(9, BLACK), Element.ALIGN_RIGHT));
             header.addCell(rightCell);
             doc.add(header);

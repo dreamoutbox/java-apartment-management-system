@@ -130,7 +130,7 @@ public class InvoiceController {
         }
 
         byte[] pdf = invoicePdfService.generate(invoice, elecUsage, waterUsage, elecRate, waterRate);
-        String filename = "invoice-" + invoice.getPeriod() + "-" + invoice.getId() + ".pdf";
+        String filename = "invoice-" + invoice.getInvoiceNumber() + ".pdf";
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")

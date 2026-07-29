@@ -79,7 +79,8 @@
             </div>
             <div style="display:flex;gap:10px;">
                 <button onclick="window.print()" class="btn print-btn">🖨 Print Invoice</button>
-                <a th:href="@{'/invoices/' + ${invoice.id} + '/pdf'}" class="btn" style="background:#6366f1;">⬇ Download PDF</a>
+                <a th:href="@{'/invoices/' + ${invoice.id} + '/pdf'}" class="btn" style="background:#6366f1;">⬇ Download
+                    PDF</a>
                 <a th:href="@{/invoices}" class="btn back-btn" style="background:#475569;">← Back to Invoices</a>
             </div>
         </div>
@@ -94,8 +95,8 @@
                 </div>
                 <div style="text-align:right;">
                     <div style="font-size:18px;font-weight:700;color:var(--primary);">INVOICE STATEMENT</div>
-                    <div style="font-size:13px;color:#cbd5e1;" class="unit-detail">Invoice ID: <span
-                            th:text="${invoice.id}">UUID</span></div>
+                    <div style="font-size:13px;color:#cbd5e1;" class="unit-detail">Invoice #: <span
+                            th:text="${invoice.invoiceNumber}">INV-202607-00001</span></div>
                     <div style="font-size:13px;color:#cbd5e1;" class="unit-detail">Billing Period: <span
                             th:text="${invoice.period}" style="font-weight:600;">2026-07</span></div>
                     <div style="margin-top:6px;">

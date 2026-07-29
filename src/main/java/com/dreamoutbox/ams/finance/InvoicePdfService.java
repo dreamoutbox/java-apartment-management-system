@@ -66,7 +66,8 @@ public class InvoicePdfService {
             rightCell.setPadding(0);
             rightCell.setHorizontalAlignment(Element.ALIGN_RIGHT);
             rightCell.addElement(para("INVOICE STATEMENT", bold(14, BLACK), Element.ALIGN_RIGHT));
-            rightCell.addElement(para("Invoice ID: " + invoice.getId(), regular(8, MUTED), Element.ALIGN_RIGHT));
+            rightCell.addElement(
+                    para("Invoice #: " + invoice.getInvoiceNumber(), regular(8, MUTED), Element.ALIGN_RIGHT));
             rightCell.addElement(para("Billing Period: " + invoice.getPeriod(), bold(9, BLACK), Element.ALIGN_RIGHT));
             rightCell.addElement(para("Status: " + invoice.getStatus(), bold(9, BLACK), Element.ALIGN_RIGHT));
             header.addCell(rightCell);

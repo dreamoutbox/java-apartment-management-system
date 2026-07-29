@@ -37,6 +37,8 @@ public interface InvoiceRepository extends JpaRepository<Invoice, UUID> {
 
         List<Invoice> findAllByOrderByPeriodDesc();
 
+        List<Invoice> findAllByOrderByCreatedAtAsc();
+
         @Query("SELECT COALESCE(SUM(i.balanceRemaining), 0) FROM Invoice i WHERE i.status != 'PAID'")
         Double calculateTotalOutstandingBalance();
 }

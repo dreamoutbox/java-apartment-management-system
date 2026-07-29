@@ -69,7 +69,7 @@ public class PaymentController {
     public ResponseEntity<byte[]> downloadReceiptPdf(@PathVariable UUID id) {
         Payment payment = paymentService.getById(id);
         byte[] pdf = paymentPdfService.generate(payment);
-        String filename = "receipt-" + payment.getId() + ".pdf";
+        String filename = "receipt-" + payment.getReceiptNumber() + ".pdf";
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")
                 .contentType(MediaType.APPLICATION_PDF)
@@ -87,7 +87,7 @@ public class PaymentController {
             Tenant tenant = tenantService.getById(tenantId);
             Payment payment = paymentService.recordPayment(tenant, amount, currentUser);
             redirectAttributes.addFlashAttribute("successMessage",
-                    "Payment recorded successfully. Receipt #" + payment.getId());
+                    "Payment recorded successfully. Receipt #" + payment.getReceiptNumber());
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         }

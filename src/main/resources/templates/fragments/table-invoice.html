@@ -7,6 +7,7 @@
         <table class="data-table">
             <thead>
                 <tr>
+                    <th>Invoice #</th>
                     <th>Period</th>
                     <th>Tenant</th>
                     <th>Room #</th>
@@ -22,6 +23,7 @@
             </thead>
             <tbody>
                 <tr th:each="inv : ${invoices}">
+                    <td style="font-weight:600;" th:text="${inv.invoiceNumber}">INV-202607-00001</td>
                     <td th:text="${inv.period}">2026-07</td>
                     <td
                         th:text="${inv.contract != null and inv.contract.tenant != null ? inv.contract.tenant.fullName : 'N/A'}">
@@ -49,7 +51,7 @@
                     </td>
                 </tr>
                 <tr th:if="${#lists.isEmpty(invoices)}">
-                    <td colspan="11" style="text-align:center;color:#94a3b8;padding:24px;">No invoices found.</td>
+                    <td colspan="12" style="text-align:center;color:#94a3b8;padding:24px;">No invoices found.</td>
                 </tr>
             </tbody>
         </table>

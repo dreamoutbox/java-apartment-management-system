@@ -22,7 +22,7 @@ import java.time.LocalDate;
 
 @Entity
 @Table(name = "invoice", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"contract_id", "period"})
+        @UniqueConstraint(columnNames = { "contract_id", "period" })
 })
 @Getter
 @Setter
@@ -60,4 +60,15 @@ public class Invoice extends BaseEntity {
 
     @Column(nullable = false)
     private LocalDate dueDate;
+
+    @Column(name = "invoice_number")
+    private String invoiceNumber;
+
+    public String getInvoiceNumber() {
+        if (invoiceNumber != null && !invoiceNumber.isBlank()) {
+            return invoiceNumber;
+        }
+        String ym = (period != null && !period.isBlank()) ? period.replace("-", "") : "202607";
+        return "INV-" + ym + "-00001";
+    }
 }

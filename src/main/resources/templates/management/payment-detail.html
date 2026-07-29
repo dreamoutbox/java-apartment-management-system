@@ -75,7 +75,8 @@
             </div>
             <div style="display:flex;gap:10px;">
                 <button onclick="window.print()" class="btn print-btn">🖨 Print Receipt</button>
-                <a th:href="@{'/payments/' + ${payment.id} + '/pdf'}" class="btn" style="background:#6366f1;">⬇ Download PDF</a>
+                <a th:href="@{'/payments/' + ${payment.id} + '/pdf'}" class="btn" style="background:#6366f1;">⬇ Download
+                    PDF</a>
                 <a th:href="@{/payments}" class="btn back-btn" style="background:#475569;">← Back to Receipts</a>
             </div>
         </div>
@@ -90,8 +91,8 @@
                 </div>
                 <div style="text-align:right;">
                     <div style="font-size:18px;font-weight:700;color:#10b981;">PAYMENT RECEIPT</div>
-                    <div style="font-size:13px;color:#cbd5e1;margin-top:4px;">Receipt #: <span th:text="${payment.id}"
-                            style="font-family:monospace;">UUID</span></div>
+                    <div style="font-size:13px;color:#cbd5e1;margin-top:4px;">Receipt #: <span
+                            th:text="${payment.receiptNumber}" style="font-weight:600;">REC-202607-00001</span></div>
                     <div style="font-size:13px;color:#cbd5e1;">Payment Date: <span
                             th:text="${payment.paidAt != null ? #temporals.format(payment.paidAt, 'yyyy-MM-dd HH:mm') : 'N/A'}"
                             style="font-weight:600;">2026-07-25</span></div>
