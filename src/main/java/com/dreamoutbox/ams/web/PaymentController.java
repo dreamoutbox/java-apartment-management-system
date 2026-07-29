@@ -1,12 +1,16 @@
 package com.dreamoutbox.ams.web;
 
 import com.dreamoutbox.ams.finance.Payment;
+import com.dreamoutbox.ams.finance.PaymentPdfService;
 import com.dreamoutbox.ams.finance.PaymentService;
 import com.dreamoutbox.ams.tenant.Tenant;
 import com.dreamoutbox.ams.tenant.TenantService;
 import com.dreamoutbox.ams.user.User;
 import com.dreamoutbox.ams.user.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -27,6 +31,7 @@ import java.util.UUID;
 public class PaymentController {
 
     private final PaymentService paymentService;
+    private final PaymentPdfService paymentPdfService;
     private final TenantService tenantService;
     private final UserService userService;
 
@@ -58,6 +63,17 @@ public class PaymentController {
         model.addAttribute("payment", payment);
         model.addAttribute("activeTab", "payments");
         return "management/payment-detail";
+    }
+
+    @GetMapping("/{id}/pdf")
+    public ResponseEntity<byte[]> downloadReceiptPdf(@PathVariable UUID id) {
+        Payment payment = paymentService.getById(id);
+        byte[] pdf = paymentPdfService.generate(payment);
+        String filename = "receipt-" + payment.getId() + ".pdf";
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(pdf);
     }
 
     @PostMapping("/create")

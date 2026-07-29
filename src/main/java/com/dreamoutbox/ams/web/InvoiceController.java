@@ -2,8 +2,12 @@ package com.dreamoutbox.ams.web;
 
 import com.dreamoutbox.ams.contract.ContractService;
 import com.dreamoutbox.ams.finance.Invoice;
+import com.dreamoutbox.ams.finance.InvoicePdfService;
 import com.dreamoutbox.ams.finance.InvoiceService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,6 +34,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 public class InvoiceController {
 
     private final InvoiceService invoiceService;
+    private final InvoicePdfService invoicePdfService;
     private final ContractService contractService;
     private final UserService userService;
     private final TenantService tenantService;
@@ -103,6 +108,34 @@ public class InvoiceController {
 
         model.addAttribute("activeTab", "invoices");
         return "management/invoice-detail";
+    }
+
+    @GetMapping("/{id}/pdf")
+    public ResponseEntity<byte[]> downloadInvoicePdf(@PathVariable UUID id) {
+        Invoice invoice = invoiceService.getById(id);
+
+        BigDecimal elecRate = BigDecimal.ZERO, waterRate = BigDecimal.ZERO;
+        BigDecimal elecUsage = BigDecimal.ZERO, waterUsage = BigDecimal.ZERO;
+
+        if (invoice.getContract() != null && invoice.getContract().getRoom() != null) {
+            var utilityRate = invoiceService.getUtilityRate(invoice.getPeriod());
+            elecRate  = (utilityRate != null && utilityRate.getElectricityUnitPrice() != null)
+                    ? utilityRate.getElectricityUnitPrice() : new BigDecimal("0.25");
+            waterRate = (utilityRate != null && utilityRate.getWaterUnitPrice() != null)
+                    ? utilityRate.getWaterUnitPrice() : new BigDecimal("1.50");
+            elecUsage  = elecRate.compareTo(BigDecimal.ZERO)  > 0
+                    ? invoice.getElectricityAmount().divide(elecRate,  2, java.math.RoundingMode.HALF_UP) : BigDecimal.ZERO;
+            waterUsage = waterRate.compareTo(BigDecimal.ZERO) > 0
+                    ? invoice.getWaterAmount().divide(waterRate, 2, java.math.RoundingMode.HALF_UP) : BigDecimal.ZERO;
+        }
+
+        byte[] pdf = invoicePdfService.generate(invoice, elecUsage, waterUsage, elecRate, waterRate);
+        String filename = "invoice-" + invoice.getPeriod() + "-" + invoice.getId() + ".pdf";
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(pdf);
     }
 
     @PostMapping("/save")

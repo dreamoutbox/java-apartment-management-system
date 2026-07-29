@@ -75,6 +75,7 @@
             </div>
             <div style="display:flex;gap:10px;">
                 <button onclick="window.print()" class="btn print-btn">🖨 Print Receipt</button>
+                <a th:href="@{'/payments/' + ${payment.id} + '/pdf'}" class="btn" style="background:#6366f1;">⬇ Download PDF</a>
                 <a th:href="@{/payments}" class="btn back-btn" style="background:#475569;">← Back to Receipts</a>
             </div>
         </div>
