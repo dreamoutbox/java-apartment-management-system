@@ -64,12 +64,12 @@
                 </div>
             </div>
             <div th:if="${tenant != null and tenant.idCardImagePath != null}"
-                style="margin-top:16px;padding-top:12px;border-top:1px solid var(--border-color);">
-                <span class="stat-label">ID Document Proof</span>
-                <div style="margin-top:6px;">
-                    <a th:href="@{'/uploads/' + ${tenant.idCardImagePath}}" target="_blank" class="btn"
-                        style="padding:4px 12px;font-size:13px;background:#475569;">📄 View Uploaded ID Card</a>
-                </div>
+                style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border-color);">
+                <span class="stat-label" style="display:block;margin-bottom:8px;">ID Card Photo</span>
+                <a th:href="@{'/uploads/' + ${tenant.idCardImagePath}}" target="_blank" style="display:inline-block;">
+                    <img th:src="@{'/uploads/' + ${tenant.idCardImagePath}}" alt="ID Card Photo"
+                        style="max-width:360px;max-height:240px;border-radius:8px;border:1px solid var(--border-color);object-fit:cover;display:block;">
+                </a>
             </div>
         </div>
 
