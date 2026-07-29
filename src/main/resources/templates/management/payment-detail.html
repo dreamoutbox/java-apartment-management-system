@@ -124,51 +124,66 @@
                 </div>
             </div>
 
-            <!-- Payment Summary Banner -->
-            <div
-                style="background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3);padding:16px;border-radius:8px;margin-bottom:24px;display:flex;justify-content:space-between;align-items:center;">
-                <div>
-                    <div style="font-size:13px;color:#a7f3d0;">Total Payment Amount Received</div>
-                    <div style="font-size:24px;font-weight:700;color:#34d399;" th:text="${'$' + payment.amount}">
-                        $1500.00</div>
-                </div>
-                <div style="font-size:13px;color:#a7f3d0;text-align:right;">
-                    Allocation Strategy: FIFO (Oldest Outstanding Invoices First)
-                </div>
-            </div>
-
             <!-- Invoice Allocation Breakdown Table -->
-            <h4 style="font-size:14px;font-weight:600;margin-bottom:12px;">Payment Allocations Breakdown</h4>
-            <table class="data-table" data-no-toolbar="true" style="margin-bottom:24px;">
+            <h4 style="font-size:14px;font-weight:600;margin-bottom:10px;">Payment Allocations Breakdown</h4>
+            <table class="data-table bordered-table" data-no-toolbar="true"
+                style="border-collapse:collapse;margin-bottom:10px;">
                 <thead>
                     <tr>
-                        <th>Invoice Period</th>
-                        <th>Room Number</th>
-                        <th>Amount Applied</th>
-                        <th>Invoice Remaining Balance</th>
-                        <th>Invoice Status</th>
+                        <th style="border:2px solid #334155;padding:10px;">INVOICE PERIOD</th>
+                        <th style="border:2px solid #334155;padding:10px;">ROOM NUMBER</th>
+                        <th style="border:2px solid #334155;padding:10px;">AMOUNT APPLIED</th>
+                        <th style="border:2px solid #334155;padding:10px;">INVOICE REMAINING BALANCE</th>
+                        <th style="border:2px solid #334155;padding:10px;">INVOICE STATUS</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr th:each="alloc : ${payment.allocations}">
-                        <td th:text="${alloc.invoice != null ? alloc.invoice.period : 'N/A'}">2026-07</td>
-                        <td
+                        <td style="border:2px solid #334155;padding:10px;"
+                            th:text="${alloc.invoice != null ? alloc.invoice.period : 'N/A'}">2026-07</td>
+                        <td style="border:2px solid #334155;padding:10px;"
                             th:text="${alloc.invoice != null and alloc.invoice.contract != null and alloc.invoice.contract.room != null ? alloc.invoice.contract.room.roomNumber : 'N/A'}">
                             101</td>
-                        <td style="font-weight:600;color:#4ade80;" th:text="${'$' + alloc.amountApplied}">$1070.00</td>
-                        <td th:text="${'$' + (alloc.invoice != null ? alloc.invoice.balanceRemaining : 0)}">$0.00</td>
-                        <td>
+                        <td style="border:2px solid #334155;padding:10px;font-weight:600;"
+                            th:text="${'$' + alloc.amountApplied}">$823.50</td>
+                        <td style="border:2px solid #334155;padding:10px;"
+                            th:text="${'$' + (alloc.invoice != null ? alloc.invoice.balanceRemaining : 0)}">$0.00</td>
+                        <td style="border:2px solid #334155;padding:10px;">
                             <span th:if="${alloc.invoice != null}"
                                 th:class="${'status-badge status-' + alloc.invoice.status}"
                                 th:text="${alloc.invoice.status}">PAID</span>
                         </td>
                     </tr>
                     <tr th:if="${#lists.isEmpty(payment.allocations)}">
-                        <td colspan="5" style="text-align:center;color:#94a3b8;padding:16px;">No specific invoices
+                        <td colspan="5" style="border:2px solid #334155;text-align:center;color:#94a3b8;padding:16px;">
+                            No specific invoices
                             allocated. Entire amount credited to tenant account balance.</td>
                     </tr>
                 </tbody>
             </table>
+
+            <!-- Right-aligned Total Payment Received Summary Table -->
+            <div style="display:flex;justify-content:flex-end;margin-bottom:5px;">
+                <table style="border-collapse:collapse;border:2px solid #48586f;width:45%;max-width:420px;"
+                    data-no-toolbar="true">
+                    <tr>
+                        <td
+                            style="border:2px solid #48586f;padding:10px 14px;font-weight:600;font-size:13px;color:var(--text-main);line-height:1.4;">
+                            Total Payment Amount Received<br>
+                        </td>
+                        <td style="border:2px solid #48586f;padding:10px 18px;font-size:16px;font-weight:700;color:var(--text-main);text-align:right;white-space:nowrap;"
+                            th:text="${'$' + payment.amount}">
+                            $900.00
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            <div style="display:flex;justify-content:flex-end;margin-bottom:15px;">
+                <span style="font-weight:400;font-size:12px;color:#94a3b8;">
+                    * Paid Outstanding Invoices First
+                </span>
+            </div>
 
             <!-- Signatures / Footer Notes -->
             <div
@@ -177,8 +192,9 @@
                     <div style="font-size:12px;color:#94a3b8;margin-bottom:40px;">Received By Signature:</div>
                     <div style="border-bottom:1px dashed #64748b;width:200px;margin-bottom:4px;"></div>
                     <div style="font-size:13px;font-weight:500;"
-                        th:text="${payment.receivedBy != null ? payment.receivedBy.fullName : 'Authorized Staff'}">Staff
-                        Name</div>
+                        th:text="${payment.receivedBy != null ? payment.receivedBy.fullName : 'Authorized Staff'}">
+                        Staff Name
+                    </div>
                 </div>
                 <div style="font-size:12px;color:#94a3b8;text-align:right;max-width:300px;">
                     This is an official computer-generated receipt from Apartment Hub system. Please retain this receipt
