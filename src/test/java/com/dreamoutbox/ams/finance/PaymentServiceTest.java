@@ -1,5 +1,6 @@
 package com.dreamoutbox.ams.finance;
 
+import com.dreamoutbox.ams.common.DocumentSequenceService;
 import com.dreamoutbox.ams.contract.Contract;
 import com.dreamoutbox.ams.room.Room;
 import com.dreamoutbox.ams.room.RoomStatus;
@@ -29,139 +30,145 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class PaymentServiceTest {
 
-    @Mock
-    private PaymentRepository paymentRepository;
-    @Mock
-    private InvoiceRepository invoiceRepository;
-    @Mock
-    private com.dreamoutbox.ams.tenant.TenantRepository tenantRepository;
+        @Mock
+        private PaymentRepository paymentRepository;
+        @Mock
+        private InvoiceRepository invoiceRepository;
+        @Mock
+        private com.dreamoutbox.ams.tenant.TenantRepository tenantRepository;
+        @Mock
+        private DocumentSequenceService documentSequenceService;
 
-    @InjectMocks
-    private PaymentService paymentService;
+        @InjectMocks
+        private PaymentService paymentService;
 
-    private User accountant;
-    private Tenant bob;
-    private Contract contract;
+        private User accountant;
+        private Tenant bob;
+        private Contract contract;
 
-    @BeforeEach
-    void setUp() {
-        accountant = User.builder()
-                .username("accountant1")
-                .passwordHash("hash")
-                .role(Role.ACCOUNTANT)
-                .build();
-        accountant.setId(UUID.randomUUID());
+        @BeforeEach
+        void setUp() {
+                lenient().when(documentSequenceService.getNextNumber(any(), any())).thenReturn("REC-202601-00001");
 
-        bob = Tenant.builder()
-                .fullName("Bob")
-                .phone("12345678")
-                .idCardNumber("ID123")
-                .creditBalance(BigDecimal.ZERO)
-                .build();
-        bob.setId(UUID.randomUUID());
+                accountant = User.builder()
+                                .username("accountant1")
+                                .passwordHash("hash")
+                                .role(Role.ACCOUNTANT)
+                                .build();
+                accountant.setId(UUID.randomUUID());
 
-        Room room = Room.builder()
-                .roomNumber("101")
-                .floor("1")
-                .baseRent(new BigDecimal("3000.00"))
-                .status(RoomStatus.OCCUPIED)
-                .build();
+                bob = Tenant.builder()
+                                .fullName("Bob")
+                                .phone("12345678")
+                                .idCardNumber("ID123")
+                                .creditBalance(BigDecimal.ZERO)
+                                .build();
+                bob.setId(UUID.randomUUID());
 
-        contract = Contract.builder()
-                .room(room)
-                .tenant(bob)
-                .monthlyRent(new BigDecimal("3000.00"))
-                .startDate(LocalDate.of(2026, 1, 1))
-                .endDate(LocalDate.of(2026, 12, 31))
-                .build();
-    }
+                Room room = Room.builder()
+                                .roomNumber("101")
+                                .floor("1")
+                                .baseRent(new BigDecimal("3000.00"))
+                                .status(RoomStatus.OCCUPIED)
+                                .build();
 
-    @Test
-    void testBobPartialPaymentThenFullPaymentScenario() {
-        // Scenario Step 1: Jan Invoice 3000. Bob pays 2000.
-        Invoice janInvoice = Invoice.builder()
-                .contract(contract)
-                .period("2026-01")
-                .rentAmount(new BigDecimal("3000.00"))
-                .electricityAmount(BigDecimal.ZERO)
-                .waterAmount(BigDecimal.ZERO)
-                .totalAmount(new BigDecimal("3000.00"))
-                .balanceRemaining(new BigDecimal("3000.00"))
-                .status(InvoiceStatus.UNPAID)
-                .dueDate(LocalDate.of(2026, 1, 10))
-                .build();
+                contract = Contract.builder()
+                                .room(room)
+                                .tenant(bob)
+                                .monthlyRent(new BigDecimal("3000.00"))
+                                .startDate(LocalDate.of(2026, 1, 1))
+                                .endDate(LocalDate.of(2026, 12, 31))
+                                .build();
+        }
 
-        when(invoiceRepository.findUnpaidInvoicesForTenantForUpdate(eq(bob), any()))
-                .thenReturn(List.of(janInvoice));
-        when(paymentRepository.save(any(Payment.class))).thenAnswer(i -> i.getArgument(0));
+        @Test
+        void testBobPartialPaymentThenFullPaymentScenario() {
+                // Scenario Step 1: Jan Invoice 3000. Bob pays 2000.
+                Invoice janInvoice = Invoice.builder()
+                                .contract(contract)
+                                .period("2026-01")
+                                .rentAmount(new BigDecimal("3000.00"))
+                                .electricityAmount(BigDecimal.ZERO)
+                                .waterAmount(BigDecimal.ZERO)
+                                .totalAmount(new BigDecimal("3000.00"))
+                                .balanceRemaining(new BigDecimal("3000.00"))
+                                .status(InvoiceStatus.UNPAID)
+                                .dueDate(LocalDate.of(2026, 1, 10))
+                                .build();
 
-        Payment payment1 = paymentService.recordPayment(bob, new BigDecimal("2000.00"), accountant);
+                when(invoiceRepository.findUnpaidInvoicesForTenantForUpdate(eq(bob), any()))
+                                .thenReturn(List.of(janInvoice));
+                when(paymentRepository.save(any(Payment.class))).thenAnswer(i -> i.getArgument(0));
 
-        // Verification 1: Jan Invoice balance becomes 1000, status PARTIALLY_PAID
-        assertEquals(1, payment1.getAllocations().size());
-        assertEquals(new BigDecimal("2000.00"), payment1.getAllocations().get(0).getAmountApplied());
-        assertEquals(new BigDecimal("1000.00"), janInvoice.getBalanceRemaining());
-        assertEquals(InvoiceStatus.PARTIALLY_PAID, janInvoice.getStatus());
+                Payment payment1 = paymentService.recordPayment(bob, new BigDecimal("2000.00"), accountant);
 
-        // Scenario Step 2: Feb Invoice 3000 generated. Unpaid invoices = [Jan (1000 balance), Feb (3000 balance)].
-        Invoice febInvoice = Invoice.builder()
-                .contract(contract)
-                .period("2026-02")
-                .rentAmount(new BigDecimal("3000.00"))
-                .electricityAmount(BigDecimal.ZERO)
-                .waterAmount(BigDecimal.ZERO)
-                .totalAmount(new BigDecimal("3000.00"))
-                .balanceRemaining(new BigDecimal("3000.00"))
-                .status(InvoiceStatus.UNPAID)
-                .dueDate(LocalDate.of(2026, 2, 10))
-                .build();
+                // Verification 1: Jan Invoice balance becomes 1000, status PARTIALLY_PAID
+                assertEquals(1, payment1.getAllocations().size());
+                assertEquals(new BigDecimal("2000.00"), payment1.getAllocations().get(0).getAmountApplied());
+                assertEquals(new BigDecimal("1000.00"), janInvoice.getBalanceRemaining());
+                assertEquals(InvoiceStatus.PARTIALLY_PAID, janInvoice.getStatus());
 
-        List<Invoice> unpaidInvoices = new ArrayList<>();
-        unpaidInvoices.add(janInvoice);
-        unpaidInvoices.add(febInvoice);
+                // Scenario Step 2: Feb Invoice 3000 generated. Unpaid invoices = [Jan (1000
+                // balance), Feb (3000 balance)].
+                Invoice febInvoice = Invoice.builder()
+                                .contract(contract)
+                                .period("2026-02")
+                                .rentAmount(new BigDecimal("3000.00"))
+                                .electricityAmount(BigDecimal.ZERO)
+                                .waterAmount(BigDecimal.ZERO)
+                                .totalAmount(new BigDecimal("3000.00"))
+                                .balanceRemaining(new BigDecimal("3000.00"))
+                                .status(InvoiceStatus.UNPAID)
+                                .dueDate(LocalDate.of(2026, 2, 10))
+                                .build();
 
-        when(invoiceRepository.findUnpaidInvoicesForTenantForUpdate(eq(bob), any()))
-                .thenReturn(unpaidInvoices);
+                List<Invoice> unpaidInvoices = new ArrayList<>();
+                unpaidInvoices.add(janInvoice);
+                unpaidInvoices.add(febInvoice);
 
-        // Bob pays 4000
-        Payment payment2 = paymentService.recordPayment(bob, new BigDecimal("4000.00"), accountant);
+                when(invoiceRepository.findUnpaidInvoicesForTenantForUpdate(eq(bob), any()))
+                                .thenReturn(unpaidInvoices);
 
-        // Verification 2: FIFO Allocation: 1000 to Jan (making Jan PAID), 3000 to Feb (making Feb PAID)
-        assertEquals(2, payment2.getAllocations().size());
-        assertEquals(new BigDecimal("1000.00"), payment2.getAllocations().get(0).getAmountApplied());
-        assertEquals(new BigDecimal("3000.00"), payment2.getAllocations().get(1).getAmountApplied());
+                // Bob pays 4000
+                Payment payment2 = paymentService.recordPayment(bob, new BigDecimal("4000.00"), accountant);
 
-        assertEquals(0, janInvoice.getBalanceRemaining().compareTo(BigDecimal.ZERO));
-        assertEquals(InvoiceStatus.PAID, janInvoice.getStatus());
+                // Verification 2: FIFO Allocation: 1000 to Jan (making Jan PAID), 3000 to Feb
+                // (making Feb PAID)
+                assertEquals(2, payment2.getAllocations().size());
+                assertEquals(new BigDecimal("1000.00"), payment2.getAllocations().get(0).getAmountApplied());
+                assertEquals(new BigDecimal("3000.00"), payment2.getAllocations().get(1).getAmountApplied());
 
-        assertEquals(0, febInvoice.getBalanceRemaining().compareTo(BigDecimal.ZERO));
-        assertEquals(InvoiceStatus.PAID, febInvoice.getStatus());
-        assertEquals(0, bob.getCreditBalance().compareTo(BigDecimal.ZERO));
-    }
+                assertEquals(0, janInvoice.getBalanceRemaining().compareTo(BigDecimal.ZERO));
+                assertEquals(InvoiceStatus.PAID, janInvoice.getStatus());
 
-    @Test
-    void testOverpaymentRecordedAsCreditBalance() {
-        Invoice invoice = Invoice.builder()
-                .contract(contract)
-                .period("2026-01")
-                .rentAmount(new BigDecimal("1000.00"))
-                .electricityAmount(BigDecimal.ZERO)
-                .waterAmount(BigDecimal.ZERO)
-                .totalAmount(new BigDecimal("1000.00"))
-                .balanceRemaining(new BigDecimal("1000.00"))
-                .status(InvoiceStatus.UNPAID)
-                .dueDate(LocalDate.of(2026, 1, 10))
-                .build();
+                assertEquals(0, febInvoice.getBalanceRemaining().compareTo(BigDecimal.ZERO));
+                assertEquals(InvoiceStatus.PAID, febInvoice.getStatus());
+                assertEquals(0, bob.getCreditBalance().compareTo(BigDecimal.ZERO));
+        }
 
-        when(invoiceRepository.findUnpaidInvoicesForTenantForUpdate(eq(bob), any()))
-                .thenReturn(List.of(invoice));
-        when(paymentRepository.save(any(Payment.class))).thenAnswer(i -> i.getArgument(0));
+        @Test
+        void testOverpaymentRecordedAsCreditBalance() {
+                Invoice invoice = Invoice.builder()
+                                .contract(contract)
+                                .period("2026-01")
+                                .rentAmount(new BigDecimal("1000.00"))
+                                .electricityAmount(BigDecimal.ZERO)
+                                .waterAmount(BigDecimal.ZERO)
+                                .totalAmount(new BigDecimal("1000.00"))
+                                .balanceRemaining(new BigDecimal("1000.00"))
+                                .status(InvoiceStatus.UNPAID)
+                                .dueDate(LocalDate.of(2026, 1, 10))
+                                .build();
 
-        Payment payment = paymentService.recordPayment(bob, new BigDecimal("1500.00"), accountant);
+                when(invoiceRepository.findUnpaidInvoicesForTenantForUpdate(eq(bob), any()))
+                                .thenReturn(List.of(invoice));
+                when(paymentRepository.save(any(Payment.class))).thenAnswer(i -> i.getArgument(0));
 
-        assertNotNull(payment);
-        assertEquals(InvoiceStatus.PAID, invoice.getStatus());
-        assertEquals(0, invoice.getBalanceRemaining().compareTo(BigDecimal.ZERO));
-        assertEquals(new BigDecimal("500.00"), bob.getCreditBalance());
-    }
+                Payment payment = paymentService.recordPayment(bob, new BigDecimal("1500.00"), accountant);
+
+                assertNotNull(payment);
+                assertEquals(InvoiceStatus.PAID, invoice.getStatus());
+                assertEquals(0, invoice.getBalanceRemaining().compareTo(BigDecimal.ZERO));
+                assertEquals(new BigDecimal("500.00"), bob.getCreditBalance());
+        }
 }
