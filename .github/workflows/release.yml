@@ -22,7 +22,7 @@ jobs:
           cache: maven
 
       - name: Build JAR
-        run: ./mvnw -B package
+        run: ./mvnw -B clean package
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
