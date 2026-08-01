@@ -42,7 +42,8 @@ public class TicketController {
 
     @GetMapping
     public String index(Model model, @AuthenticationPrincipal UserDetails userDetails) {
-        if (userDetails != null && userDetails.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_TENANT"))) {
+        if (userDetails != null
+                && userDetails.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_TENANT"))) {
             User currentUser = userService.getByUsername(userDetails.getUsername());
             Tenant tenant = tenantService.getByUserId(currentUser.getId());
             model.addAttribute("tickets", maintenanceService.getTenantTickets(tenant));
@@ -58,13 +59,14 @@ public class TicketController {
 
     @GetMapping("/new")
     public String newForm(Model model, @AuthenticationPrincipal UserDetails userDetails) {
-        if (userDetails != null && userDetails.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_TENANT"))) {
+        if (userDetails != null
+                && userDetails.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_TENANT"))) {
             User currentUser = userService.getByUsername(userDetails.getUsername());
             Tenant tenant = tenantService.getByUserId(currentUser.getId());
             List<Contract> activeContracts = contractService.getTenantActiveContracts(tenant);
             List<Room> tenantRooms = activeContracts.stream()
                     .filter(c -> c.getRoom() != null)
-                    .map(Contract::getRoom)
+                    .map(c -> c.getRoom())
                     .collect(Collectors.toList());
 
             model.addAttribute("rooms", tenantRooms);
@@ -96,7 +98,8 @@ public class TicketController {
             @RequestParam(required = false) MultipartFile image,
             @AuthenticationPrincipal UserDetails userDetails) {
         UUID effectiveTenantId = tenantId;
-        if (userDetails != null && userDetails.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_TENANT"))) {
+        if (userDetails != null
+                && userDetails.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_TENANT"))) {
             User currentUser = userService.getByUsername(userDetails.getUsername());
             Tenant tenant = tenantService.getByUserId(currentUser.getId());
             effectiveTenantId = tenant.getId();
@@ -108,7 +111,8 @@ public class TicketController {
                     .collect(Collectors.toSet());
 
             if (!allowedRoomIds.contains(roomId)) {
-                throw new IllegalStateException("Access Denied: You can only submit maintenance tickets for your own active leased room.");
+                throw new IllegalStateException(
+                        "Access Denied: You can only submit maintenance tickets for your own active leased room.");
             }
         }
 

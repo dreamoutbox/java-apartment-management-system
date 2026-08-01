@@ -86,7 +86,8 @@ public class LandlordController {
             @RequestParam BigDecimal monthlyRent,
             @RequestParam String startDate,
             @RequestParam String endDate) {
-        contractService.createContract(roomId, tenantId, monthlyRent, LocalDate.parse(startDate), LocalDate.parse(endDate));
+        contractService.createContract(roomId, tenantId, monthlyRent, LocalDate.parse(startDate),
+                LocalDate.parse(endDate));
         return "redirect:/landlord/dashboard";
     }
 
@@ -117,7 +118,8 @@ public class LandlordController {
                 maintenanceService.assignTechnician(ticketId, technicianId, currentUser);
             }
             if (status != null) {
-                maintenanceService.updateTicketStatus(ticketId, status, note != null ? note : "", proofImage, currentUser);
+                maintenanceService.updateTicketStatus(ticketId, status, note != null ? note : "", proofImage,
+                        currentUser);
             }
             redirectAttributes.addFlashAttribute("successMessage", "Ticket updated successfully.");
         } catch (Exception e) {
