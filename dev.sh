@@ -3,7 +3,7 @@
 # Free port 8080 if held by orphan background process
 # fuser -k 8080/tcp >/dev/null 2>&1 || true
 
-./mvnw spring-boot:run
+./mvnw spring-boot:run -Dspring-boot.run.profiles=dev
 
 # App URL: http://localhost:8080
 
