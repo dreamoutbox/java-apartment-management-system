@@ -1,5 +1,6 @@
 package com.dreamoutbox.ams.finance;
 
+import com.dreamoutbox.ams.common.DocumentSequenceService;
 import com.dreamoutbox.ams.contract.Contract;
 import com.dreamoutbox.ams.room.Room;
 import com.dreamoutbox.ams.room.RoomStatus;
@@ -35,6 +36,8 @@ class PaymentServiceTest {
     private InvoiceRepository invoiceRepository;
     @Mock
     private com.dreamoutbox.ams.tenant.TenantRepository tenantRepository;
+    @Mock
+    private DocumentSequenceService documentSequenceService;
 
     @InjectMocks
     private PaymentService paymentService;
@@ -45,6 +48,8 @@ class PaymentServiceTest {
 
     @BeforeEach
     void setUp() {
+        lenient().when(documentSequenceService.getNextNumber(any(), any())).thenReturn("REC-202601-00001");
+
         accountant = User.builder()
                 .username("accountant1")
                 .passwordHash("hash")
