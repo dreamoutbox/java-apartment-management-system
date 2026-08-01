@@ -11,7 +11,7 @@ A web-based apartment management system built with Spring Boot. It covers the fu
 - **Invoice Generation** — Generate monthly invoices (rent + utilities) per contract; reprint or export as PDF
 - **Payment Recording** — Record tenant payments; auto-apply payments to oldest outstanding invoices; handle overpayments as credit balance
 - **Payment Receipts** — Print or export payment receipts as PDF
-- **Maintenance Tickets** — Tenants submit tickets with description and photo evidence; managers assign technicians; full status history
+- **Maintenance Tickets** — Tenants submit tickets with description and photo evidence; managers assign technicians to fix the issues
 - **Building Announcements** — Post news and rule announcements visible to all tenants
 - **Tenant Portal** — Tenants have a dedicated self-service view for their own contracts, invoices, payments, tickets, and announcements
 - **Role-Based Access Control** — Separate permission levels for Landlord, Manager, Accountant, Technician, and Tenant
@@ -31,6 +31,7 @@ A web-based apartment management system built with Spring Boot. It covers the fu
 
 ### Invoices
 ![Invoices Table](screenshots/invoices/invoices-table.png)
+![Invoice Detail](screenshots/invoices/invoice-detail.png)
 ![Invoice Print](screenshots/invoices/invoice-print.png)
 
 ### Payments
