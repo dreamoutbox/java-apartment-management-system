@@ -17,8 +17,13 @@ import com.dreamoutbox.ams.user.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -64,7 +69,20 @@ public class DataInitializer implements CommandLineRunner {
 
         log.info("Default seed rooms ready.");
 
-        seedTenantData();
+        // Provide a system authentication so @CreatedBy auditing works during seeding
+        var systemAuth = new UsernamePasswordAuthenticationToken(
+                "system", null, List.of(
+                        new SimpleGrantedAuthority("ROLE_LANDLORD"),
+                        new SimpleGrantedAuthority("ROLE_MANAGER"),
+                        new SimpleGrantedAuthority("ROLE_ACCOUNTANT"),
+                        new SimpleGrantedAuthority("ROLE_TECHNICIAN"),
+                        new SimpleGrantedAuthority("ROLE_TENANT")));
+        SecurityContextHolder.getContext().setAuthentication(systemAuth);
+        try {
+            seedTenantData();
+        } finally {
+            SecurityContextHolder.clearContext();
+        }
     }
 
     private void seedTenantData() {
@@ -89,17 +107,18 @@ public class DataInitializer implements CommandLineRunner {
                             tenant1.getId(),
                             BigDecimal.valueOf(1200),
                             LocalDate.now().minusMonths(2),
-                            LocalDate.now().plusMonths(10)
-                    );
+                            LocalDate.now().plusMonths(10));
                     log.info("Seeded lease contract for tenant1 in Room 101");
                 }
 
                 // Seed meter reading and invoices if needed
                 try {
                     invoiceService.setUtilityRate("2026-07", BigDecimal.valueOf(0.25), BigDecimal.valueOf(1.50));
-                    invoiceService.recordMeterReading(room101, "2026-07", BigDecimal.valueOf(1250), BigDecimal.valueOf(340));
+                    invoiceService.recordMeterReading(room101, "2026-07", BigDecimal.valueOf(1250),
+                            BigDecimal.valueOf(340));
                     invoiceService.generateMonthlyInvoices("2026-07");
-                } catch (Exception ignored) {}
+                } catch (Exception ignored) {
+                }
 
                 // Seed announcement if none exist
                 if (announcementService.getAllAnnouncements().isEmpty() && landlord != null) {
@@ -108,20 +127,19 @@ public class DataInitializer implements CommandLineRunner {
                             "Dear Residents, welcome to our online portal. You can now track your monthly invoices, submit maintenance tickets, and check building announcements right here.",
                             AnnouncementType.NEWS,
                             true,
-                            landlord
-                    );
+                            landlord);
                     announcementService.createAnnouncement(
                             "Building Rules & Regulations",
                             "Please observe quiet hours between 10:00 PM and 7:00 AM.",
                             AnnouncementType.RULE,
                             false,
-                            landlord
-                    );
+                            landlord);
                 }
 
                 // Seed maintenance ticket if none exist
                 if (maintenanceService.getTenantTickets(tenant1).isEmpty()) {
-                    maintenanceService.createTicket(room101, tenant1, "Air conditioner in living room is not cooling properly.", null);
+                    maintenanceService.createTicket(room101, tenant1,
+                            "Air conditioner in living room is not cooling properly.", null);
                 }
             }
         } catch (Exception e) {
