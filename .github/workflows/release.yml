@@ -24,8 +24,11 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
+      - name: Run Tests
+        run: ./mvnw -B test
+
       - name: Build JAR
-        run: ./mvnw -B clean package
+        run: ./mvnw -B package -DskipTests
 
       - name: Create Release
         uses: softprops/action-gh-release@v2

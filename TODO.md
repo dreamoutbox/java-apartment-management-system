@@ -14,4 +14,4 @@
 
 - [ ] remove partially paid feature
 
-- [ ] make .github/workflows/release.yml run tests
+- [x] make .github/workflows/release.yml run tests
