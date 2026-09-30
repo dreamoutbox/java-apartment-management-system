@@ -38,3 +38,4 @@ data
 errors/
 handoff.md
 issues/
+.playwright-mcp/

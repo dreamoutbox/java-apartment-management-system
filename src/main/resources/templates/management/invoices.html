@@ -48,23 +48,21 @@
             <div class="card">
                 <div class="card-title">Configure Monthly Utility Rates</div>
                 <form th:action="@{/invoices/utility-rates}" method="post">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>Period (YYYY-MM)</label>
-                            <input type="text" name="period" class="form-control" placeholder="2026-07" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Electricity Rate ($/kWh)</label>
-                            <input type="number" step="0.01" name="electricityRate" class="form-control"
-                                placeholder="0.25" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Water Rate ($/m³)</label>
-                            <input type="number" step="0.01" name="waterRate" class="form-control" placeholder="1.50"
-                                required>
-                        </div>
+                    <div class="form-group">
+                        <label>Period (YYYY-MM)</label>
+                        <input type="text" name="period" class="form-control" placeholder="2026-07" required>
                     </div>
-                    <button type="submit" class="btn" style="margin-top:12px;">Save Rates</button>
+                    <div class="form-group">
+                        <label>Electricity Rate ($/kWh)</label>
+                        <input type="number" step="0.01" name="electricityRate" class="form-control" placeholder="0.25"
+                            required>
+                    </div>
+                    <div class="form-group">
+                        <label>Water Rate ($/m³)</label>
+                        <input type="number" step="0.01" name="waterRate" class="form-control" placeholder="1.50"
+                            required>
+                    </div>
+                    <button type="submit" class="btn">Save Rates</button>
                 </form>
             </div>
 
