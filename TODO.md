@@ -6,7 +6,7 @@
 
 - [x] add filter soft delete to entity tables
 
-- [ ] chore fix page views
+- [x] chore fix page views
 
 - [x] add Dockerfile
 
