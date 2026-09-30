@@ -1,0 +1,30 @@
+networks:
+  ams-net:
+    name: ams-net
+
+services:
+  ams:
+    image: ams:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ams
+    # restart: unless-stopped
+    ports:
+      - "${PORT:-8080}:8080"
+    environment:
+      TZ: Asia/Bangkok
+      APP_SEED_AUTO: "true"
+      SPRING_DEVTOOLS_RESTART_ENABLED: "false"
+      SPRING_DEVTOOLS_LIVERELOAD_ENABLED: "false"
+      SPRING_H2_CONSOLE_SETTINGS_WEB_ALLOW_OTHERS: "true"
+    volumes:
+      - ./data:/app/data
+    networks:
+      - ams-net
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/login" ]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s

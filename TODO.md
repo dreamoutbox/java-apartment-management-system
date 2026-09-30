@@ -6,6 +6,12 @@
 
 - [x] add filter soft delete to entity tables
 
-- [ ] add Dockerfile
+- [ ] chore fix page views
 
-- [ ] add Docker compose for demo
+- [x] add Dockerfile
+
+- [x] add Docker compose for demo
+
+- [ ] remove partially paid feature
+
+- [ ] make .github/workflows/release.yml run tests

@@ -1,0 +1,11 @@
+**/.git
+**/.github
+**/.vscode
+target/
+data/
+screenshots/
+errors/
+*.md
+*.log
+.DS_Store
+issues/
