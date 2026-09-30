@@ -27,10 +27,10 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.ignoringRequestMatchers("/h2-console/**"))
+                .csrf(csrf -> csrf.ignoringRequestMatchers("/h2-console/**", "/api/dev/**"))
                 .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/css/**", "/js/**", "/uploads/**", "/h2-console/**", "/error")
+                        .requestMatchers("/login", "/css/**", "/js/**", "/uploads/**", "/h2-console/**", "/error", "/api/dev/**")
                         .permitAll()
                         .requestMatchers("/users", "/users/**").hasAnyRole("LANDLORD", "MANAGER")
                         .requestMatchers("/tenants", "/tenants/**").hasAnyRole("LANDLORD", "MANAGER")

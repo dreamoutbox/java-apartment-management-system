@@ -12,10 +12,14 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.SpringApplication;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.List;
 
 @Component
@@ -28,6 +32,10 @@ public class DataInitializer implements CommandLineRunner {
     private final PasswordEncoder passwordEncoder;
     private final RoomRepository roomRepository;
     private final DataSeederService dataSeederService;
+    private final ConfigurableApplicationContext applicationContext;
+
+    @Value("${app.seed.auto:false}")
+    private boolean autoSeed;
 
     @Override
     public void run(String... args) {
@@ -51,20 +59,29 @@ public class DataInitializer implements CommandLineRunner {
         }
         log.info("Default seed rooms ready.");
 
-        // Provide a system authentication so @CreatedBy auditing and @PreAuthorize
-        // checks pass
-        var systemAuth = new UsernamePasswordAuthenticationToken(
-                "system", null, List.of(
-                        new SimpleGrantedAuthority("ROLE_LANDLORD"),
-                        new SimpleGrantedAuthority("ROLE_MANAGER"),
-                        new SimpleGrantedAuthority("ROLE_ACCOUNTANT"),
-                        new SimpleGrantedAuthority("ROLE_TECHNICIAN"),
-                        new SimpleGrantedAuthority("ROLE_TENANT")));
-        SecurityContextHolder.getContext().setAuthentication(systemAuth);
-        try {
-            dataSeederService.seed();
-        } finally {
-            SecurityContextHolder.clearContext();
+        boolean hasMockArg = Arrays.stream(args).anyMatch(arg -> arg.equals("--mock-data") || arg.startsWith("--mock-data="));
+        if (autoSeed || hasMockArg) {
+            log.info("Running DataSeederService mock data seed...");
+            var systemAuth = new UsernamePasswordAuthenticationToken(
+                    "system", null, List.of(
+                            new SimpleGrantedAuthority("ROLE_LANDLORD"),
+                            new SimpleGrantedAuthority("ROLE_MANAGER"),
+                            new SimpleGrantedAuthority("ROLE_ACCOUNTANT"),
+                            new SimpleGrantedAuthority("ROLE_TECHNICIAN"),
+                            new SimpleGrantedAuthority("ROLE_TENANT")));
+            SecurityContextHolder.getContext().setAuthentication(systemAuth);
+            try {
+                dataSeederService.seed();
+            } finally {
+                SecurityContextHolder.clearContext();
+            }
+        } else {
+            log.info("Automatic mock data seeding skipped (app.seed.auto is false). Use ./mock-data.sh to seed.");
+        }
+
+        if (hasMockArg) {
+            log.info("Mock data task completed. Shutting down.");
+            System.exit(SpringApplication.exit(applicationContext, () -> 0));
         }
     }
 
