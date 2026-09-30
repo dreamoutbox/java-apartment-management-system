@@ -54,9 +54,11 @@
             var isSelectable = table.dataset.selectable === 'true' || !!table.querySelector('input[type="radio"]');
             var filterState = isSelectable ? 'active' : (table.dataset.defaultFilter || 'active');
 
+            var mountTarget = table.closest('.table-responsive') || table;
+
             if (!noToolbar) {
                 // Toolbar wrap (limit dropdown + filter dropdown + search bar)
-                if (!table.previousElementSibling || !table.previousElementSibling.classList.contains('ams-table-toolbar')) {
+                if (!mountTarget.previousElementSibling || !mountTarget.previousElementSibling.classList.contains('ams-table-toolbar')) {
                     var toolbar = document.createElement('div');
                     toolbar.className = 'ams-table-toolbar';
 
@@ -145,13 +147,13 @@
                     });
 
                     toolbar.appendChild(searchInput);
-                    table.parentNode.insertBefore(toolbar, table);
+                    mountTarget.parentNode.insertBefore(toolbar, mountTarget);
                 }
 
                 // Bottom Pagination Bar
                 paginationBar = document.createElement('div');
                 paginationBar.className = 'ams-pagination-toolbar';
-                table.parentNode.insertBefore(paginationBar, table.nextSibling);
+                mountTarget.parentNode.insertBefore(paginationBar, mountTarget.nextSibling);
             }
 
             // Sortable Headers

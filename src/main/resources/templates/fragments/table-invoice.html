@@ -4,65 +4,69 @@
 <body>
 
     <div th:fragment="invoiceTable(invoices)">
-        <table class="data-table">
-            <thead>
-                <tr>
-                    <th>Invoice #</th>
-                    <th>Period</th>
-                    <th>Tenant</th>
-                    <th>Room #</th>
-                    <th>Rent</th>
-                    <th>Electricity</th>
-                    <th>Water</th>
-                    <th>Total Amount</th>
-                    <th>Balance Due</th>
-                    <th>Status</th>
-                    <th>Due Date</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="inv : ${invoices}"
-                    th:attr="data-deleted=${inv != null and inv.deleted}"
-                    th:classappend="${inv != null and inv.deleted ? 'deleted-record' : ''}">
-                    <td style="font-weight:600;" th:text="${inv.invoiceNumber}">INV-202607-00001</td>
-                    <td th:text="${inv.period}">2026-07</td>
-                    <td th:text="${inv.tenantName}">Tenant Name</td>
-                    <td th:text="${inv.roomNumber}">101</td>
-                    <td th:text="${'$' + inv.rentAmount}">$1000.00</td>
-                    <td th:text="${'$' + inv.electricityAmount}">$50.00</td>
-                    <td th:text="${'$' + inv.waterAmount}">$20.00</td>
-                    <td th:text="${'$' + inv.totalAmount}" style="font-weight:600;">$1070.00</td>
-                    <td th:text="${'$' + inv.balanceRemaining}"
-                        th:style="${inv.balanceRemaining > 0 ? 'color:#f87171;font-weight:600;' : 'color:#4ade80;'}">
-                        $0.00</td>
-                    <td>
-                        <span th:if="${inv != null and inv.deleted}" class="status-badge status-DELETED">DELETED</span>
-                        <span th:unless="${inv != null and inv.deleted}" th:class="${'status-badge status-' + inv.status}" th:text="${inv.status}">PAID</span>
-                    </td>
-                    <td th:text="${inv.dueDate}">2026-07-10</td>
-                    <td style="display:flex;gap:6px;">
-                        <a th:href="@{'/invoices/' + ${inv.id}}" class="btn"
-                            style="padding:4px 10px;font-size:12px;">View</a>
-                        <div th:if="${inv != null and inv.deleted}">
-                            <span style="color:#ef4444;font-size:12px;font-weight:600;">Deleted</span>
-                        </div>
-                        <div th:if="${inv != null and !inv.deleted}" style="display:flex;gap:6px;" sec:authorize="!hasRole('TENANT')">
-                            <a th:href="@{'/invoices/' + ${inv.id} + '/edit'}" class="btn"
-                                style="padding:4px 10px;font-size:12px;background:#3b82f6;">Edit</a>
-                            <form th:action="@{'/invoices/' + ${inv.id} + '/delete'}" method="post"
-                                onsubmit="return confirm('Delete this invoice?');">
-                                <button type="submit" class="btn"
-                                    style="padding:4px 10px;font-size:12px;background:#ef4444;">Delete</button>
-                            </form>
-                        </div>
-                    </td>
-                </tr>
-                <tr th:if="${#lists.isEmpty(invoices)}">
-                    <td colspan="12" style="text-align:center;color:#94a3b8;padding:24px;">No invoices found.</td>
-                </tr>
-            </tbody>
-        </table>
+        <div class="table-responsive">
+            <table class="data-table table-compact">
+                <thead>
+                    <tr>
+                        <th>Invoice #</th>
+                        <th>Period</th>
+                        <th>Tenant</th>
+                        <th>Room #</th>
+                        <th>Rent</th>
+                        <th>Electricity</th>
+                        <th>Water</th>
+                        <th>Total Amount</th>
+                        <th>Balance Due</th>
+                        <th>Status</th>
+                        <th>Due Date</th>
+                        <th style="min-width:180px;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="inv : ${invoices}"
+                        th:attr="data-deleted=${inv != null and inv.deleted}"
+                        th:classappend="${inv != null and inv.deleted ? 'deleted-record' : ''}">
+                        <td style="font-weight:600;" th:text="${inv.invoiceNumber}">INV-202607-00001</td>
+                        <td th:text="${inv.period}">2026-07</td>
+                        <td th:text="${inv.tenantName}">Tenant Name</td>
+                        <td th:text="${inv.roomNumber}">101</td>
+                        <td th:text="${'$' + inv.rentAmount}">$1000.00</td>
+                        <td th:text="${'$' + inv.electricityAmount}">$50.00</td>
+                        <td th:text="${'$' + inv.waterAmount}">$20.00</td>
+                        <td th:text="${'$' + inv.totalAmount}" style="font-weight:600;">$1070.00</td>
+                        <td th:text="${'$' + inv.balanceRemaining}"
+                            th:style="${inv.balanceRemaining > 0 ? 'color:#f87171;font-weight:600;' : 'color:#4ade80;'}">
+                            $0.00</td>
+                        <td>
+                            <span th:if="${inv != null and inv.deleted}" class="status-badge status-DELETED">DELETED</span>
+                            <span th:unless="${inv != null and inv.deleted}" th:class="${'status-badge status-' + inv.status}" th:text="${inv.status}">PAID</span>
+                        </td>
+                        <td th:text="${inv.dueDate}">2026-07-10</td>
+                        <td style="white-space:nowrap;">
+                            <div style="display:flex;gap:6px;align-items:center;">
+                                <a th:href="@{'/invoices/' + ${inv.id}}" class="btn"
+                                    style="padding:4px 10px;font-size:12px;">View</a>
+                                <div th:if="${inv != null and inv.deleted}">
+                                    <span style="color:#ef4444;font-size:12px;font-weight:600;">Deleted</span>
+                                </div>
+                                <div th:if="${inv != null and !inv.deleted}" style="display:flex;gap:6px;" sec:authorize="!hasRole('TENANT')">
+                                    <a th:href="@{'/invoices/' + ${inv.id} + '/edit'}" class="btn"
+                                        style="padding:4px 10px;font-size:12px;background:#3b82f6;">Edit</a>
+                                    <form th:action="@{'/invoices/' + ${inv.id} + '/delete'}" method="post"
+                                        onsubmit="return confirm('Delete this invoice?');">
+                                        <button type="submit" class="btn"
+                                            style="padding:4px 10px;font-size:12px;background:#ef4444;">Delete</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(invoices)}">
+                        <td colspan="12" style="text-align:center;color:#94a3b8;padding:24px;">No invoices found.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
 
         <div style="display:flex; justify-content:flex-end; margin-top:14px;">
             <!-- <div style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.25);padding:10px 18px;border-radius:8px;display:flex;align-items:center;gap:12px;"> -->

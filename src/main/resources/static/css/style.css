@@ -228,6 +228,17 @@ td {
     border-bottom: 1px solid var(--border-color);
 }
 
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.table-compact th,
+.table-compact td {
+    padding: 12px 10px;
+}
+
 tr:hover td {
     background: rgba(255, 255, 255, 0.02);
 }
