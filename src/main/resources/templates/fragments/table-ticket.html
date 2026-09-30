@@ -16,13 +16,14 @@
     </thead>
     <tbody>
         <tr th:each="ticket : ${tickets}"
-            th:classappend="${selectable != null and selectable ? 'selectable-row' + (selectedId != null and selectedId == ticket.id ? ' selected-row' : '') : ''}"
-            th:data-href="${selectable == null or !selectable ? '/tickets/' + ticket.id : null}"
+            th:attr="data-deleted=${ticket != null and ticket.deleted}"
+            th:classappend="${(ticket != null and ticket.deleted ? 'deleted-record ' : '') + (selectable != null and selectable ? 'selectable-row' + (selectedId != null and selectedId == ticket.id ? ' selected-row' : '') : '')}"
+            th:data-href="${(selectable == null or !selectable) and (ticket == null or !ticket.deleted) ? '/tickets/' + ticket.id : null}"
             onclick="if (!this.querySelector('input[type=radio]') && !event.target.closest('button, a, form, select, input')) { var href = this.getAttribute('data-href'); if(href) window.location.href = href; }"
             style="cursor:pointer;">
             <td th:if="${selectable != null and selectable}" style="text-align:center;">
                 <input type="radio" th:name="${inputName != null ? inputName : 'ticketId'}" th:value="${ticket.id}"
-                    th:checked="${selectedId != null and selectedId == ticket.id}" required style="cursor:pointer;">
+                    th:checked="${selectedId != null and selectedId == ticket.id}" th:disabled="${ticket != null and ticket.deleted}" required style="cursor:pointer;">
             </td>
             <td th:if="${columns == null or #lists.contains(columns, 'roomNumber')}" th:text="${ticket != null and ticket.room != null ? ticket.room.roomNumber : 'N/A'}">101</td>
             <td th:if="${columns == null or #lists.contains(columns, 'reportedBy')}" th:text="${ticket != null and ticket.reportedBy != null ? ticket.reportedBy.fullName : 'N/A'}">
@@ -31,11 +32,25 @@
             <td th:if="${columns == null or #lists.contains(columns, 'assignedTechnician')}"
                 th:text="${ticket != null and ticket.assignedTechnician != null ? ticket.assignedTechnician.fullName : 'Unassigned'}">
                 Unassigned</td>
-            <td th:if="${columns == null or #lists.contains(columns, 'status')}"><span th:class="${'status-badge status-' + (ticket != null ? ticket.status : 'PENDING')}"
-                    th:text="${ticket != null ? ticket.status : ''}">PENDING</span></td>
+            <td th:if="${columns == null or #lists.contains(columns, 'status')}">
+                <span th:if="${ticket != null and ticket.deleted}" class="status-badge status-DELETED">DELETED</span>
+                <span th:unless="${ticket != null and ticket.deleted}"
+                    th:class="${'status-badge status-' + (ticket != null ? ticket.status : 'PENDING')}"
+                    th:text="${ticket != null ? ticket.status : ''}">PENDING</span>
+            </td>
             <td th:if="${assignActionUrl != null and ticket != null and (selectable == null or !selectable) and #authorization.expression('hasAnyRole(''LANDLORD'', ''MANAGER'')')}">
-                <a th:href="@{'/tickets/' + ${ticket.id} + '/edit'}" class="btn"
-                    style="padding:4px 10px;font-size:12px;">Update</a>
+                <div th:if="${ticket.deleted}">
+                    <span style="color:#ef4444;font-size:12px;font-weight:600;">Deleted</span>
+                </div>
+                <div th:unless="${ticket.deleted}" style="display:flex;gap:6px;">
+                    <a th:href="@{'/tickets/' + ${ticket.id} + '/edit'}" class="btn"
+                        style="padding:4px 10px;font-size:12px;">Update</a>
+                    <form th:action="@{'/tickets/' + ${ticket.id} + '/delete'}" method="post"
+                        onsubmit="return confirm('Delete this maintenance ticket?');">
+                        <button type="submit" class="btn"
+                            style="padding:4px 10px;font-size:12px;background:#ef4444;">Delete</button>
+                    </form>
+                </div>
             </td>
         </tr>
     </tbody>

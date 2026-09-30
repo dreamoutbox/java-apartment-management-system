@@ -29,6 +29,8 @@ public interface ContractRepository extends JpaRepository<Contract, UUID> {
 
     List<Contract> findAllByDeletedFalseOrderByCreatedAtDesc();
 
+    List<Contract> findAllByOrderByCreatedAtDesc();
+
     @Query("SELECT c FROM Contract c WHERE c.room = :room AND c.status = 'ACTIVE' AND c.deleted = false "
             + "AND (:startDate <= c.endDate AND :endDate >= c.startDate)")
     List<Contract> findOverlappingActiveContracts(

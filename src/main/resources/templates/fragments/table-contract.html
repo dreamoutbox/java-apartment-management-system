@@ -17,20 +17,28 @@
     </thead>
     <tbody>
         <tr th:each="c : ${contracts}"
-            th:classappend="${selectable != null and selectable ? 'selectable-row' + (selectedId != null and selectedId == c.id ? ' selected-row' : '') : ''}">
+            th:attr="data-deleted=${c != null and c.deleted}"
+            th:classappend="${(c != null and c.deleted ? 'deleted-record ' : '') + (selectable != null and selectable ? 'selectable-row' + (selectedId != null and selectedId == c.id ? ' selected-row' : '') : '')}">
             <td th:if="${selectable != null and selectable}" style="text-align:center;">
                 <input type="radio" th:name="${inputName != null ? inputName : 'contractId'}" th:value="${c.id}"
-                    th:checked="${selectedId != null and selectedId == c.id}" required style="cursor:pointer;">
+                    th:checked="${selectedId != null and selectedId == c.id}" th:disabled="${c != null and c.deleted}" required style="cursor:pointer;">
             </td>
             <td th:if="${columns == null or #lists.contains(columns, 'roomNumber')}" th:text="${c != null and c.room != null ? c.room.roomNumber : 'N/A'}">101</td>
             <td th:if="${columns == null or #lists.contains(columns, 'tenantName')}" th:text="${c != null and c.tenant != null ? c.tenant.fullName : 'N/A'}">Tenant</td>
             <td th:if="${columns == null or #lists.contains(columns, 'monthlyRent')}" th:text="${'$' + (c != null ? c.monthlyRent : 0)}">$1200</td>
             <td th:if="${columns == null or #lists.contains(columns, 'startDate')}" th:text="${c != null ? c.startDate : ''}">2024-01-01</td>
             <td th:if="${columns == null or #lists.contains(columns, 'endDate')}" th:text="${c != null ? c.endDate : ''}">2024-12-31</td>
-            <td th:if="${columns == null or #lists.contains(columns, 'status')}"><span th:class="${'status-badge status-' + (c != null ? c.status : 'ACTIVE')}"
-                    th:text="${c != null ? c.status : ''}">ACTIVE</span></td>
+            <td th:if="${columns == null or #lists.contains(columns, 'status')}">
+                <span th:if="${c != null and c.deleted}" class="status-badge status-DELETED">DELETED</span>
+                <span th:unless="${c != null and c.deleted}"
+                    th:class="${'status-badge status-' + (c != null ? c.status : 'ACTIVE')}"
+                    th:text="${c != null ? c.status : ''}">ACTIVE</span>
+            </td>
             <td th:if="${(selectable == null or !selectable) and #authorization.expression('hasAnyRole(''LANDLORD'', ''MANAGER'')')}">
-                <div th:if="${c != null}" style="display:flex;gap:6px;">
+                <div th:if="${c != null and c.deleted}">
+                    <span style="color:#ef4444;font-size:12px;font-weight:600;">Deleted</span>
+                </div>
+                <div th:if="${c != null and !c.deleted}" style="display:flex;gap:6px;">
                     <a th:href="@{'/contracts/' + ${c.id} + '/edit'}" class="btn"
                         style="padding:4px 10px;font-size:12px;">Update</a>
                     <form th:action="@{'/contracts/' + ${c.id} + '/delete'}" method="post"

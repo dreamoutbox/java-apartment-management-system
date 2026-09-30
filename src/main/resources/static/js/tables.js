@@ -12,7 +12,7 @@
         if (e.target.tagName === 'INPUT' && e.target.type !== 'radio') return;
 
         var tr = e.target.closest('tbody tr');
-        if (!tr) return;
+        if (!tr || tr.getAttribute('data-deleted') === 'true') return;
 
         var radio = tr.querySelector('input[type="radio"]');
         if (!radio || radio.disabled || radio === e.target) return;
@@ -51,11 +51,20 @@
             var sortState = { col: -1, asc: true };
             var paginationBar = null;
 
+            var isSelectable = table.dataset.selectable === 'true' || !!table.querySelector('input[type="radio"]');
+            var filterState = isSelectable ? 'active' : (table.dataset.defaultFilter || 'active');
+
             if (!noToolbar) {
-                // Toolbar wrap (limit dropdown + search bar)
+                // Toolbar wrap (limit dropdown + filter dropdown + search bar)
                 if (!table.previousElementSibling || !table.previousElementSibling.classList.contains('ams-table-toolbar')) {
                     var toolbar = document.createElement('div');
                     toolbar.className = 'ams-table-toolbar';
+
+                    var leftControls = document.createElement('div');
+                    leftControls.style.display = 'flex';
+                    leftControls.style.alignItems = 'center';
+                    leftControls.style.gap = '16px';
+                    leftControls.style.flexWrap = 'wrap';
 
                     // Limit Dropdown
                     var limitBox = document.createElement('div');
@@ -80,7 +89,45 @@
 
                     limitBox.appendChild(limitSelect);
                     limitBox.appendChild(document.createTextNode(' entries per page'));
-                    toolbar.appendChild(limitBox);
+                    leftControls.appendChild(limitBox);
+
+                    // Filter Dropdown (Active Only / All Records / Deleted Only)
+                    if (!isSelectable) {
+                        var filterBox = document.createElement('div');
+                        filterBox.className = 'ams-filter-box';
+                        filterBox.innerHTML = '<span>Status:</span>';
+
+                        var filterSelect = document.createElement('select');
+                        filterSelect.className = 'ams-filter-select';
+                        var optActive = document.createElement('option');
+                        optActive.value = 'active';
+                        optActive.textContent = 'Active Only';
+                        var optAll = document.createElement('option');
+                        optAll.value = 'all';
+                        optAll.textContent = 'All Records';
+                        var optDeleted = document.createElement('option');
+                        optDeleted.value = 'deleted';
+                        optDeleted.textContent = 'Deleted Only';
+
+                        if (filterState === 'all') optAll.selected = true;
+                        else if (filterState === 'deleted') optDeleted.selected = true;
+                        else optActive.selected = true;
+
+                        filterSelect.appendChild(optActive);
+                        filterSelect.appendChild(optAll);
+                        filterSelect.appendChild(optDeleted);
+
+                        filterSelect.addEventListener('change', function () {
+                            filterState = this.value;
+                            currentPage = 1;
+                            render();
+                        });
+
+                        filterBox.appendChild(filterSelect);
+                        leftControls.appendChild(filterBox);
+                    }
+
+                    toolbar.appendChild(leftControls);
 
                     // Search Bar
                     var searchInput = document.createElement('input');
@@ -146,8 +193,24 @@
             });
 
             function getFilteredRows() {
-                if (!searchQuery) return allRows;
-                return allRows.filter(function (row) {
+                var filtered = allRows.filter(function (row) {
+                    if (row.querySelector('td[colspan]') && row.innerText.toLowerCase().includes('no ')) {
+                        return false;
+                    }
+                    var isDeleted = row.getAttribute('data-deleted') === 'true' || row.classList.contains('deleted-record');
+                    if (isSelectable) {
+                        return !isDeleted;
+                    }
+                    if (filterState === 'active') {
+                        return !isDeleted;
+                    } else if (filterState === 'deleted') {
+                        return isDeleted;
+                    }
+                    return true;
+                });
+
+                if (!searchQuery) return filtered;
+                return filtered.filter(function (row) {
                     return row.innerText.toLowerCase().includes(searchQuery);
                 });
             }
@@ -163,12 +226,22 @@
                 var startIdx = pageSize === Infinity ? 0 : (currentPage - 1) * pageSize;
                 var endIdx = pageSize === Infinity ? totalFiltered : Math.min(startIdx + pageSize, totalFiltered);
 
+                // Clean up any dynamic empty row
+                tbody.querySelectorAll('.ams-empty-row').forEach(function (r) { r.remove(); });
+
                 // Hide all, append & show page rows
                 allRows.forEach(function (row) { row.style.display = 'none'; });
-                for (var i = startIdx; i < endIdx; i++) {
-                    if (filtered[i]) {
-                        filtered[i].style.display = '';
-                        tbody.appendChild(filtered[i]);
+                if (filtered.length === 0) {
+                    var emptyRow = document.createElement('tr');
+                    emptyRow.className = 'ams-empty-row';
+                    emptyRow.innerHTML = '<td colspan="100" style="text-align:center;color:#94a3b8;padding:24px;">No records match the selected filter.</td>';
+                    tbody.appendChild(emptyRow);
+                } else {
+                    for (var i = startIdx; i < endIdx; i++) {
+                        if (filtered[i]) {
+                            filtered[i].style.display = '';
+                            tbody.appendChild(filtered[i]);
+                        }
                     }
                 }
 
@@ -253,9 +326,36 @@
         return (cell.innerText || '').trim();
     }
 
+    window.filterAnnouncementCards = function (select) {
+        var container = select.closest('.card') || document;
+        var cards = container.querySelectorAll('.announcement-item, [data-deleted]');
+        var val = select.value;
+        cards.forEach(function (card) {
+            if (!card.hasAttribute('data-deleted')) return;
+            var isDel = card.getAttribute('data-deleted') === 'true';
+            if (val === 'active') {
+                card.style.display = isDel ? 'none' : '';
+            } else if (val === 'deleted') {
+                card.style.display = isDel ? '' : 'none';
+            } else {
+                card.style.display = '';
+            }
+        });
+    };
+
+    function initAnnouncements() {
+        document.querySelectorAll('.ams-announcement-filter').forEach(function (sel) {
+            window.filterAnnouncementCards(sel);
+        });
+    }
+
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initTables);
+        document.addEventListener('DOMContentLoaded', function () {
+            initTables();
+            initAnnouncements();
+        });
     } else {
         initTables();
+        initAnnouncements();
     }
 })();

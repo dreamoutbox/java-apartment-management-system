@@ -22,7 +22,9 @@
                 </tr>
             </thead>
             <tbody>
-                <tr th:each="inv : ${invoices}">
+                <tr th:each="inv : ${invoices}"
+                    th:attr="data-deleted=${inv != null and inv.deleted}"
+                    th:classappend="${inv != null and inv.deleted ? 'deleted-record' : ''}">
                     <td style="font-weight:600;" th:text="${inv.invoiceNumber}">INV-202607-00001</td>
                     <td th:text="${inv.period}">2026-07</td>
                     <td th:text="${inv.tenantName}">Tenant Name</td>
@@ -35,15 +37,25 @@
                         th:style="${inv.balanceRemaining > 0 ? 'color:#f87171;font-weight:600;' : 'color:#4ade80;'}">
                         $0.00</td>
                     <td>
-                        <span th:class="${'status-badge status-' + inv.status}" th:text="${inv.status}">PAID</span>
+                        <span th:if="${inv != null and inv.deleted}" class="status-badge status-DELETED">DELETED</span>
+                        <span th:unless="${inv != null and inv.deleted}" th:class="${'status-badge status-' + inv.status}" th:text="${inv.status}">PAID</span>
                     </td>
                     <td th:text="${inv.dueDate}">2026-07-10</td>
                     <td style="display:flex;gap:6px;">
                         <a th:href="@{'/invoices/' + ${inv.id}}" class="btn"
                             style="padding:4px 10px;font-size:12px;">View</a>
-                        <a th:href="@{'/invoices/' + ${inv.id} + '/edit'}" class="btn"
-                            style="padding:4px 10px;font-size:12px;background:#3b82f6;"
-                            sec:authorize="!hasRole('TENANT')">Edit</a>
+                        <div th:if="${inv != null and inv.deleted}">
+                            <span style="color:#ef4444;font-size:12px;font-weight:600;">Deleted</span>
+                        </div>
+                        <div th:if="${inv != null and !inv.deleted}" style="display:flex;gap:6px;" sec:authorize="!hasRole('TENANT')">
+                            <a th:href="@{'/invoices/' + ${inv.id} + '/edit'}" class="btn"
+                                style="padding:4px 10px;font-size:12px;background:#3b82f6;">Edit</a>
+                            <form th:action="@{'/invoices/' + ${inv.id} + '/delete'}" method="post"
+                                onsubmit="return confirm('Delete this invoice?');">
+                                <button type="submit" class="btn"
+                                    style="padding:4px 10px;font-size:12px;background:#ef4444;">Delete</button>
+                            </form>
+                        </div>
                     </td>
                 </tr>
                 <tr th:if="${#lists.isEmpty(invoices)}">

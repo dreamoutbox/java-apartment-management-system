@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -133,6 +134,15 @@ public class MaintenanceService {
     @Transactional(readOnly = true)
     public List<MaintenanceTicket> getAllTickets() {
         return ticketRepository.findAll();
+    }
+
+    @Transactional
+    public void deleteTicket(UUID id) {
+        MaintenanceTicket ticket = ticketRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Ticket not found: " + id));
+        ticket.setDeleted(true);
+        ticket.setDeletedAt(LocalDateTime.now());
+        ticketRepository.save(ticket);
     }
 
     @Transactional(readOnly = true)

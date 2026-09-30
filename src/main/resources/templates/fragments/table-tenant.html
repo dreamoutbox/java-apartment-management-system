@@ -19,16 +19,19 @@
         </thead>
         <tbody>
             <tr th:each="t : ${tenants}"
-                th:classappend="${selectable != null and selectable ? 'selectable-row' + (selectedId != null and selectedId == t.id ? ' selected-row' : '') : ''}"
-                th:data-href="${selectable == null or !selectable ? '/tenants/' + t.id : null}"
+                th:attr="data-deleted=${t != null and t.deleted}"
+                th:classappend="${(t != null and t.deleted ? 'deleted-record ' : '') + (selectable != null and selectable ? 'selectable-row' + (selectedId != null and selectedId == t.id ? ' selected-row' : '') : '')}"
+                th:data-href="${(selectable == null or !selectable) and (t == null or !t.deleted) ? '/tenants/' + t.id : null}"
                 onclick="if (!this.querySelector('input[type=radio]') && !event.target.closest('button, a, form, select, input')) { var href = this.getAttribute('data-href'); if(href) window.location.href = href; }"
                 style="cursor:pointer;">
                 <td th:if="${selectable != null and selectable}" style="text-align:center;">
                     <input type="radio" th:name="${inputName != null ? inputName : 'tenantId'}" th:value="${t.id}"
-                        th:checked="${selectedId != null and selectedId == t.id}" required style="cursor:pointer;">
+                        th:checked="${selectedId != null and selectedId == t.id}" th:disabled="${t != null and t.deleted}" required style="cursor:pointer;">
                 </td>
-                <td th:if="${columns == null or #lists.contains(columns, 'fullName')}"
-                    th:text="${t != null ? t.fullName : ''}">Name</td>
+                <td th:if="${columns == null or #lists.contains(columns, 'fullName')}">
+                    <span th:text="${t != null ? t.fullName : ''}">Name</span>
+                    <span th:if="${t != null and t.deleted}" class="status-badge status-DELETED" style="margin-left:6px;font-size:10px;">DELETED</span>
+                </td>
                 <td th:if="${columns == null or #lists.contains(columns, 'username')}"
                     th:text="${t != null and t.user != null ? t.user.username : 'N/A'}">username</td>
                 <td th:if="${columns == null or #lists.contains(columns, 'phone')}"
@@ -47,7 +50,10 @@
                 <td th:if="${columns == null or #lists.contains(columns, 'creditBalance')}"
                     th:text="${'$' + (t != null and t.creditBalance != null ? t.creditBalance : 0)}">$0.00</td>
                 <td th:if="${selectable == null or !selectable}">
-                    <div th:if="${t != null}" style="display:flex;gap:6px;">
+                    <div th:if="${t != null and t.deleted}">
+                        <span style="color:#ef4444;font-size:12px;font-weight:600;">Deleted</span>
+                    </div>
+                    <div th:if="${t != null and !t.deleted}" style="display:flex;gap:6px;">
                         <a th:href="@{'/tenants/' + ${t.id}}" class="btn"
                             style="padding:4px 10px;font-size:12px;background:#10b981;">View</a>
                         <a th:href="@{'/tenants/' + ${t.id} + '/edit'}" class="btn"

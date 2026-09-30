@@ -119,7 +119,7 @@ public class ContractService {
 
     @Transactional(readOnly = true)
     public List<Contract> getAllContracts() {
-        return contractRepository.findAllByDeletedFalseOrderByCreatedAtDesc();
+        return contractRepository.findAllByOrderByCreatedAtDesc();
     }
 
     @Transactional(readOnly = true)

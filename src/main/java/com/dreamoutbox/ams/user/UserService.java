@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -28,6 +29,10 @@ public class UserService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+
+        if (user.isDeleted()) {
+            throw new UsernameNotFoundException("User account has been deleted: " + username);
+        }
 
         return org.springframework.security.core.userdetails.User.builder()
                 .username(user.getUsername())
@@ -94,8 +99,17 @@ public class UserService implements UserDetailsService {
     public void deleteUser(UUID id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("User not found: " + id));
-        tenantRepository.findByUserId(user.getId()).ifPresent(tenantRepository::delete);
-        userRepository.delete(user);
+        LocalDateTime now = LocalDateTime.now();
+        user.setDeleted(true);
+        user.setDeletedAt(now);
+        user.setEnabled(false);
+        userRepository.save(user);
+
+        tenantRepository.findByUserId(user.getId()).ifPresent(tenant -> {
+            tenant.setDeleted(true);
+            tenant.setDeletedAt(now);
+            tenantRepository.save(tenant);
+        });
     }
 
     @Transactional(readOnly = true)
@@ -104,7 +118,7 @@ public class UserService implements UserDetailsService {
     }
 
     public List<User> getUsersByRole(Role role) {
-        return userRepository.findByRoleOrderByCreatedAtAsc(role);
+        return userRepository.findByRoleAndDeletedFalseOrderByCreatedAtAsc(role);
     }
 
     public User getByUsername(String username) {

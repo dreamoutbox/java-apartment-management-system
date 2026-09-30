@@ -405,6 +405,50 @@ tr:hover td {
     cursor: pointer;
 }
 
+.ams-filter-box {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+.ams-filter-select {
+    padding: 6px 10px;
+    font-size: 13px;
+    width: auto;
+    background: var(--bg-dark);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    color: var(--text-main);
+    cursor: pointer;
+}
+
+.ams-filter-select:focus {
+    border-color: var(--primary);
+    outline: none;
+}
+
+tr.deleted-record td,
+tr.deleted-row td,
+div.deleted-record {
+    opacity: 0.72;
+    background: rgba(239, 68, 68, 0.04) !important;
+}
+
+tr.deleted-record:hover td,
+tr.deleted-row:hover td {
+    opacity: 0.9;
+    background: rgba(239, 68, 68, 0.08) !important;
+}
+
+.status-badge.status-DELETED {
+    background: rgba(239, 68, 68, 0.18);
+    color: #f87171;
+    border: 1px solid rgba(239, 68, 68, 0.35);
+    font-weight: 600;
+}
+
 .ams-pagination-toolbar {
     display: flex;
     justify-content: space-between;

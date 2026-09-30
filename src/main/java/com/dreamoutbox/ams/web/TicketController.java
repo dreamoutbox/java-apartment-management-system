@@ -155,4 +155,15 @@ public class TicketController {
         }
         return "redirect:/tickets/" + ticketId;
     }
+
+    @PostMapping("/{id}/delete")
+    public String deleteTicket(@PathVariable UUID id, org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
+        try {
+            maintenanceService.deleteTicket(id);
+            redirectAttributes.addFlashAttribute("successMessage", "Ticket deleted successfully.");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        }
+        return "redirect:/tickets";
+    }
 }

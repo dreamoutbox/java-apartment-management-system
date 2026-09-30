@@ -185,4 +185,15 @@ public class InvoiceController {
         }
         return "redirect:/invoices";
     }
+
+    @PostMapping("/{id}/delete")
+    public String deleteInvoice(@PathVariable UUID id, RedirectAttributes redirectAttributes) {
+        try {
+            invoiceService.deleteInvoice(id);
+            redirectAttributes.addFlashAttribute("successMessage", "Invoice deleted successfully.");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        }
+        return "redirect:/invoices";
+    }
 }

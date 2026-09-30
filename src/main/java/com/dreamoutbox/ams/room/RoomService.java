@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -65,24 +66,10 @@ public class RoomService {
                     "Cannot delete room while it has an active lease contract. Please terminate or expire the contract first.");
         }
 
-        // 1. Delete associated maintenance tickets (cascades to ticket images &
-        // history)
-        var tickets = ticketRepository.findByRoom(room);
-        ticketRepository.deleteAll(tickets);
-
-        // 2. Delete associated meter readings
-        var readings = meterReadingRepository.findByRoom(room);
-        meterReadingRepository.deleteAll(readings);
-
-        // 3. Delete inactive/historical contracts and their invoices
-        for (var contract : contracts) {
-            var invoices = invoiceRepository.findByContract(contract);
-            invoiceRepository.deleteAll(invoices);
-        }
-        contractRepository.deleteAll(contracts);
-
-        // 4. Delete room
-        roomRepository.delete(room);
+        LocalDateTime now = LocalDateTime.now();
+        room.setDeleted(true);
+        room.setDeletedAt(now);
+        roomRepository.save(room);
     }
 
     @Transactional

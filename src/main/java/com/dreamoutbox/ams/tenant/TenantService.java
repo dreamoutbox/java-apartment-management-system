@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -73,10 +74,17 @@ public class TenantService {
         Tenant tenant = tenantRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Tenant not found: " + id));
 
+        LocalDateTime now = LocalDateTime.now();
+        tenant.setDeleted(true);
+        tenant.setDeletedAt(now);
+        tenantRepository.save(tenant);
+
         User user = tenant.getUser();
-        tenantRepository.delete(tenant);
         if (user != null) {
-            userRepository.delete(user);
+            user.setDeleted(true);
+            user.setDeletedAt(now);
+            user.setEnabled(false);
+            userRepository.save(user);
         }
     }
 

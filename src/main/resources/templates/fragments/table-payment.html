@@ -16,8 +16,13 @@
             </tr>
         </thead>
         <tbody>
-            <tr th:each="p : ${payments}">
-                <td style="font-weight:600;" th:text="${p.receiptNumber}">REC-202607-00001</td>
+            <tr th:each="p : ${payments}"
+                th:attr="data-deleted=${p != null and p.deleted}"
+                th:classappend="${p != null and p.deleted ? 'deleted-record' : ''}">
+                <td>
+                    <span style="font-weight:600;" th:text="${p.receiptNumber}">REC-202607-00001</span>
+                    <span th:if="${p != null and p.deleted}" class="status-badge status-DELETED" style="margin-left:6px;font-size:10px;">DELETED</span>
+                </td>
                 <td th:text="${p.tenant != null ? p.tenant.fullName : 'N/A'}" style="font-weight:500;">Tenant Name</td>
                 <td th:text="${'$' + p.amount}" style="font-weight:600;color:#4ade80;">$1500.00</td>
                 <td th:text="${p.paidAt != null ? #temporals.format(p.paidAt, 'yyyy-MM-dd HH:mm') : 'N/A'}">2026-07-25
@@ -30,7 +35,16 @@
                         style="color:#94a3b8;">Account Credit</span>
                 </td>
                 <td>
-                    <a th:href="@{'/payments/' + ${p.id}}" class="btn" style="padding:4px 10px;font-size:12px;">View</a>
+                    <div style="display:flex;gap:6px;align-items:center;">
+                        <a th:href="@{'/payments/' + ${p.id}}" class="btn" style="padding:4px 10px;font-size:12px;">View</a>
+                        <div th:if="${p != null and p.deleted}">
+                            <span style="color:#ef4444;font-size:12px;font-weight:600;">Deleted</span>
+                        </div>
+                        <form th:if="${p != null and !p.deleted}" th:action="@{'/payments/' + ${p.id} + '/delete'}" method="post"
+                            onsubmit="return confirm('Delete this payment receipt?');">
+                            <button type="submit" class="btn" style="padding:4px 10px;font-size:12px;background:#ef4444;">Delete</button>
+                        </form>
+                    </div>
                 </td>
             </tr>
             <tr th:if="${#lists.isEmpty(payments)}">

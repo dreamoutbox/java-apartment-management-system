@@ -93,4 +93,15 @@ public class PaymentController {
         }
         return "redirect:/payments";
     }
+
+    @PostMapping("/{id}/delete")
+    public String deletePayment(@PathVariable UUID id, RedirectAttributes redirectAttributes) {
+        try {
+            paymentService.deletePayment(id);
+            redirectAttributes.addFlashAttribute("successMessage", "Payment deleted successfully.");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        }
+        return "redirect:/payments";
+    }
 }

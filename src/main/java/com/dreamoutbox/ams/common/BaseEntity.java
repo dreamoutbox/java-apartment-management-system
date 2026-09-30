@@ -32,4 +32,10 @@ public abstract class BaseEntity {
     @LastModifiedDate
     @Column(nullable = false)
     private LocalDateTime updatedAt;
+
+    @Column(nullable = false, columnDefinition = "boolean not null default false")
+    private boolean deleted = false;
+
+    @Column
+    private LocalDateTime deletedAt;
 }

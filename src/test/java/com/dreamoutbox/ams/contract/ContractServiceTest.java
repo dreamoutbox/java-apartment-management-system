@@ -84,14 +84,14 @@ class ContractServiceTest {
     }
 
     @Test
-    void testGetAllContractsExcludesSoftDeleted() {
-        when(contractRepository.findAllByDeletedFalseOrderByCreatedAtDesc())
+    void testGetAllContractsReturnsAllContracts() {
+        when(contractRepository.findAllByOrderByCreatedAtDesc())
                 .thenReturn(List.of(activeContract));
 
         List<Contract> result = contractService.getAllContracts();
 
         assertEquals(1, result.size());
-        verify(contractRepository).findAllByDeletedFalseOrderByCreatedAtDesc();
+        verify(contractRepository).findAllByOrderByCreatedAtDesc();
     }
 
     @Test

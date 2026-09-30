@@ -24,7 +24,7 @@ public interface InvoiceRepository extends JpaRepository<Invoice, UUID> {
         List<Invoice> findByContractTenantOrderByPeriodDesc(Tenant tenant);
 
         @Lock(LockModeType.PESSIMISTIC_WRITE)
-        @Query("SELECT i FROM Invoice i WHERE i.contract.tenant = :tenant AND i.status IN :statuses ORDER BY i.period ASC")
+        @Query("SELECT i FROM Invoice i WHERE i.contract.tenant = :tenant AND i.status IN :statuses AND i.deleted = false ORDER BY i.period ASC")
         List<Invoice> findUnpaidInvoicesForTenantForUpdate(
                         @Param("tenant") Tenant tenant,
                         @Param("statuses") List<InvoiceStatus> statuses);
@@ -32,13 +32,13 @@ public interface InvoiceRepository extends JpaRepository<Invoice, UUID> {
         List<Invoice> findByContractTenantAndStatusInOrderByPeriodAsc(
                         Tenant tenant, List<InvoiceStatus> statuses);
 
-        @Query("SELECT i FROM Invoice i WHERE i.status != 'PAID' AND i.dueDate < :today")
+        @Query("SELECT i FROM Invoice i WHERE i.status != 'PAID' AND i.dueDate < :today AND i.deleted = false")
         List<Invoice> findOverdueInvoices(@Param("today") LocalDate today);
 
         List<Invoice> findAllByOrderByPeriodDesc();
 
         List<Invoice> findAllByOrderByCreatedAtAsc();
 
-        @Query("SELECT COALESCE(SUM(i.balanceRemaining), 0) FROM Invoice i WHERE i.status != 'PAID'")
+        @Query("SELECT COALESCE(SUM(i.balanceRemaining), 0) FROM Invoice i WHERE i.status != 'PAID' AND i.deleted = false")
         Double calculateTotalOutstandingBalance();
 }

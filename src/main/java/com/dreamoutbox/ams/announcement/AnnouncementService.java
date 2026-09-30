@@ -49,7 +49,9 @@ public class AnnouncementService {
     public void deleteAnnouncement(UUID id) {
         Announcement announcement = announcementRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Announcement not found: " + id));
-        announcementRepository.delete(announcement);
+        announcement.setDeleted(true);
+        announcement.setDeletedAt(LocalDateTime.now());
+        announcementRepository.save(announcement);
     }
 
     @Transactional(readOnly = true)

@@ -51,11 +51,4 @@ public class Contract extends BaseEntity {
     @Column(nullable = false)
     @Builder.Default
     private ContractStatus status = ContractStatus.ACTIVE;
-
-    @Column(nullable = false, columnDefinition = "boolean not null default false")
-    @Builder.Default
-    private boolean deleted = false;
-
-    @Column
-    private LocalDateTime deletedAt;
 }

@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -295,7 +296,20 @@ public class InvoiceService {
 
     @Transactional
     public void deleteMeterReading(UUID id) {
-        meterReadingRepository.deleteById(id);
+        MeterReading reading = meterReadingRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Meter reading not found: " + id));
+        reading.setDeleted(true);
+        reading.setDeletedAt(LocalDateTime.now());
+        meterReadingRepository.save(reading);
+    }
+
+    @Transactional
+    public void deleteInvoice(UUID id) {
+        Invoice invoice = invoiceRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invoice not found: " + id));
+        invoice.setDeleted(true);
+        invoice.setDeletedAt(LocalDateTime.now());
+        invoiceRepository.save(invoice);
     }
 
     @Transactional(readOnly = true)

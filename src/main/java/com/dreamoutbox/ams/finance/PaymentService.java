@@ -91,6 +91,15 @@ public class PaymentService {
         return paymentRepository.findAllByOrderByPaidAtDesc();
     }
 
+    @Transactional
+    public void deletePayment(UUID id) {
+        Payment payment = paymentRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Payment not found: " + id));
+        payment.setDeleted(true);
+        payment.setDeletedAt(LocalDateTime.now());
+        paymentRepository.save(payment);
+    }
+
     @Transactional(readOnly = true)
     public Payment getById(UUID id) {
         return paymentRepository.findById(id)
