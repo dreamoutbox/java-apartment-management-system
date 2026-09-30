@@ -47,6 +47,7 @@ class InvoiceTest {
         assertEquals("0812345671", invoice.getTenantPhone());
         assertEquals("tenant1@example.com", invoice.getTenantEmail());
         assertEquals("1", invoice.getFloor());
+        assertEquals(tenant.getId(), invoice.getTenantId());
     }
 
     @Test
@@ -61,6 +62,7 @@ class InvoiceTest {
         assertEquals("N/A", invoice.getTenantPhone());
         assertEquals("N/A", invoice.getTenantEmail());
         assertEquals("N/A", invoice.getFloor());
+        org.junit.jupiter.api.Assertions.assertNull(invoice.getTenantId());
     }
 
     @Test
@@ -79,5 +81,6 @@ class InvoiceTest {
         assertEquals("N/A", invoice.getTenantPhone());
         assertEquals("N/A", invoice.getTenantEmail());
         assertEquals("N/A", invoice.getFloor());
+        org.junit.jupiter.api.Assertions.assertNull(invoice.getTenantId());
     }
 }

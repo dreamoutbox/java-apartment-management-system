@@ -8,6 +8,8 @@
 
 - [x] chore fix page views
 
+- [x] add pay button to Invoice Statement page
+
 - [x] add Dockerfile
 
 - [x] add Docker compose for demo

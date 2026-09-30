@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Record Tenant Payment - Apartment Hub</title>
+    <title>Create Tenant Payment - Apartment Hub</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/style.css}">
@@ -15,7 +15,7 @@
 
     <div class="main-content">
         <div class="header">
-            <h1>Record Tenant Payment</h1>
+            <h1>Create Tenant Payment</h1>
             <p>Select tenant and enter payment amount to automatically allocate funds using FIFO (first-in-first-out)
             </p>
         </div>
@@ -26,7 +26,7 @@
                 <div class="form-group" style="margin-bottom:20px;">
                     <label style="font-weight:600;margin-bottom:8px;display:block;">Select Tenant</label>
                     <div
-                        th:replace="~{fragments/table-tenant :: tenantTable(tenants=${tenants}, selectable=true, inputName='tenantId', selectedId=null, defaultLimit=5)}">
+                        th:replace="~{fragments/table-tenant :: tenantTable(tenants=${tenants}, selectable=true, inputName='tenantId', selectedId=${selectedTenantId}, defaultLimit=5)}">
                     </div>
                 </div>
 

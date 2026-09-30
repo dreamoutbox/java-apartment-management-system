@@ -19,6 +19,7 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Entity
 @Table(name = "invoice", uniqueConstraints = {
@@ -71,6 +72,16 @@ public class Invoice extends BaseEntity {
         }
         String ym = (period != null && !period.isBlank()) ? period.replace("-", "") : "202607";
         return "INV-" + ym + "-00001";
+    }
+
+    public UUID getTenantId() {
+        try {
+            return (contract != null && contract.getTenant() != null)
+                    ? contract.getTenant().getId()
+                    : null;
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public String getTenantName() {

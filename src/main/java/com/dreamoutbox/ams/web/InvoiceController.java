@@ -77,6 +77,9 @@ public class InvoiceController {
     public String invoiceDetail(@PathVariable UUID id, Model model) {
         Invoice invoice = invoiceService.getById(id);
         model.addAttribute("invoice", invoice);
+        model.addAttribute("createPaymentUrl", invoice.getTenantId() != null
+                ? "/payments/new?tenantId=" + invoice.getTenantId()
+                : "/payments/new");
 
         if (invoice.getContract() != null && invoice.getContract().getRoom() != null) {
             com.dreamoutbox.ams.room.Room room = invoice.getContract().getRoom();

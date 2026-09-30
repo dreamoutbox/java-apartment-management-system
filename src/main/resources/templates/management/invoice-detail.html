@@ -13,6 +13,7 @@
             .sidebar,
             .back-btn,
             .print-btn,
+            .pay-btn,
             .header {
                 display: none !important;
             }
@@ -78,6 +79,8 @@
                 <p>Detailed monthly rent and utility breakdown statement</p>
             </div>
             <div style="display:flex;gap:10px;">
+                <a th:href="@{${createPaymentUrl != null ? createPaymentUrl : (invoice.tenantId != null ? '/payments/new?tenantId=' + invoice.tenantId : '/payments/new')}}"
+                    id="create-payment-btn" class="btn pay-btn" style="background:#10b981;">Create Payment</a>
                 <button onclick="window.print()" class="btn print-btn">🖨 Print Invoice</button>
                 <a th:href="@{'/invoices/' + ${invoice.id} + '/pdf'}" class="btn" style="background:#6366f1;">⬇ Download
                     PDF</a>
@@ -111,8 +114,7 @@
                 <div>
                     <h4 style="font-size:12px;text-transform:uppercase;color:#94a3b8;letter-spacing:0.5px;margin-bottom:8px;"
                         class="unit-detail">Billed To:</h4>
-                    <div style="font-weight:600;font-size:16px;"
-                        th:text="${invoice.tenantName}">
+                    <div style="font-weight:600;font-size:16px;" th:text="${invoice.tenantName}">
                         Tenant Name</div>
                     <div style="font-size:14px;color:#cbd5e1;" class="unit-detail"
                         th:text="${'Phone: ' + invoice.tenantPhone}">

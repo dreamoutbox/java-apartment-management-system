@@ -315,6 +315,19 @@
                 });
             }
 
+            // If a row is already selected/checked, ensure we show the page containing it
+            var checkedRow = allRows.find(function (r) {
+                var radio = r.querySelector('input[type="radio"]:checked');
+                return !!radio;
+            });
+            if (checkedRow && pageSize !== Infinity) {
+                var initialFiltered = getFilteredRows();
+                var checkedIdx = initialFiltered.indexOf(checkedRow);
+                if (checkedIdx !== -1) {
+                    currentPage = Math.floor(checkedIdx / pageSize) + 1;
+                }
+            }
+
             // Initial render
             render();
         });

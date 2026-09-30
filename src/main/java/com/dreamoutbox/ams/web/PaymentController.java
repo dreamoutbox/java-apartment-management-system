@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
 
 @Controller
@@ -51,8 +52,31 @@ public class PaymentController {
     }
 
     @GetMapping("/new")
-    public String newPaymentForm(Model model) {
-        model.addAttribute("tenants", tenantService.getAllTenants());
+    public String newPaymentForm(
+            @RequestParam(required = false) String tenantId,
+            @RequestParam(required = false) String tenant,
+            Model model) {
+        List<Tenant> tenants = tenantService.getAllTenants();
+        UUID selectedId = null;
+        String raw = (tenantId != null && !tenantId.isBlank()) ? tenantId : tenant;
+        if (raw != null && !raw.isBlank()) {
+            String trimmed = raw.trim();
+            try {
+                selectedId = UUID.fromString(trimmed);
+            } catch (IllegalArgumentException ignored) {
+                for (Tenant t : tenants) {
+                    if ((t.getUser() != null && trimmed.equalsIgnoreCase(t.getUser().getUsername()))
+                            || (t.getEmail() != null && trimmed.equalsIgnoreCase(t.getEmail()))
+                            || (t.getFullName() != null && trimmed.equalsIgnoreCase(t.getFullName()))) {
+                        selectedId = t.getId();
+                        break;
+                    }
+                }
+            }
+        }
+
+        model.addAttribute("tenants", tenants);
+        model.addAttribute("selectedTenantId", selectedId);
         model.addAttribute("activeTab", "payments");
         return "management/form-payment";
     }
