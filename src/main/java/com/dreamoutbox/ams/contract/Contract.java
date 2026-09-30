@@ -19,6 +19,7 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "contract")
@@ -50,4 +51,11 @@ public class Contract extends BaseEntity {
     @Column(nullable = false)
     @Builder.Default
     private ContractStatus status = ContractStatus.ACTIVE;
+
+    @Column(nullable = false, columnDefinition = "boolean not null default false")
+    @Builder.Default
+    private boolean deleted = false;
+
+    @Column
+    private LocalDateTime deletedAt;
 }

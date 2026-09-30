@@ -56,7 +56,7 @@ public class RoomService {
         Room room = roomRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Room not found: " + id));
 
-        var contracts = contractRepository.findByRoom(room);
+        var contracts = contractRepository.findByRoomAndDeletedFalse(room);
         boolean hasActiveContract = room.getStatus() == RoomStatus.OCCUPIED ||
                 contracts.stream().anyMatch(c -> c.getStatus() == ContractStatus.ACTIVE);
 

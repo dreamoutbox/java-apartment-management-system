@@ -25,12 +25,8 @@
                 <tr th:each="inv : ${invoices}">
                     <td style="font-weight:600;" th:text="${inv.invoiceNumber}">INV-202607-00001</td>
                     <td th:text="${inv.period}">2026-07</td>
-                    <td
-                        th:text="${inv.contract != null and inv.contract.tenant != null ? inv.contract.tenant.fullName : 'N/A'}">
-                        Tenant Name</td>
-                    <td
-                        th:text="${inv.contract != null and inv.contract.room != null ? inv.contract.room.roomNumber : 'N/A'}">
-                        101</td>
+                    <td th:text="${inv.tenantName}">Tenant Name</td>
+                    <td th:text="${inv.roomNumber}">101</td>
                     <td th:text="${'$' + inv.rentAmount}">$1000.00</td>
                     <td th:text="${'$' + inv.electricityAmount}">$50.00</td>
                     <td th:text="${'$' + inv.waterAmount}">$20.00</td>

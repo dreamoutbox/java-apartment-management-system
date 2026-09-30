@@ -23,7 +23,7 @@
                 <input type="hidden" name="contractId"
                     th:value="${invoice.contract != null ? invoice.contract.id : ''}">
                 <input type="text" class="form-control"
-                    th:value="${'Room ' + (invoice.contract != null and invoice.contract.room != null ? invoice.contract.room.roomNumber : 'N/A') + ' — Tenant: ' + (invoice.contract != null and invoice.contract.tenant != null ? invoice.contract.tenant.fullName : 'N/A')}"
+                    th:value="${'Room ' + invoice.roomNumber + ' — Tenant: ' + invoice.tenantName}"
                     disabled>
             </div>
 

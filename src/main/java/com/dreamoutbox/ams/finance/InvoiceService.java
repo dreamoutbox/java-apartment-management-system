@@ -120,7 +120,7 @@ public class InvoiceService {
 
     @Transactional
     public List<Invoice> generateMonthlyInvoices(String period) {
-        List<Contract> activeContracts = contractRepository.findByStatus(ContractStatus.ACTIVE);
+        List<Contract> activeContracts = contractRepository.findByStatusAndDeletedFalse(ContractStatus.ACTIVE);
         return activeContracts.stream()
                 .map(contract -> generateInvoice(contract, period))
                 .toList();

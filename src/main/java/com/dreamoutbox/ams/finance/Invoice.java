@@ -31,8 +31,9 @@ import java.time.LocalDate;
 @Builder
 public class Invoice extends BaseEntity {
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "contract_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "contract_id")
+    @org.hibernate.annotations.NotFound(action = org.hibernate.annotations.NotFoundAction.IGNORE)
     private Contract contract;
 
     @Column(nullable = false)
@@ -70,5 +71,59 @@ public class Invoice extends BaseEntity {
         }
         String ym = (period != null && !period.isBlank()) ? period.replace("-", "") : "202607";
         return "INV-" + ym + "-00001";
+    }
+
+    public String getTenantName() {
+        try {
+            return (contract != null && contract.getTenant() != null)
+                    ? contract.getTenant().getFullName()
+                    : "N/A";
+        } catch (Exception e) {
+            return "N/A";
+        }
+    }
+
+    public String getTenantPhone() {
+        try {
+            if (contract != null && contract.getTenant() != null) {
+                String phone = contract.getTenant().getPhone();
+                return (phone != null && !phone.isBlank()) ? phone : "N/A";
+            }
+        } catch (Exception e) {
+            return "N/A";
+        }
+        return "N/A";
+    }
+
+    public String getTenantEmail() {
+        try {
+            if (contract != null && contract.getTenant() != null && contract.getTenant().getUser() != null) {
+                String email = contract.getTenant().getUser().getUsername();
+                return (email != null && !email.isBlank()) ? email : "N/A";
+            }
+        } catch (Exception e) {
+            return "N/A";
+        }
+        return "N/A";
+    }
+
+    public String getRoomNumber() {
+        try {
+            return (contract != null && contract.getRoom() != null)
+                    ? contract.getRoom().getRoomNumber()
+                    : "N/A";
+        } catch (Exception e) {
+            return "N/A";
+        }
+    }
+
+    public String getFloor() {
+        try {
+            return (contract != null && contract.getRoom() != null)
+                    ? String.valueOf(contract.getRoom().getFloor())
+                    : "N/A";
+        } catch (Exception e) {
+            return "N/A";
+        }
     }
 }

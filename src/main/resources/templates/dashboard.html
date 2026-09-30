@@ -239,12 +239,8 @@
                     </thead>
                     <tbody>
                         <tr th:each="inv : ${overdueInvoices}">
-                            <td
-                                th:text="${inv.contract != null and inv.contract.tenant != null ? inv.contract.tenant.fullName : 'N/A'}">
-                                Tenant</td>
-                            <td
-                                th:text="${inv.contract != null and inv.contract.room != null ? inv.contract.room.roomNumber : 'N/A'}">
-                                101</td>
+                            <td th:text="${inv.tenantName}">Tenant</td>
+                            <td th:text="${inv.roomNumber}">101</td>
                             <td th:text="${inv.period}">2026-07</td>
                             <td th:text="${'$' + inv.totalAmount}">$1000.00</td>
                             <td th:text="${'$' + inv.balanceRemaining}">$500.00</td>

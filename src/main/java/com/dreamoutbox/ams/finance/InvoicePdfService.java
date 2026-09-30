@@ -151,24 +151,17 @@ public class InvoicePdfService {
     }
 
     private String safeGet(Invoice inv, String field) {
-        try {
-            return switch (field) {
-                case "tenantName" -> inv.getContract().getTenant().getFullName();
-                case "tenantPhone" -> {
-                    String p = inv.getContract().getTenant().getPhone();
-                    yield p != null ? p : "N/A";
-                }
-                case "tenantEmail" -> {
-                    var u = inv.getContract().getTenant().getUser();
-                    yield u != null ? u.getUsername() : "N/A";
-                }
-                case "roomNumber" -> inv.getContract().getRoom().getRoomNumber();
-                case "floor" -> String.valueOf(inv.getContract().getRoom().getFloor());
-                default -> "N/A";
-            };
-        } catch (Exception e) {
+        if (inv == null) {
             return "N/A";
         }
+        return switch (field) {
+            case "tenantName" -> inv.getTenantName();
+            case "tenantPhone" -> inv.getTenantPhone();
+            case "tenantEmail" -> inv.getTenantEmail();
+            case "roomNumber" -> inv.getRoomNumber();
+            case "floor" -> inv.getFloor();
+            default -> "N/A";
+        };
     }
 
     private String safe(BigDecimal v, String fallback) {

@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -82,10 +83,13 @@ public class ContractService {
         Contract contract = contractRepository.findById(contractId)
                 .orElseThrow(() -> new IllegalArgumentException("Contract not found: " + contractId));
 
+        contract.setDeleted(true);
+        contract.setDeletedAt(LocalDateTime.now());
         if (contract.getStatus() == ContractStatus.ACTIVE) {
+            contract.setStatus(ContractStatus.TERMINATED);
             roomService.transition(contract.getRoom(), RoomStatus.VACANT);
         }
-        contractRepository.delete(contract);
+        contractRepository.save(contract);
     }
 
     @Transactional
@@ -110,17 +114,17 @@ public class ContractService {
 
     @Transactional(readOnly = true)
     public List<Contract> getAllActiveContracts() {
-        return contractRepository.findByStatus(ContractStatus.ACTIVE);
+        return contractRepository.findByStatusAndDeletedFalse(ContractStatus.ACTIVE);
     }
 
     @Transactional(readOnly = true)
     public List<Contract> getAllContracts() {
-        return contractRepository.findAll();
+        return contractRepository.findAllByDeletedFalseOrderByCreatedAtDesc();
     }
 
     @Transactional(readOnly = true)
     public List<Contract> getTenantActiveContracts(Tenant tenant) {
-        return contractRepository.findByTenantAndStatus(tenant, ContractStatus.ACTIVE);
+        return contractRepository.findByTenantAndStatusAndDeletedFalse(tenant, ContractStatus.ACTIVE);
     }
 
     @Transactional(readOnly = true)
