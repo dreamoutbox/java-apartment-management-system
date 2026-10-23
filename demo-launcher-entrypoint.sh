@@ -113,4 +113,39 @@ systemctl restart "${APP_NAME}.service"
 
 systemctl --no-pager --full status "${APP_NAME}.service" || true
 
-echo "logs: journalctl -u ${APP_NAME} -f"
+# --- healthcheck ---
+HEALTH_URL="${HEALTH_URL:-http://127.0.0.1:8080/login}"
+HEALTH_TIMEOUT="${HEALTH_TIMEOUT:-90}"   # seconds; JVM + Spring startup
+
+echo "waiting for ${HEALTH_URL} (up to ${HEALTH_TIMEOUT}s)..."
+deadline=$((SECONDS + HEALTH_TIMEOUT))
+until curl -fsS --max-time 2 -o /dev/null "$HEALTH_URL"; do
+  if ! systemctl is-active --quiet "${APP_NAME}.service"; then
+    echo "service is not running (crashed or restarting)" >&2
+    journalctl -u "${APP_NAME}" -n 50 --no-pager >&2
+    exit 1
+  fi
+  if (( SECONDS >= deadline )); then
+    echo "healthcheck timed out after ${HEALTH_TIMEOUT}s" >&2
+    journalctl -u "${APP_NAME}" -n 50 --no-pager >&2
+    exit 1
+  fi
+  sleep 2
+done
+echo "healthy: ${HEALTH_URL}"
+
+# --- start mock ---
+echo "App is running on port 8080. Seeding mock data via API..."
+RESPONSE=$(curl -s -w "\n%{http_code}" -X POST http://localhost:8080/api/dev/mock-data)
+BODY=$(echo "$RESPONSE" | sed '$d')
+STATUS=$(echo "$RESPONSE" | tail -n1)
+if [ "$STATUS" = "200" ]; then
+    echo "$BODY"
+else
+    echo "Failed to seed mock data. HTTP status: $STATUS"
+    echo "$BODY"
+    exit 1
+fi
+
+# echo "logs: journalctl -u ${APP_NAME} -f"
+echo "COMPLETE"
