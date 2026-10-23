@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # bootstrap.sh - Debian/Ubuntu. Run as root.
-set -euo pipefail
+set -euxo pipefail
 
 # ---- config ----
-ARTIFACT_URL="https://github.com/dreamoutbox/java-apartment-management-system/releases/latest/download/ams-1.3.0.jar"
+ARTIFACT_URL="https://github.com/dreamoutbox/java-apartment-management-system/releases/latest/download/ams-1.3.2.jar"
 JAVA_OPTS_DEFAULT="-XX:MaxRAMPercentage=75 -XX:+ExitOnOutOfMemoryError"
 # ----------------
 
