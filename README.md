@@ -18,6 +18,16 @@ A web-based apartment management system built with Spring Boot. It covers the fu
 
 ---
 
+### Demo Logins
+
+| Username | Password | Role | Access |
+|---|---|---|---|
+| `landlord` | `password` | Landlord | Full access — rooms, tenants, contracts, invoices, payments, announcements, tickets |
+| `manager` | `password` | Manager | Rooms, tenants, contracts, maintenance tickets |
+| `accountant` | `password` | Accountant | Invoices, payments, utility rates & meter readings |
+| `technician` | `password` | Technician | View & update assigned maintenance tickets |
+| `tenant1`–`tenant20` | `password` | Tenant | Personal portal — own contract, invoices, payments, tickets, announcements |
+
 ## Demo Screenshots
 
 ### Tenants
@@ -47,18 +57,6 @@ A web-based apartment management system built with Spring Boot. It covers the fu
 ![Ticket Detail 2](screenshots/tickets/ticket-detail-2.png)
 
 ---
-
-## How to Use
-
-### Roles & Default Credentials
-
-| Username | Password | Role | Access |
-|---|---|---|---|
-| `landlord` | `password` | Landlord | Full access — rooms, tenants, contracts, invoices, payments, announcements, tickets |
-| `manager` | `password` | Manager | Rooms, tenants, contracts, maintenance tickets |
-| `accountant` | `password` | Accountant | Invoices, payments, utility rates & meter readings |
-| `technician` | `password` | Technician | View & update assigned maintenance tickets |
-| `tenant1`–`tenant20` | `password` | Tenant | Personal portal — own contract, invoices, payments, tickets, announcements |
 
 ### Core Workflows
 
@@ -138,17 +136,3 @@ src/main/resources/
 ├── templates/       # Thymeleaf HTML templates
 └── static/          # CSS, JS, images
 ```
-
-### Demo Data
-
-On first startup the app automatically seeds:
-- 4 system staff users (landlord, manager, accountant, technician) + 20 tenant users
-- 20 rooms across 4 floors
-- 4 lease contracts (Rooms 101–104, Jan–Dec 2026, rent = 1,000/month)
-- Utility rates and meter readings for Jan–May 2026
-- 20 invoices (4 tenants x 5 months)
-  - Tenant 1: all invoices paid
-  - Tenant 2: months 01–04 paid, month 05 partially paid
-  - Tenants 3–4: unpaid
-- 1 maintenance ticket (Room 101, reported by Tenant 1, assigned to System Technician)
-- 2 building announcements
